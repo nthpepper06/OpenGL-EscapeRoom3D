@@ -161,6 +161,8 @@ set(ESCAPE_ROOM_SOURCES
     src/interaction/InteractionManager.cpp
     src/ui/GuiLayer.hpp
     src/ui/GuiLayer.cpp
+    src/audio/AudioEngine.hpp
+    src/audio/AudioEngine.cpp
 )
 
 add_executable(EscapeRoom ${ESCAPE_ROOM_SOURCES})
@@ -182,7 +184,7 @@ target_link_libraries(EscapeRoom PRIVATE
 )
 
 if(WIN32)
-    target_link_libraries(EscapeRoom PRIVATE opengl32)
+    target_link_libraries(EscapeRoom PRIVATE opengl32 winmm)
 endif()
 
 # Copy assets directory to build output directory

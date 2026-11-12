@@ -45,6 +45,7 @@ Application::Application() {
 }
 
 Application::~Application() {
+    audioEngine.shutdown();
     guiLayer.shutdown();
     if (window) {
         glfwDestroyWindow(window);
@@ -180,6 +181,13 @@ bool Application::init(int width, int height, const std::string& title) {
 
     // Initialize Player Controller
     playerController.init(&camera);
+    playerController.onFootstep = [this](const glm::vec3& pos) {
+        audioEngine.playFootstep(pos);
+    };
+
+    // Initialize 3D Spatial Audio Engine
+    audioEngine.init();
+    interactionMgr.audioEngine = &audioEngine;
 
     // Load first room (Occult Ritual Chamber)
     switchRoom(0);
@@ -285,6 +293,10 @@ void Application::run() {
 
         // Update interaction timers
         interactionMgr.update(deltaTime);
+
+        // Update 3D Spatial Audio listener and horror atmosphere
+        audioEngine.updateListener(camera.position, camera.front, camera.up);
+        audioEngine.updateAtmosphere(currentFearFactor, pointLight.position, pointLight.flickerEnabled);
 
         // Raycasting for target highlight
         updateRaycast();
@@ -494,6 +506,7 @@ void Application::run() {
                         shadowPipeline,
                         particleSystem,
                         ssaoPipeline,
+                        audioEngine,
                         [this](int roomIdx) { switchRoom(roomIdx); },
                         [this]() { saveCurrentScene(); },
                         [this]() { loadSceneFile(); });
@@ -623,6 +636,7 @@ void Application::onKey(int key, int scancode, int action, int mods) {
         if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
             if (interactionMgr.enteredPin.size() < 4) {
                 interactionMgr.enteredPin += static_cast<char>('0' + (key - GLFW_KEY_0));
+                audioEngine.playKeypadBeep(true);
             }
             return;
         }
@@ -630,6 +644,7 @@ void Application::onKey(int key, int scancode, int action, int mods) {
         if (key >= GLFW_KEY_KP_0 && key <= GLFW_KEY_KP_9) {
             if (interactionMgr.enteredPin.size() < 4) {
                 interactionMgr.enteredPin += static_cast<char>('0' + (key - GLFW_KEY_KP_0));
+                audioEngine.playKeypadBeep(true);
             }
             return;
         }
@@ -954,7 +969,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         guiLayer.render(appMode, sceneRoot, pointLight, spotLight, ambientLight,
                         interactionMgr, camera, hoveredObjectId, windowWidth, windowHeight,
                         currentRoomIndex, currentRoomName, currentFearFactor, postProcessor,
-                        shadowPipeline, particleSystem, ssaoPipeline,
+                        shadowPipeline, particleSystem, ssaoPipeline, audioEngine,
                         [this](int r) { switchRoom(r); },
                         [this]() { saveCurrentScene(); },
                         [this]() { loadSceneFile(); });

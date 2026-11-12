@@ -1,4 +1,5 @@
 #include "ui/GuiLayer.hpp"
+#include "audio/AudioEngine.hpp"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -56,6 +57,7 @@ void GuiLayer::render(AppMode appMode,
                       ShadowPipeline& shadowPipeline,
                       ParticleSystem& particleSystem,
                       SsaoPipeline& ssaoPipeline,
+                      AudioEngine& audioEngine,
                       std::function<void(int)> onSwitchRoom,
                       std::function<void()> onSaveScene,
                       std::function<void()> onLoadScene) {
@@ -116,6 +118,23 @@ void GuiLayer::render(AppMode appMode,
                 ImGui::MenuItem("Ceiling Light ON/OFF", nullptr, &pointLight.enabled);
                 ImGui::MenuItem("Point Light Flicker ON/OFF", nullptr, &pointLight.flickerEnabled);
                 ImGui::MenuItem("Flashlight (F) ON/OFF", nullptr, &spotLight.enabled);
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Audio (3D Spatial)")) {
+                ImGui::MenuItem("Audio Engine Active", nullptr, &audioEngine.enabled);
+                ImGui::MenuItem("Mute", nullptr, &audioEngine.muted);
+                ImGui::SliderFloat("Master Volume", &audioEngine.masterVolume, 0.0f, 1.0f);
+                ImGui::SliderFloat("SFX Volume", &audioEngine.sfxVolume, 0.0f, 1.0f);
+                ImGui::SliderFloat("Ambient Volume", &audioEngine.ambientVolume, 0.0f, 1.0f);
+                ImGui::Separator();
+                if (ImGui::Button("Test Footstep")) {
+                    audioEngine.playFootstep(camera.position);
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Test Beep")) {
+                    audioEngine.playKeypadBeep(true);
+                }
                 ImGui::EndMenu();
             }
 

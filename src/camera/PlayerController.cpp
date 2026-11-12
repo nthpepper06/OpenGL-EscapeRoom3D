@@ -171,17 +171,28 @@ void PlayerController::update(float deltaTime, GLFWwindow* window, bool freezeIn
     // Resolve collision with sliding
     resolveCollisions(currentPosition, playerVelocity, deltaTime, colliders);
 
-    // Head-bobbing
+    // Head-bobbing & Footstep audio trigger
     float bobOffset = 0.0f;
     float currentHorizontalSpeed = glm::length(glm::vec2(playerVelocity.x, playerVelocity.z));
 
-    if (headBobEnabled && currentHorizontalSpeed > 0.2f) {
+    if (currentHorizontalSpeed > 0.2f) {
         float bobSpeedMult = isSprinting ? 1.4f : 1.0f;
-        headBobTimer += deltaTime * headBobFrequency * bobSpeedMult;
-        bobOffset = std::sin(headBobTimer) * headBobAmplitude;
+        if (headBobEnabled) {
+            headBobTimer += deltaTime * headBobFrequency * bobSpeedMult;
+            bobOffset = std::sin(headBobTimer) * headBobAmplitude;
+        }
+
+        stepTimer += deltaTime * bobSpeedMult;
+        if (stepTimer >= 0.44f) {
+            stepTimer = 0.0f;
+            if (onFootstep) {
+                onFootstep(currentPosition);
+            }
+        }
     } else {
         headBobTimer = 0.0f;
         bobOffset = 0.0f;
+        stepTimer = 0.35f;
     }
 
     currentPosition.y = baseEyeHeight;

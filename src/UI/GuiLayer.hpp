@@ -10,6 +10,8 @@
 #include "interaction/InteractionManager.hpp"
 #include "camera/Camera.hpp"
 
+class AudioEngine;
+
 class GuiLayer {
 public:
     std::shared_ptr<SceneObject> selectedObject = nullptr;
@@ -41,6 +43,7 @@ public:
                 ShadowPipeline& shadowPipeline,
                 ParticleSystem& particleSystem,
                 SsaoPipeline& ssaoPipeline,
+                AudioEngine& audioEngine,
                 std::function<void(int)> onSwitchRoom,
                 std::function<void()> onSaveScene,
                 std::function<void()> onLoadScene);

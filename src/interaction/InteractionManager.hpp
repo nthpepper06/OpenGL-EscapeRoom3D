@@ -4,6 +4,10 @@
 #include "scene/SceneObject.hpp"
 #include "renderer/Light.hpp"
 
+class SceneObject;
+class PointLight;
+class AudioEngine;
+
 enum class InspectType {
     None,
     SecretNote,
@@ -44,6 +48,7 @@ public:
     std::shared_ptr<SceneObject> safeDoorObject = nullptr;
     std::shared_ptr<SceneObject> exitDoorObject = nullptr;
     std::shared_ptr<SceneObject> keyObject = nullptr;
+    AudioEngine* audioEngine = nullptr;
 
     void update(float deltaTime);
     void interact(std::shared_ptr<SceneObject> obj, PointLight& ceilingLight);

@@ -33,6 +33,10 @@ public:
     bool isMoving = false;
     bool isSprinting = false;
 
+    // Audio callback for footsteps
+    std::function<void(const glm::vec3&)> onFootstep = nullptr;
+    float stepTimer = 0.0f;
+
     void setPosition(const glm::vec3& newPos);
     glm::vec3 getPosition() const;
 

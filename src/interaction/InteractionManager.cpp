@@ -1,4 +1,5 @@
 #include "interaction/InteractionManager.hpp"
+#include "audio/AudioEngine.hpp"
 
 void InteractionManager::update(float deltaTime) {
     if (messageTimer > 0.0f) {
@@ -59,6 +60,7 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
         case InteractionType::DeskDrawer: {
             auto target = drawerObject ? drawerObject : obj;
             target->isOpen = !target->isOpen;
+            if (audioEngine) audioEngine->playDrawerSlide(glm::vec3(target->getWorldMatrix()[3]));
             setMessage(target->isOpen ? "Da mo ngan keo! Ben trong co manh giay ghi: [MA PIN KET SAT: " + correctSafePin + "]!" : "Da dong ngan keo ban.", 8.0f);
             break;
         }
@@ -104,10 +106,12 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
             if (!safeUnlocked) {
                 showKeypadModal = true;
                 enteredPin = "";
+                if (audioEngine) audioEngine->playKeypadBeep(true);
                 setMessage("Ket sat dang khoa! Hay go ma PIN 4 chu so (" + correctSafePin + ").", 5.0f);
             } else {
                 auto target = safeDoorObject ? safeDoorObject : obj;
                 target->isOpen = !target->isOpen;
+                if (audioEngine) audioEngine->playDoorCreak(glm::vec3(target->getWorldMatrix()[3]));
                 setMessage(target->isOpen ? "Da mo cua ket sat." : "Da dong cua ket sat.");
             }
             break;
@@ -123,6 +127,7 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 sigilsCollected++;
                 keysCollected++;
             }
+            if (audioEngine) audioEngine->playItemPickup();
             obj->isVisible = false;
             std::string keyTitle = "CHIA KHOA VANG & MANH SIGIL CUA VANCE [" + std::to_string(keysCollected) + "/3]";
             std::string keyBody = "Ban da thu thap thanh cong Chia Khoa Vang va Manh Co Vat Sigil #" + std::to_string(currentRoomId + 1) + "!\n"
@@ -144,8 +149,10 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                     obj->isOpen = true;
                     exitUnlocked = true;
                     gameWon = true;
+                    if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
                     setMessage("CHUC MUNG! Ban da thu thap du 3 Chia Khoa Vang va pha giai toan bo bi an ac mong!", 10.0f);
                 } else {
+                    if (audioEngine) audioEngine->playKeypadBeep(false);
                     setMessage("CUA THOAT HIEM CUOI BI PHONG AN! Can du 3 Chia Khoa Vang de mo (Hien co: " + std::to_string(keysCollected) + "/3).", 6.0f);
                 }
             } else {
@@ -157,8 +164,10 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                     obj->isOpen = true;
                     exitUnlocked = true;
                     requestRoomTransition = true;
+                    if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
                     setMessage("MO KHOA THANH CONG! Cua thoat hiem bung mo! Dang chuyen sang can phong tiep theo...", 6.0f);
                 } else {
+                    if (audioEngine) audioEngine->playKeypadBeep(false);
                     setMessage("Cua thoat hiem dang bi KHOA CHAT! Hay tim manh giay & mo ket sat lay Chia Khoa Vang!", 5.0f);
                 }
             }
@@ -177,9 +186,16 @@ bool InteractionManager::checkPin(const std::string& pin) {
             safeDoorObject->isOpen = true;
             safeDoorObject->isLocked = false;
         }
+        if (audioEngine) {
+            audioEngine->playKeypadBeep(true);
+            audioEngine->playSafeUnlock(safeDoorObject ? glm::vec3(safeDoorObject->getWorldMatrix()[3]) : glm::vec3(3.2f, 1.46f, 0.0f));
+        }
         setMessage("DUNG MA PIN! Ket sat da mo khoa va bung cua! Nhat Chia Khoa Vang ben trong!", 8.0f);
         return true;
     } else {
+        if (audioEngine) {
+            audioEngine->playKeypadBeep(false);
+        }
         setMessage("SAI MA PIN! Manh giay trong ngan keo ghi: " + correctSafePin, 5.0f);
         enteredPin.clear();
         return false;

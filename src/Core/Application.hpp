@@ -20,6 +20,7 @@
 #include "rooms/AbandonedAsylumRoom.hpp"
 #include "rooms/MirrorRoom.hpp"
 #include "renderer/PlanarReflection.hpp"
+#include "audio/AudioEngine.hpp"
 
 class Application {
 public:
@@ -69,6 +70,8 @@ private:
     PointLight pointLight;
     SpotLight spotLight;
     AmbientLight ambientLight;
+
+    AudioEngine audioEngine;
 
     std::shared_ptr<SceneObject> sceneRoot;
     InteractionManager interactionMgr;
