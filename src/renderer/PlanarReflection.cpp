@@ -9,15 +9,17 @@ PlanarReflection::~PlanarReflection() {
     cleanup();
 }
 
-bool PlanarReflection::init(int res) {
-    resolution = res;
+bool PlanarReflection::init(int w, int h) {
+    texWidth = (w > 0) ? w : 1280;
+    texHeight = (h > 0) ? h : 720;
     setupFBO();
     return (fbo != 0);
 }
 
-void PlanarReflection::resize(int res) {
-    if (res <= 0 || res == resolution) return;
-    resolution = res;
+void PlanarReflection::resize(int w, int h) {
+    if (w <= 0 || h <= 0 || (w == texWidth && h == texHeight)) return;
+    texWidth = w;
+    texHeight = h;
     cleanup();
     setupFBO();
 }
@@ -37,10 +39,10 @@ void PlanarReflection::setupFBO() {
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    // Color texture (RGBA16F HDR)
+    // Color texture (RGBA16F HDR) matching screen aspect ratio
     glGenTextures(1, &reflectionTexture);
     glBindTexture(GL_TEXTURE_2D, reflectionTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, resolution, resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, texWidth, texHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -50,7 +52,7 @@ void PlanarReflection::setupFBO() {
     // Depth Renderbuffer
     glGenRenderbuffers(1, &depthRbo);
     glBindRenderbuffer(GL_RENDERBUFFER, depthRbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution, resolution);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, texWidth, texHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRbo);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -60,16 +62,12 @@ void PlanarReflection::setupFBO() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void PlanarReflection::computeReflectionMatrices(const Camera& mainCamera,
-                                               const glm::vec3& planePos,
-                                               const glm::vec3& planeNormal,
-                                               float aspect,
-                                               glm::mat4& outView,
-                                               glm::mat4& outProj) {
+glm::vec3 PlanarReflection::computeRefCamPos(const Camera& mainCamera,
+                                           const glm::vec3& planePos,
+                                           const glm::vec3& planeNormal) {
     glm::vec3 n = glm::normalize(planeNormal);
     float d = -glm::dot(n, planePos);
 
-    // Reflection matrix for positions
     glm::mat4 R(1.0f);
     R[0][0] = 1.0f - 2.0f * n.x * n.x;
     R[0][1] = -2.0f * n.x * n.y;
@@ -92,41 +90,30 @@ void PlanarReflection::computeReflectionMatrices(const Camera& mainCamera,
     R[3][3] = 1.0f;
 
     glm::vec4 refCamPos4 = R * glm::vec4(mainCamera.position, 1.0f);
-    glm::vec3 refCamPos = glm::vec3(refCamPos4) / refCamPos4.w;
+    return glm::vec3(refCamPos4) / refCamPos4.w;
+}
+
+void PlanarReflection::computeReflectionMatrices(const Camera& mainCamera,
+                                               const glm::vec3& planePos,
+                                               const glm::vec3& planeNormal,
+                                               float aspect,
+                                               glm::mat4& outView,
+                                               glm::mat4& outProj) {
+    glm::vec3 n = glm::normalize(planeNormal);
+    glm::vec3 refCamPos = computeRefCamPos(mainCamera, planePos, planeNormal);
 
     glm::vec3 refCamFront = glm::reflect(mainCamera.front, n);
     glm::vec3 refCamUp = glm::reflect(mainCamera.up, n);
 
     outView = glm::lookAt(refCamPos, refCamPos + refCamFront, refCamUp);
     outProj = mainCamera.getProjectionMatrix(aspect);
-
-    // Oblique Near-Plane Projection Matrix (Lengyel method)
-    // Add small bias (0.05m) to clip plane distance d to eliminate Z-fighting and near-plane precision flickering
-    float clipPlaneBias = 0.05f;
-    glm::vec4 clipPlane = glm::vec4(n, d + clipPlaneBias);
-    glm::vec4 viewSpacePlane = glm::transpose(glm::inverse(outView)) * clipPlane;
-    if (viewSpacePlane.w > 0.0f) {
-        viewSpacePlane = -viewSpacePlane;
-    }
-
-    glm::vec4 q;
-    q.x = (glm::sign(viewSpacePlane.x) + outProj[2][0]) / outProj[0][0];
-    q.y = (glm::sign(viewSpacePlane.y) + outProj[2][1]) / outProj[1][1];
-    q.z = -1.0f;
-    q.w = (1.0f + outProj[2][2]) / outProj[3][2];
-
-    glm::vec4 c = viewSpacePlane * (2.0f / glm::dot(viewSpacePlane, q));
-    outProj[0][2] = c.x;
-    outProj[1][2] = c.y;
-    outProj[2][2] = c.z + 1.0f;
-    outProj[3][2] = c.w;
 }
 
 void PlanarReflection::beginRender() {
     stateGuard = std::make_unique<GLStateGuard>();
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glViewport(0, 0, resolution, resolution);
+    glViewport(0, 0, texWidth, texHeight);
     glClearColor(0.04f, 0.03f, 0.06f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);

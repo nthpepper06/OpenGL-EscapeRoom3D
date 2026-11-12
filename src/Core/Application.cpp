@@ -178,7 +178,7 @@ bool Application::init(int width, int height, const std::string& title) {
     if (!ssaoPipeline.init(windowWidth, windowHeight)) {
         std::cerr << "[Warning] SsaoPipeline initialization failed.\n";
     }
-    if (!planarReflection.init(512)) {
+    if (!planarReflection.init(windowWidth, windowHeight)) {
         std::cerr << "[Warning] PlanarReflection initialization failed.\n";
     }
 
@@ -516,13 +516,15 @@ void Application::run() {
             glm::mat4 refView, refProj;
             glm::vec3 mirrorPos(0.0f, 2.4f, -7.82f);
             glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
-            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
+            float aspect = (float)windowWidth / (float)windowHeight;
+            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, aspect, refView, refProj);
+            glm::vec3 refCamPos = planarReflection.computeRefCamPos(camera, mirrorPos, mirrorNormal);
 
             planarReflection.beginRender();
             lightingShader.use();
             lightingShader.setMat4("projection", refProj);
             lightingShader.setMat4("view", refView);
-            lightingShader.setVec3("viewPos", camera.position);
+            lightingShader.setVec3("viewPos", refCamPos);
             lightingShader.setVec4("clipPlane", glm::vec4(mirrorNormal, -glm::dot(mirrorNormal, mirrorPos) + 0.02f));
             lightingShader.setBool("usePlanarReflection", false);
             lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
@@ -530,9 +532,54 @@ void Application::run() {
             lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
             lightingShader.setInt("debugViewMode", 0);
 
+            // Feed updated lighting uniforms to lightingShader for planar reflection pass
+            lightingShader.setVec3("ambientColor", ambientLight.color);
+            lightingShader.setFloat("ambientIntensity", ambientLight.intensity);
+
+            lightingShader.setBool("pointLight.enabled", pointLight.enabled);
+            lightingShader.setVec3("pointLight.position", pointLight.position);
+            lightingShader.setVec3("pointLight.color", pointLight.color);
+            lightingShader.setFloat("pointLight.intensity", pointLight.intensity);
+            lightingShader.setFloat("pointLight.constant", pointLight.constant);
+            lightingShader.setFloat("pointLight.linear", pointLight.linear);
+            lightingShader.setFloat("pointLight.quadratic", pointLight.quadratic);
+
+            lightingShader.setBool("spotLight.enabled", spotLight.enabled);
+            lightingShader.setVec3("spotLight.position", spotLight.position);
+            lightingShader.setVec3("spotLight.direction", spotLight.direction);
+            lightingShader.setVec3("spotLight.color", spotLight.color);
+            lightingShader.setFloat("spotLight.intensity", spotLight.intensity * 0.40f);
+            lightingShader.setFloat("spotLight.cutOff", spotLight.cutOff);
+            lightingShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+            lightingShader.setFloat("spotLight.constant", spotLight.constant);
+            lightingShader.setFloat("spotLight.linear", spotLight.linear);
+            lightingShader.setFloat("spotLight.quadratic", spotLight.quadratic);
+
+            glActiveTexture(GL_TEXTURE6);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, iblPipeline.getIrradianceMap());
+            lightingShader.setInt("irradianceMap", 6);
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, iblPipeline.getPrefilterMap());
+            lightingShader.setInt("prefilterMap", 7);
+            glActiveTexture(GL_TEXTURE8);
+            glBindTexture(GL_TEXTURE_2D, iblPipeline.getBrdfLUT());
+            lightingShader.setInt("brdfLUT", 8);
+
+            lightingShader.setBool("spotShadowEnabled", false);
+            lightingShader.setBool("pointShadowEnabled", false);
+
+            auto centerMirrorObj = sceneRoot ? sceneRoot->findById("center_mirror") : nullptr;
+            if (centerMirrorObj) centerMirrorObj->isVisible = false; // Never render mirror inside its own reflection!
+            auto mirrorFrameObj = sceneRoot ? sceneRoot->findById("mirror_frame") : nullptr;
+            if (mirrorFrameObj) mirrorFrameObj->isVisible = false; // Never block reflection camera with mirror frame slab!
+
             if (sceneRoot) {
                 sceneRoot->draw(lightingShader, "", "", RenderLayer::MirrorOnly);
             }
+
+            if (centerMirrorObj) centerMirrorObj->isVisible = true;
+            if (mirrorFrameObj) mirrorFrameObj->isVisible = true;
+
             planarReflection.endRender();
         }
         gpuProfiler.endPass(GpuPass::PlanarReflection);
@@ -860,6 +907,7 @@ void Application::onFramebufferSize(int width, int height) {
     glViewport(0, 0, width, height);
     postProcessor.resize(width, height);
     ssaoPipeline.resize(width, height);
+    planarReflection.resize(width, height);
 }
 
 void Application::onMouseMove(double xpos, double ypos) {
@@ -1195,16 +1243,19 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         }
 
         if (currentRoomIndex == 2 && planarReflection.enabled) {
+            GLStateGuard refGuard;
             glm::mat4 refView, refProj;
             glm::vec3 mirrorPos(0.0f, 2.4f, -7.82f);
             glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
-            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
+            float aspect = (float)windowWidth / (float)windowHeight;
+            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, aspect, refView, refProj);
+            glm::vec3 refCamPos = planarReflection.computeRefCamPos(camera, mirrorPos, mirrorNormal);
 
             planarReflection.beginRender();
             lightingShader.use();
             lightingShader.setMat4("projection", refProj);
             lightingShader.setMat4("view", refView);
-            lightingShader.setVec3("viewPos", camera.position);
+            lightingShader.setVec3("viewPos", refCamPos);
             lightingShader.setVec4("clipPlane", glm::vec4(mirrorNormal, -glm::dot(mirrorNormal, mirrorPos) + 0.02f));
             lightingShader.setBool("usePlanarReflection", false);
             lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
@@ -1212,9 +1263,54 @@ void Application::runBenchmarkAndCaptureScreenshots() {
             lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
             lightingShader.setInt("debugViewMode", 0);
 
+            // Lighting setup for reflection pass
+            lightingShader.setVec3("ambientColor", ambientLight.color);
+            lightingShader.setFloat("ambientIntensity", ambientLight.intensity);
+
+            lightingShader.setBool("pointLight.enabled", pointLight.enabled);
+            lightingShader.setVec3("pointLight.position", pointLight.position);
+            lightingShader.setVec3("pointLight.color", pointLight.color);
+            lightingShader.setFloat("pointLight.intensity", pointLight.intensity);
+            lightingShader.setFloat("pointLight.constant", pointLight.constant);
+            lightingShader.setFloat("pointLight.linear", pointLight.linear);
+            lightingShader.setFloat("pointLight.quadratic", pointLight.quadratic);
+
+            lightingShader.setBool("spotLight.enabled", spotLight.enabled);
+            lightingShader.setVec3("spotLight.position", spotLight.position);
+            lightingShader.setVec3("spotLight.direction", spotLight.direction);
+            lightingShader.setVec3("spotLight.color", spotLight.color);
+            lightingShader.setFloat("spotLight.intensity", spotLight.intensity * 0.40f);
+            lightingShader.setFloat("spotLight.cutOff", spotLight.cutOff);
+            lightingShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+            lightingShader.setFloat("spotLight.constant", spotLight.constant);
+            lightingShader.setFloat("spotLight.linear", spotLight.linear);
+            lightingShader.setFloat("spotLight.quadratic", spotLight.quadratic);
+
+            glActiveTexture(GL_TEXTURE6);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, iblPipeline.getIrradianceMap());
+            lightingShader.setInt("irradianceMap", 6);
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, iblPipeline.getPrefilterMap());
+            lightingShader.setInt("prefilterMap", 7);
+            glActiveTexture(GL_TEXTURE8);
+            glBindTexture(GL_TEXTURE_2D, iblPipeline.getBrdfLUT());
+            lightingShader.setInt("brdfLUT", 8);
+
+            lightingShader.setBool("spotShadowEnabled", false);
+            lightingShader.setBool("pointShadowEnabled", false);
+
+            auto centerMirrorObj = sceneRoot ? sceneRoot->findById("center_mirror") : nullptr;
+            if (centerMirrorObj) centerMirrorObj->isVisible = false;
+            auto mirrorFrameObj = sceneRoot ? sceneRoot->findById("mirror_frame") : nullptr;
+            if (mirrorFrameObj) mirrorFrameObj->isVisible = false;
+
             if (sceneRoot) {
                 sceneRoot->draw(lightingShader, "", "", RenderLayer::MirrorOnly);
             }
+
+            if (centerMirrorObj) centerMirrorObj->isVisible = true;
+            if (mirrorFrameObj) mirrorFrameObj->isVisible = true;
+
             planarReflection.endRender();
         }
 
