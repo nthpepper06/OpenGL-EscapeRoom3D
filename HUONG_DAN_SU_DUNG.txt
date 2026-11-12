@@ -1,0 +1,150 @@
+================================================================================
+     HUONG DAN BIEN DICH VA SU DUNG CHUONG TRINH LAB 01, 02, 03 & LAB 04
+================================================================================
+
+1. CACH BIEN DICH CHUONG TRINH (BUILD)
+--------------------------------------------------------------------------------
+Mo PowerShell hoac Command Prompt tai thu muc goc cua du an va chay mot trong cac lenh sau:
+
+* Cach 1: Bien dich toan bo chuong trinh Lab (Lab 01, Lab 02, Lab 03, Lab 04):
+  g++ -O2 src/old_labs_main.cpp src/glad.c -Iinclude -Llib -lglfw3 -lopengl32 -lgdi32 -lwinmm -o main.exe
+
+* Cach 2: Bien dich rieng LAB 04 thanh file lab4.exe:
+  g++ -O2 src/lab4_main.cpp src/glad.c -Iinclude -Llib -lglfw3 -lopengl32 -lgdi32 -lwinmm -o lab4.exe
+
+* Cach 3: Bien dich bang CMake (neu may co cai dat CMake va Ninja/MinGW):
+  cmake -B build -G "Ninja"
+  cmake --build build --target Lab4
+
+
+2. CACH CHAY CHUONG TRINH (RUN)
+--------------------------------------------------------------------------------
+* Cach 1: Chay truc tiep LAB 04 (Quan sat vat the 3D):
+  .\lab4.exe
+  (Hoac: .\main.exe --lab4  /  .\main.exe -4)
+
+* Cach 2: Chay chuong trinh Menu lua chon truc quan:
+  .\main.exe
+
+* Cach 3: Chay truc tiep LAB 03 (Bien doi hinh hoc 2D):
+  .\main.exe --lab3   (hoac: .\main.exe -3)
+
+* Cach 4: Chay truc tiep LAB 02 (Xen hinh & To mau da giac):
+  .\main.exe --lab2   (hoac: .\main.exe -2)
+
+* Cach 5: Chay truc tiep LAB 01 (Ve doan thang & duong cong Bresenham/Midpoint):
+  .\main.exe --lab1   (hoac: .\main.exe -1)
+
+* Cach 6: Chay kiem thu tu dong 100% cac thuat toan ca 4 Lab (Unit Tests):
+  .\main.exe --test   (hoac: .\lab4.exe --test)
+
+* Cach 7: Chay Lab 2D & 3D Phong chieu sang:
+  .\main.exe --lab2d3d
+
+
+3. HUONG DAN SU DUNG CHI TIET LAB 04: QUAN SAT VAT THE 3D
+--------------------------------------------------------------------------------
+De bai Lab 4:
+4.1. Vat the duoc bieu dien theo mo hinh khung ket noi (Wireframe).
+4.2. Vat the duoc bieu dien theo mo hinh mat da giac (Polygon / Surface).
+Yeu cau: Dung ma tran bien doi he quan sat de quan sat vat the bang cach:
+- Thay doi phep chieu: song song hoac phoi canh
+- Thay doi goc quan sat Theta (θ), Phi (Φ) de xoay vat the
+- Thay doi vi tri quan sat (diem nhin Eye va diem ngam Target)
+- Phong to, thu nho vat the (Zoom & Scale)
+
+* THAO TAC CHUOT:
+  - Chuot trai:
+    + Click tren thanh Menu (phia tren): Chon phep chieu, chon mo hinh bieu dien, chon 1 trong 9 vat the 3D, bat/tat tu dong xoay, reset view...
+    + Nhan giu & keo chuot trong vung 3D: Xoay tu do quanh vat the theo toa do cau (Orbit Camera).
+  - Chuot phai:
+    + Nhan giu & keo chuot: Panning vi tri quan sat (di chuyen diem nhin Eye va tam Target dong thoi tren mat phang quan sat).
+  - Cuon chuot:
+    + Cuon len/xuong: Phong to / Thu nho khoang cach quan sat R (Camera Distance Zoom).
+    + O che do chieu song song: Thu phong vung nhin truc giao (Ortho Size).
+
+* PHIM TAT DIEU KHIEN LAB 04:
+  - [P]             : Chuyen doi PHEP CHIEU: PHOI CANH (Perspective) <-> SONG SONG (Orthographic).
+  - [M]             : Chuyen doi 4 che do MO HINH BIEU DIEN:
+                      1) 4.1. Khung ket noi (Wireframe Model) + Danh sach nut dinh (Vertices Points).
+                      2) 4.2. Mat da giac (Polygon Solid) voi chieu sang Blinn-Phong Shading va mau sac tung mat.
+                      3) Mat da giac ket hop Khung vien canh (Solid + Wireframe Overlay).
+                      4) Tap hop cac dinh (Points).
+  - [Tab] hoac [O]  : Chuyen doi qua lai giua 9 VAT THE 3D:
+                      1) Hinh lap phuong (Cube - 8 dinh, 12 canh, 6 mat)
+                      2) Kim tu thap / Hinh chop (Pyramid - 5 dinh, 8 canh, 5 mat)
+                      3) Lang tru tam giac (Triangular Prism - 6 dinh, 9 canh, 5 mat)
+                      4) Lang tru luc giac (Hexagonal Prism - 12 dinh, 18 canh, 8 mat)
+                      5) Hinh cau mat cong (UV Sphere - luoi vi tuyen & kinh tuyen)
+                      6) Hinh non (Cone - dinh nhon va day tron)
+                      7) Hinh tru (Cylinder - 2 day tron va mat than)
+                      8) Hinh xuyen (Torus / Donut - mat cong bac cao)
+                      9) Mo hinh Ngoi nha 3D (3D House Model - than nha, mai doc, ong khoi)
+  - [Mui ten Trai/Phai] : Thay doi goc quan sat Theta (θ) xoay quanh truc dung Y [0..360 do].
+  - [Mui ten Len/Xuong] : Thay doi goc quan sat Phi (Φ) ngang/ngang nhin len xuong [-89..+89 do].
+  - [W, A, S, D]    : Thay doi vi tri quan sat (Diem nhin Eye va Target Len / Xuong / Trai / Phai).
+  - [+] hoac [-]    : Phong to / Thu nho vat the qua ma tran Ti le vat the Model Scale (0.2x den 5.0x).
+  - [PageUp/PageDn] : Dieu chinh goc mo FOV (trong Phoi canh) hoac Vung nhin Ortho (trong Song song).
+  - [SPACE]         : Bat / Tat tu dong xoay quanh vat the (Auto Orbit Rotation 60 FPS).
+  - [1], [2], [3], [4]: Dat nhanh goc nhin Preset chuan:
+                      + [1]: Goc nhin Truoc (Front View: Theta=0, Phi=0)
+                      + [2]: Goc nhin Tren (Top View: Theta=0, Phi=89)
+                      + [3]: Goc nhin Ben Phai (Right View: Theta=90, Phi=0)
+                      + [4]: Goc nhin Truc do (Isometric: Theta=45, Phi=35.26)
+  - [R]             : Dat lai he quan sat ve mac dinh (Reset View: R=5.5, Theta=35, Phi=25, Scale=1.0x).
+  - [L]             : Bat / Tat Chieu sang (Lighting: Ambient, Diffuse, Specular).
+  - [G]             : Bat / Tat Luoi toa do mat phang (Grid plane).
+  - [X]             : Bat / Tat He truc toa do 3D (Ox: Do, Oy: Xanh la, Oz: Xanh duong).
+  - [C]             : Bat / Tat Khu mat khuat (Back-Face Culling).
+  - [K] hoac [ENTER]: In chi tiet Ma tran View (4x4), Ma tran Projection (4x4), Model Matrix ra Console.
+  - [H]             : An / Hien Bang thong so Ma tran truc quan tren man hinh (HUD Matrix Panel).
+  - [ESC]           : Thoat chuong trinh.
+
+* BANG HUD MA TRAN 4X4 TRUC QUAN:
+  - Bang ben trai hien thi toan bo thong so thoi gian thuc cua:
+    + Toa do Diem nhin Eye: E(xe, ye, ze)
+    + Toa do Diem ngam Target: T(xt, yt, zt)
+    + Goc Theta (θ), Phi (Φ), Khoang cach R, He so Scale
+    + 16 phan tu cua MA TRAN HE QUAN SAT (View Matrix LookAt 4x4)
+    + 16 phan tu cua MA TRAN PHEP CHIEU (Projection Matrix 4x4)
+
+
+4. HUONG DAN SU DUNG CHI TIET LAB 03: CAC PHEP BIEN DOI 2D
+--------------------------------------------------------------------------------
+De bai Lab 3:
+- Tinh tien (Translation)
+- Ti le voi tam ti le (x0, y0)
+- Quay voi tam quay (x0, y0)
+- Doi xung qua duong thang y = ax + b
+
+* THAO TAC CHUOT & PHIM TAT LAB 03:
+  - Chuot trai: Keo doi vector tinh tien, dat tam quay, dat tam ti le, ve duong thang doi xung.
+  - [1]: Tinh tien; [2]: Ti le; [3]: Quay; [4]: Doi xung y=ax+b.
+  - [F]: Doi hinh mau; [SPACE]: Tu dong quay; [R]: Reset.
+
+
+5. HUONG DAN SU DUNG CHI TIET LAB 02: XEN HINH & TO MAU
+--------------------------------------------------------------------------------
+De bai Lab 2:
+- 2.1. Thuat toan xen hinh: Cohen-Sutherland va Chia nhi phan
+- 2.2. Thuat toan to mau: To mau theo duong bien va Dong quet (Scanline)
+- Phim [1]..[6] de chon thuat toan; [F1]..[F5] nap file da giac mau tu thu muc data/.
+
+
+6. CAU TRUC DU AN (PROJECT STRUCTURE)
+--------------------------------------------------------------------------------
+- data/                         : Chua cac file du lieu da giac (.txt)
+- src/
+  + Lab1/                       : Thuat toan va App Lab 1 (Bresenham & Midpoint)
+  + Lab2/                       : Thuat toan va App Lab 2 (Clipping & Polygon Fill)
+  + Lab3/                       : Thuat toan va App Lab 3 (2D Transformations)
+  + Lab4/                       : LAB 04 - PHEP QUAN SAT VAT THE 3D [MOI]
+    * Lab4Transformations.hpp   : Ma tran 4x4, LookAt, Spherical Orbit, Perspective & Orthographic, Scale
+    * Lab4Models.hpp            : Mo hinh Khung ket noi (4.1) & Mat da giac (4.2), bo sinh 9 vat the 3D
+    * Lab4App.hpp               : Ung dung tuong tac quan sat 3D hoan chinh kem HUD ma tran truc quan
+  + lab4_main.cpp               : Entry point chay rieng LAB 04
+  + old_labs_main.cpp           : Entry point tong hop ca 4 Lab (01, 02, 03, 04)
+- BAO_CAO_LAB_01.md             : Bao cao ly thuyet & thuc hanh Lab 01
+- BAO_CAO_LAB_04.md             : Bao cao toan dien ly thuyet & thuc hanh Lab 04
+- HUONG_DAN_SU_DUNG.txt         : Tai lieu huong dan tong hop tat ca cac Lab
+================================================================================

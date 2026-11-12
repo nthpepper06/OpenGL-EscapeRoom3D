@@ -1,0 +1,9 @@
+# File du lieu da giac Luc giac deu (6 dinh)
+6
+-60 -100
+60 -100
+110 0
+60 100
+-60 100
+-110 0
+0 0

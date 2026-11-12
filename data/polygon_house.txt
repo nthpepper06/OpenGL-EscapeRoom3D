@@ -1,0 +1,12 @@
+# File du lieu da giac Hinh ngoi nha (5 dinh)
+# Dinh dang:
+# Dong 1: So dinh N
+# N dong tiep theo: x y
+# Dong tiep theo: xSeed ySeed (diem hat giong ben trong)
+5
+-100 -80
+100 -80
+100 40
+0 120
+-100 40
+0 -20

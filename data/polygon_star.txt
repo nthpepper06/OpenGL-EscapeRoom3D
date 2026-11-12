@@ -1,0 +1,17 @@
+# File du lieu da giac Ngoi sao 5 canh (10 dinh)
+# Dinh dang: 
+# Dong 1: So dinh N
+# N dong tiep theo: x y (toa do cac dinh theo thu tu vong)
+# Dong cuoi (tuy chon): xSeed ySeed (toa do diem ben trong de to mau)
+10
+0 120
+35 40
+120 40
+55 -15
+80 -95
+0 -45
+-80 -95
+-55 -15
+-120 40
+-35 40
+0 0

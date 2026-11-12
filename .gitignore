@@ -1,0 +1,16 @@
+# Build artifacts
+build/
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+
+# Archives and IDE files
+*.rar
+*.zip
+.vscode/
+.agents/
+imgui.ini
+save_profile.dat

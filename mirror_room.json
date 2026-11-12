@@ -1,0 +1,3870 @@
+{
+  "ambient": {
+    "color": [
+      0.11999999731779099,
+      0.07999999821186066,
+      0.20000000298023224
+    ],
+    "intensity": 0.25
+  },
+  "pointLight": {
+    "color": [
+      0.75,
+      0.6499999761581421,
+      1.0
+    ],
+    "enabled": true,
+    "intensity": 10.0,
+    "position": [
+      0.0,
+      3.200000047683716,
+      0.0
+    ]
+  },
+  "scene": {
+    "children": [
+      {
+        "children": [],
+        "id": "floor_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": true
+        },
+        "name": "Polished Oak Floor",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "primitiveType": "Plane",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          1.0,
+          10.0
+        ]
+      },
+      {
+        "children": [],
+        "id": "ceiling_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.20000000298023224,
+            0.1599999964237213,
+            0.2199999988079071
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Victorian Ceiling",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          4.199999809265137,
+          0.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          0.20000000298023224,
+          10.0
+        ]
+      },
+      {
+        "children": [],
+        "id": "chandelier",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.699999988079071,
+            0.6000000238418579,
+            0.8999999761581421
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Ghost Chandelier",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          3.5999999046325684,
+          0.0
+        ],
+        "primitiveType": "Cylinder",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          0.800000011920929,
+          0.6000000238418579,
+          0.800000011920929
+        ]
+      },
+      {
+        "children": [],
+        "id": "back_wall_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.25,
+            0.18000000715255737,
+            0.25999999046325684
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Salon Back Wall",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          2.0999999046325684,
+          -5.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          4.199999809265137,
+          0.20000000298023224
+        ]
+      },
+      {
+        "children": [],
+        "id": "front_wall_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.25,
+            0.18000000715255737,
+            0.25999999046325684
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Salon Front Wall",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          2.0999999046325684,
+          5.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          4.199999809265137,
+          0.20000000298023224
+        ]
+      },
+      {
+        "children": [],
+        "id": "left_wall_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.25,
+            0.18000000715255737,
+            0.25999999046325684
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Salon Left Wall",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -5.0,
+          2.0999999046325684,
+          0.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          0.20000000298023224,
+          4.199999809265137,
+          10.0
+        ]
+      },
+      {
+        "children": [],
+        "id": "right_wall_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.25,
+            0.18000000715255737,
+            0.25999999046325684
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Salon Right Wall",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          5.0,
+          2.0999999046325684,
+          0.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          0.20000000298023224,
+          4.199999809265137,
+          10.0
+        ]
+      },
+      {
+        "children": [],
+        "id": "center_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": true
+        },
+        "name": "Haunted Grand Mirror",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          2.0999999046325684,
+          -4.880000114440918
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          3.200000047683716,
+          2.5999999046325684,
+          0.07999999821186066
+        ]
+      },
+      {
+        "children": [],
+        "id": "left_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": true
+        },
+        "name": "Left Silver Mirror",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -4.880000114440918,
+          2.0999999046325684,
+          -1.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          90.0,
+          0.0
+        ],
+        "scale": [
+          2.4000000953674316,
+          2.4000000953674316,
+          0.07999999821186066
+        ]
+      },
+      {
+        "children": [],
+        "id": "right_mirror",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": true
+        },
+        "name": "Right Silver Mirror",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          4.880000114440918,
+          2.0999999046325684,
+          -1.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          -90.0,
+          0.0
+        ],
+        "scale": [
+          2.4000000953674316,
+          2.4000000953674316,
+          0.07999999821186066
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "id": "desk_top",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.3799999952316284,
+                0.18000000715255737,
+                0.10000000149011612
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Vanity Surface",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.800000011920929,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              2.200000047683716,
+              0.07999999821186066,
+              1.2000000476837158
+            ]
+          },
+          {
+            "children": [],
+            "id": "vanity_leg_1",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.30000001192092896,
+                0.15000000596046448,
+                0.07999999821186066
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Desk Leg",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              -0.949999988079071,
+              0.4000000059604645,
+              -0.44999998807907104
+            ],
+            "primitiveType": "Cylinder",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.05999999865889549,
+              0.800000011920929,
+              0.05999999865889549
+            ]
+          },
+          {
+            "children": [],
+            "id": "vanity_leg_2",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.30000001192092896,
+                0.15000000596046448,
+                0.07999999821186066
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Desk Leg",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.949999988079071,
+              0.4000000059604645,
+              -0.44999998807907104
+            ],
+            "primitiveType": "Cylinder",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.05999999865889549,
+              0.800000011920929,
+              0.05999999865889549
+            ]
+          },
+          {
+            "children": [],
+            "id": "vanity_leg_3",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.30000001192092896,
+                0.15000000596046448,
+                0.07999999821186066
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Desk Leg",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              -0.949999988079071,
+              0.4000000059604645,
+              0.44999998807907104
+            ],
+            "primitiveType": "Cylinder",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.05999999865889549,
+              0.800000011920929,
+              0.05999999865889549
+            ]
+          },
+          {
+            "children": [],
+            "id": "vanity_leg_4",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.30000001192092896,
+                0.15000000596046448,
+                0.07999999821186066
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Desk Leg",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.949999988079071,
+              0.4000000059604645,
+              0.44999998807907104
+            ],
+            "primitiveType": "Cylinder",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.05999999865889549,
+              0.800000011920929,
+              0.05999999865889549
+            ]
+          },
+          {
+            "children": [],
+            "id": "drawer_housing",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.3199999928474426,
+                0.15000000596046448,
+                0.07999999821186066
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Drawer Housing",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.5,
+              0.550000011920929,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.8500000238418579,
+              0.41999998688697815,
+              1.0499999523162842
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "drawer_bottom",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.3499999940395355,
+                    0.18000000715255737,
+                    0.10000000149011612
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Drawer Base",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  -0.14000000059604645,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.7599999904632568,
+                  0.03999999910593033,
+                  0.9200000166893005
+                ]
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "id": "drawer_handle",
+                    "interactType": "None",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.8999999761581421,
+                        0.800000011920929,
+                        0.30000001192092896
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Brass Handle",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.0,
+                      0.05000000074505806
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.23999999463558197,
+                      0.05000000074505806,
+                      0.05000000074505806
+                    ]
+                  }
+                ],
+                "id": "drawer_front",
+                "interactType": "DeskDrawer",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.41999998688697815,
+                    0.2199999988079071,
+                    0.11999999731779099
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Drawer Front",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  0.4399999976158142
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.7799999713897705,
+                  0.3199999928474426,
+                  0.03999999910593033
+                ]
+              },
+              {
+                "children": [],
+                "id": "clue_note",
+                "interactType": "SecretNote",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Mirror Curse Note",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  -0.10000000149011612,
+                  0.05000000074505806
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.5199999809265137,
+                  0.019999999552965164,
+                  0.3799999952316284
+                ]
+              }
+            ],
+            "id": "desk_drawer",
+            "interactType": "DeskDrawer",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Vanity Drawer",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.8500000238418579
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.5,
+              0.550000011920929,
+              0.05000000074505806
+            ],
+            "primitiveType": "None",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.8500000238418579,
+              0.3499999940395355,
+              0.949999988079071
+            ]
+          }
+        ],
+        "id": "vanity_desk",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Antique Vanity Desk",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -2.799999952316284,
+          0.0,
+          -2.5
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "id": "mirror_safe_stand",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.2199999988079071,
+                0.2199999988079071,
+                0.23999999463558197
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Heavy Base Stand",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.41999998688697815,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.399999976158142,
+              0.8399999737739563,
+              1.399999976158142
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_safe_stand_trim",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.18000000715255737,
+                0.18000000715255737,
+                0.20000000298023224
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Pedestal Trim",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.05999999865889549,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.4800000190734863,
+              0.11999999731779099,
+              1.4800000190734863
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "mirror_safe_bottom",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.2879999876022339,
+                    0.27000001072883606,
+                    0.34199997782707214
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Safe Bottom Plate",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  -0.47999998927116394,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  1.2400000095367432,
+                  0.11999999731779099,
+                  1.2400000095367432
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_top",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.2879999876022339,
+                    0.27000001072883606,
+                    0.34199997782707214
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Safe Top Plate",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.47999998927116394,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  1.2400000095367432,
+                  0.11999999731779099,
+                  1.2400000095367432
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_back",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.2720000147819519,
+                    0.2550000250339508,
+                    0.3230000138282776
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Safe Back Plate",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  -0.5199999809265137
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  1.2400000095367432,
+                  0.9599999785423279,
+                  0.14000000059604645
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_left",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.3199999928474426,
+                    0.30000001192092896,
+                    0.3799999952316284
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Safe Left Wall",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5199999809265137,
+                  0.0,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.14000000059604645,
+                  0.9599999785423279,
+                  1.2400000095367432
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_right",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.3199999928474426,
+                    0.30000001192092896,
+                    0.3799999952316284
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Safe Right Wall",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.5199999809265137,
+                  0.0,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.14000000059604645,
+                  0.9599999785423279,
+                  1.2400000095367432
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_corner_0",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.5699999928474426,
+                    0.5699999928474426,
+                    0.6000000238418579
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Corner Pillar",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5600000023841858,
+                  0.0,
+                  -0.5600000023841858
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.10000000149011612,
+                  1.0800000429153442,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_corner_1",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.5699999928474426,
+                    0.5699999928474426,
+                    0.6000000238418579
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Corner Pillar",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.5600000023841858,
+                  0.0,
+                  -0.5600000023841858
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.10000000149011612,
+                  1.0800000429153442,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_corner_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.5699999928474426,
+                    0.5699999928474426,
+                    0.6000000238418579
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Corner Pillar",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5600000023841858,
+                  0.0,
+                  0.5600000023841858
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.10000000149011612,
+                  1.0800000429153442,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_corner_3",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.5699999928474426,
+                    0.5699999928474426,
+                    0.6000000238418579
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Corner Pillar",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.5600000023841858,
+                  0.0,
+                  0.5600000023841858
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.10000000149011612,
+                  1.0800000429153442,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_ext_hinge_0",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.949999988079071,
+                    0.949999988079071,
+                    1.0
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Heavy Hinge Barrel",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5400000214576721,
+                  0.3499999940395355,
+                  0.6800000071525574
+                ],
+                "primitiveType": "Cylinder",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.07999999821186066,
+                  0.2199999988079071,
+                  0.07999999821186066
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_ext_hinge_1",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.949999988079071,
+                    0.949999988079071,
+                    1.0
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Heavy Hinge Barrel",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5400000214576721,
+                  -0.3499999940395355,
+                  0.6800000071525574
+                ],
+                "primitiveType": "Cylinder",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.07999999821186066,
+                  0.2199999988079071,
+                  0.07999999821186066
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_shelf",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.23999999463558197,
+                    0.25,
+                    0.2800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": true
+                },
+                "name": "Steel Safe Shelf",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  -0.11999999731779099,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.9200000166893005,
+                  0.05000000074505806,
+                  0.9200000166893005
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_safe_velvet_pillow",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.550000011920929,
+                    0.07999999821186066,
+                    0.11999999731779099
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                  ],
+                  "useTexture": false
+                },
+                "name": "Velvet Key Cushion",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  -0.05999999865889549,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.6800000071525574,
+                  0.07000000029802322,
+                  0.46000000834465027
+                ]
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "id": "key_bow",
+                    "interactType": "None",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8500000238418579,
+                        0.20000000298023224
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.699999988079071
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Key Handle Ring",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      -0.1599999964237213,
+                      0.0,
+                      0.0
+                    ],
+                    "primitiveType": "Cylinder",
+                    "rotation": [
+                      90.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.18000000715255737,
+                      0.03999999910593033,
+                      0.18000000715255737
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "key_hole",
+                    "interactType": "None",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.3499999940395355,
+                        0.15000000596046448,
+                        0.18000000715255737
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Key Ring Hole",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      -0.1599999964237213,
+                      0.004999999888241291,
+                      0.0
+                    ],
+                    "primitiveType": "Cylinder",
+                    "rotation": [
+                      90.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.09000000357627869,
+                      0.05000000074505806,
+                      0.09000000357627869
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "key_stem",
+                    "interactType": "None",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8500000238418579,
+                        0.20000000298023224
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.699999988079071
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Key Shaft",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.03999999910593033,
+                      0.0,
+                      0.0
+                    ],
+                    "primitiveType": "Cylinder",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      90.0
+                    ],
+                    "scale": [
+                      0.03999999910593033,
+                      0.2800000011920929,
+                      0.03999999910593033
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "key_bit",
+                    "interactType": "None",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8500000238418579,
+                        0.20000000298023224
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.699999988079071
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Key Bit Teeth",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.14000000059604645,
+                      0.0,
+                      0.05999999865889549
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.07999999821186066,
+                      0.029999999329447746,
+                      0.07999999821186066
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "key_bit2",
+                    "interactType": "None",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8500000238418579,
+                        0.20000000298023224
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.699999988079071
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Key Notch",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.07999999821186066,
+                      0.0,
+                      0.05000000074505806
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.03999999910593033,
+                      0.029999999329447746,
+                      0.05999999865889549
+                    ]
+                  }
+                ],
+                "id": "golden_key",
+                "interactType": "GoldenKey",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Golden Key of Escape",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.009999999776482582,
+                  0.0
+                ],
+                "primitiveType": "None",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.5,
+                  0.20000000298023224,
+                  0.3499999940395355
+                ]
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "id": "mirror_safe_door_inner_plate",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.25600001215934753,
+                            0.24000000953674316,
+                            0.30399999022483826
+                          ],
+                          "shininess": 32.0,
+                          "specular": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ],
+                          "useTexture": true
+                        },
+                        "name": "Armored Faceplate",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.0,
+                          0.0,
+                          0.06499999761581421
+                        ],
+                        "primitiveType": "Cube",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.9200000166893005,
+                          0.8399999737739563,
+                          0.029999999329447746
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_safe_wheel_hub",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.949999988079071,
+                            0.949999988079071,
+                            1.0
+                          ],
+                          "shininess": 128.0,
+                          "specular": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Vault Wheel Hub",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          -0.11999999731779099,
+                          -0.05999999865889549,
+                          0.09000000357627869
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          90.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.18000000715255737,
+                          0.05000000074505806,
+                          0.18000000715255737
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_safe_spoke_1",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.949999988079071,
+                            0.949999988079071,
+                            1.0
+                          ],
+                          "shininess": 32.0,
+                          "specular": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Wheel Spoke H",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          -0.11999999731779099,
+                          -0.05999999865889549,
+                          0.10999999940395355
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          90.0
+                        ],
+                        "scale": [
+                          0.029999999329447746,
+                          0.3799999952316284,
+                          0.029999999329447746
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_safe_spoke_2",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.949999988079071,
+                            0.949999988079071,
+                            1.0
+                          ],
+                          "shininess": 32.0,
+                          "specular": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Wheel Spoke V",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          -0.11999999731779099,
+                          -0.05999999865889549,
+                          0.10999999940395355
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.029999999329447746,
+                          0.3799999952316284,
+                          0.029999999329447746
+                        ]
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "id": "mirror_safe_keypad_screen",
+                            "interactType": "None",
+                            "isLocked": false,
+                            "isOpen": false,
+                            "isVisible": true,
+                            "material": {
+                              "diffuse": [
+                                0.10000000149011612,
+                                0.8500000238418579,
+                                0.4000000059604645
+                              ],
+                              "shininess": 32.0,
+                              "specular": [
+                                0.800000011920929,
+                                0.800000011920929,
+                                0.800000011920929
+                              ],
+                              "useTexture": false
+                            },
+                            "name": "Keypad Screen",
+                            "openPositionOffset": [
+                              0.0,
+                              0.0,
+                              0.0
+                            ],
+                            "openRotationOffset": [
+                              0.0,
+                              0.0,
+                              0.0
+                            ],
+                            "position": [
+                              0.0,
+                              0.09000000357627869,
+                              0.02500000037252903
+                            ],
+                            "primitiveType": "Cube",
+                            "rotation": [
+                              0.0,
+                              0.0,
+                              0.0
+                            ],
+                            "scale": [
+                              0.20000000298023224,
+                              0.07000000029802322,
+                              0.019999999552965164
+                            ]
+                          }
+                        ],
+                        "id": "safe_keypad",
+                        "interactType": "SafeKeypad",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.11999999731779099,
+                            0.14000000059604645,
+                            0.1599999964237213
+                          ],
+                          "shininess": 32.0,
+                          "specular": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Electronic Security Keypad",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.23999999463558197,
+                          0.18000000715255737,
+                          0.08500000089406967
+                        ],
+                        "primitiveType": "Cube",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.25999999046325684,
+                          0.3400000035762787,
+                          0.03999999910593033
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_safe_bolt_0",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.949999988079071,
+                            0.949999988079071,
+                            1.0
+                          ],
+                          "shininess": 128.0,
+                          "specular": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Locking Bolt Pin",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.5400000214576721,
+                          0.25999999046325684,
+                          0.0
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          90.0
+                        ],
+                        "scale": [
+                          0.04500000178813934,
+                          0.10000000149011612,
+                          0.04500000178813934
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_safe_bolt_1",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.949999988079071,
+                            0.949999988079071,
+                            1.0
+                          ],
+                          "shininess": 128.0,
+                          "specular": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Locking Bolt Pin",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.5400000214576721,
+                          0.0,
+                          0.0
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          90.0
+                        ],
+                        "scale": [
+                          0.04500000178813934,
+                          0.10000000149011612,
+                          0.04500000178813934
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_safe_bolt_2",
+                        "interactType": "None",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.949999988079071,
+                            0.949999988079071,
+                            1.0
+                          ],
+                          "shininess": 128.0,
+                          "specular": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Locking Bolt Pin",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.5400000214576721,
+                          -0.25999999046325684,
+                          0.0
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          90.0
+                        ],
+                        "scale": [
+                          0.04500000178813934,
+                          0.10000000149011612,
+                          0.04500000178813934
+                        ]
+                      }
+                    ],
+                    "id": "safe_door_panel",
+                    "interactType": "SafeDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.35199999809265137,
+                        0.33000001311302185,
+                        0.4180000126361847
+                      ],
+                      "shininess": 64.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Reinforced Vault Door",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.5400000214576721,
+                      0.0,
+                      0.0
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.0800000429153442,
+                      0.9599999785423279,
+                      0.11999999731779099
+                    ]
+                  }
+                ],
+                "id": "safe_hinge",
+                "interactType": "None",
+                "isLocked": true,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Safe Door Articulation",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  -115.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5400000214576721,
+                  0.0,
+                  0.6800000071525574
+                ],
+                "primitiveType": "None",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              }
+            ],
+            "id": "mirror_safe_body",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Safe Chassis",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              1.4600000381469727,
+              0.0
+            ],
+            "primitiveType": "None",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "id": "mirror_safe_root",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Industrial Vault Safe",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          2.799999952316284,
+          0.0,
+          -2.5
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "id": "mirror_door_frame_left",
+            "interactType": "ExitDoor",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.3799999952316284,
+                0.3499999940395355,
+                0.41999998688697815
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Door Frame Left",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              -1.149999976158142,
+              1.7000000476837158,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.30000001192092896,
+              3.4000000953674316,
+              0.30000001192092896
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_door_frame_right",
+            "interactType": "ExitDoor",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.3799999952316284,
+                0.3499999940395355,
+                0.41999998688697815
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Door Frame Right",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              1.149999976158142,
+              1.7000000476837158,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.30000001192092896,
+              3.4000000953674316,
+              0.30000001192092896
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_door_frame_top",
+            "interactType": "ExitDoor",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.3799999952316284,
+                0.3499999940395355,
+                0.41999998688697815
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Door Frame Lintel",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              3.450000047683716,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              2.5999999046325684,
+              0.30000001192092896,
+              0.3199999928474426
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_door_frame_step",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.30399999022483826,
+                0.2800000011920929,
+                0.335999995470047
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": true
+            },
+            "name": "Door Threshold Step",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.05000000074505806,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              2.5,
+              0.10000000149011612,
+              0.4000000059604645
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "mirror_door_sign_plate",
+                "interactType": "ExitDoor",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.8500000238418579,
+                    0.6499999761581421,
+                    1.0
+                  ],
+                  "shininess": 128.0,
+                  "specular": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "useTexture": false
+                },
+                "name": "Glowing Exit Plate",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  0.09000000357627869
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  1.1799999475479126,
+                  0.23999999463558197,
+                  0.029999999329447746
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_door_beacon_l",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.8500000238418579,
+                    0.6499999761581421,
+                    1.0
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Exit Beacon Left",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.5799999833106995,
+                  0.0,
+                  0.05999999865889549
+                ],
+                "primitiveType": "Cylinder",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.05999999865889549,
+                  0.18000000715255737,
+                  0.05999999865889549
+                ]
+              },
+              {
+                "children": [],
+                "id": "mirror_door_beacon_r",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.8500000238418579,
+                    0.6499999761581421,
+                    1.0
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Exit Beacon Right",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.5799999833106995,
+                  0.0,
+                  0.05999999865889549
+                ],
+                "primitiveType": "Cylinder",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.05999999865889549,
+                  0.18000000715255737,
+                  0.05999999865889549
+                ]
+              }
+            ],
+            "id": "mirror_door_sign_box",
+            "interactType": "ExitDoor",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.10000000149011612,
+                0.11999999731779099,
+                0.14000000059604645
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Exit Sign Housing",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              3.75,
+              0.07999999821186066
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.2999999523162842,
+              0.3400000035762787,
+              0.1599999964237213
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_door_sconce_arm",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Sconce Arm",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              4.019999980926514,
+              0.18000000715255737
+            ],
+            "primitiveType": "Cylinder",
+            "rotation": [
+              90.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.03999999910593033,
+              0.3199999928474426,
+              0.03999999910593033
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_door_sconce_bulb",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                1.0,
+                0.9800000190734863,
+                0.8500000238418579
+              ],
+              "shininess": 128.0,
+              "specular": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "useTexture": false
+            },
+            "name": "Emergency Downlight",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              3.9200000762939453,
+              0.3400000035762787
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.20000000298023224,
+              0.11999999731779099,
+              0.20000000298023224
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "id": "mirror_door_panel_upper",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.27880001068115234,
+                        0.164000004529953,
+                        0.11479999870061874
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Upper Inset",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.7200000286102295,
+                      0.02500000037252903
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.7000000476837158,
+                      1.149999976158142,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "mirror_door_panel_lower",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.27880001068115234,
+                        0.164000004529953,
+                        0.11479999870061874
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Lower Inset",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      -0.7200000286102295,
+                      0.02500000037252903
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.7000000476837158,
+                      1.149999976158142,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "mirror_door_panel_mid",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.42500001192092896,
+                        0.25,
+                        0.17499999701976776
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Reinforcement Beam",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.0,
+                      0.03500000014901161
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.899999976158142,
+                      0.20000000298023224,
+                      0.03999999910593033
+                    ]
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "id": "mirror_door_keyhole_slot",
+                        "interactType": "ExitDoor",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.05000000074505806,
+                            0.05000000074505806,
+                            0.05000000074505806
+                          ],
+                          "shininess": 32.0,
+                          "specular": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Keyhole Slot",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.0,
+                          0.03999999910593033,
+                          0.019999999552965164
+                        ],
+                        "primitiveType": "Cube",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.03999999910593033,
+                          0.10000000149011612,
+                          0.019999999552965164
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_door_keyhole_ring",
+                        "interactType": "ExitDoor",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            0.8500000238418579,
+                            0.699999988079071,
+                            0.15000000596046448
+                          ],
+                          "shininess": 32.0,
+                          "specular": [
+                            0.5,
+                            0.5,
+                            0.5
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Keyhole Ring",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.0,
+                          0.09000000357627869,
+                          0.02500000037252903
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.07999999821186066,
+                          0.019999999552965164,
+                          0.07999999821186066
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_door_handle_stem",
+                        "interactType": "ExitDoor",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            1.0,
+                            0.8399999737739563,
+                            0.25
+                          ],
+                          "shininess": 128.0,
+                          "specular": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Handle Spindle",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          0.0,
+                          -0.10000000149011612,
+                          0.05000000074505806
+                        ],
+                        "primitiveType": "Cylinder",
+                        "rotation": [
+                          90.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.03999999910593033,
+                          0.07999999821186066,
+                          0.03999999910593033
+                        ]
+                      },
+                      {
+                        "children": [],
+                        "id": "mirror_door_handle_grip",
+                        "interactType": "ExitDoor",
+                        "isLocked": false,
+                        "isOpen": false,
+                        "isVisible": true,
+                        "material": {
+                          "diffuse": [
+                            1.0,
+                            0.8399999737739563,
+                            0.25
+                          ],
+                          "shininess": 128.0,
+                          "specular": [
+                            1.0,
+                            1.0,
+                            1.0
+                          ],
+                          "useTexture": false
+                        },
+                        "name": "Heavy Brass Lever Handle",
+                        "openPositionOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "openRotationOffset": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "position": [
+                          -0.11999999731779099,
+                          -0.10000000149011612,
+                          0.07999999821186066
+                        ],
+                        "primitiveType": "Cube",
+                        "rotation": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": [
+                          0.23999999463558197,
+                          0.03999999910593033,
+                          0.03999999910593033
+                        ]
+                      }
+                    ],
+                    "id": "mirror_door_lock_plate",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8399999737739563,
+                        0.25
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.800000011920929
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Brass Lock Assembly",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.7200000286102295,
+                      -0.07999999821186066,
+                      0.06499999761581421
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.23999999463558197,
+                      0.47999998927116394,
+                      0.029999999329447746
+                    ]
+                  }
+                ],
+                "id": "exit_door_panel",
+                "interactType": "ExitDoor",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.3400000035762787,
+                    0.20000000298023224,
+                    0.14000000059604645
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.4000000059604645,
+                    0.4000000059604645,
+                    0.4000000059604645
+                  ],
+                  "useTexture": true
+                },
+                "name": "Reinforced Escape Door",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  1.0,
+                  0.0,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  2.0,
+                  3.200000047683716,
+                  0.11999999731779099
+                ]
+              }
+            ],
+            "id": "door_hinge",
+            "interactType": "ExitDoor",
+            "isLocked": true,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Exit Door Articulation",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              -105.0,
+              0.0
+            ],
+            "position": [
+              -1.0,
+              1.7000000476837158,
+              0.0
+            ],
+            "primitiveType": "None",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "id": "mirror_door_root",
+        "interactType": "ExitDoor",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Exit Door Assembly",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          0.0,
+          4.880000114440918
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "id": "room_mirror_root",
+    "interactType": "None",
+    "isLocked": false,
+    "isOpen": false,
+    "isVisible": true,
+    "material": {
+      "diffuse": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929
+      ],
+      "shininess": 32.0,
+      "specular": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "useTexture": false
+    },
+    "name": "Mirror Room Root",
+    "openPositionOffset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "openRotationOffset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "primitiveType": "None",
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "spotLight": {
+    "color": [
+      1.0,
+      0.949999988079071,
+      0.8799999952316284
+    ],
+    "enabled": true,
+    "intensity": 22.0
+  }
+}
