@@ -29,6 +29,23 @@ public:
     int sigilsCollected = 0; // 0 to 3
     bool hasSigil[3] = { false, false, false };
 
+    // Room 1: Shadow Totems Puzzle State
+    float totemAngles[3] = { 0.0f, 0.0f, 0.0f };
+    const float targetTotemAngles[3] = { 90.0f, 180.0f, 270.0f };
+    bool altarUnlocked = false;
+    std::shared_ptr<SceneObject> altarLidObject = nullptr;
+
+    // Room 2: Circuit Breaker & UV Blacklight State
+    int fusesCollected = 0; // 0 to 2
+    bool powerRestored = false;
+    bool isUvLightActive = false;
+    std::shared_ptr<SceneObject> isolationGateObject = nullptr;
+
+    // Room 3: Mirror Anomaly & Symmetry Puzzle State
+    float bustAngles[3] = { 0.0f, 0.0f, 0.0f };
+    const float targetBustAngles[3] = { 180.0f, 90.0f, 270.0f };
+    bool mirrorPuzzleSolved = false;
+
     std::string correctSafePin = "7492";
     std::string enteredPin = "";
     bool showKeypadModal = false;

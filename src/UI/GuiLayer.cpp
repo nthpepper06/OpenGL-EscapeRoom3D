@@ -53,6 +53,7 @@ void GuiLayer::render(AppMode appMode,
                       int currentRoomIndex,
                       const std::string& currentRoomName,
                       float fearFactor,
+                      const std::string& objectiveHint,
                       PostProcessor& postProcessor,
                       ShadowPipeline& shadowPipeline,
                       ParticleSystem& particleSystem,
@@ -67,7 +68,7 @@ void GuiLayer::render(AppMode appMode,
     // HUD is always rendered (Crosshair in PlayMode, notifications, horror meter)
     renderGameHUD(appMode, interactionMgr,
                   interactionMgr.getPromptText(root ? root->findById(hoveredObjId) : nullptr),
-                  currentRoomName, fearFactor,
+                  currentRoomName, fearFactor, objectiveHint,
                   windowWidth, windowHeight);
 
     // Keypad dialog if open
@@ -451,6 +452,7 @@ void GuiLayer::renderGameHUD(AppMode appMode,
                              const std::string& promptText,
                              const std::string& roomName,
                              float fearFactor,
+                             const std::string& objectiveHint,
                              int windowWidth,
                              int windowHeight) {
     ImDrawList* drawList = ImGui::GetForegroundDrawList();
@@ -503,24 +505,23 @@ void GuiLayer::renderGameHUD(AppMode appMode,
     }
 
     // 3. Top-left Status Badges
-    std::string keyStatus = interactionMgr.hasGoldenKey ? "CO (SAN SANG MO CUA)" : "CHUA CO";
-    std::string safeStatus = interactionMgr.safeUnlocked ? "DA MO KHOA" : "DANG KHOA";
-    std::string modeStatus = (appMode == AppMode::PlayMode) ? "PLAY MODE [TAB: Edit]" : "EDIT MODE [TAB: Play]";
+    std::string uvStatus = interactionMgr.isUvLightActive ? "UV BLACKLIGHT [F/RClick]" : "WHITE [F/RClick]";
+    std::string modeStatus = (appMode == AppMode::PlayMode) ? "PLAY [TAB: Edit]" : "EDIT [TAB: Play]";
 
-    std::string hudTop = "[" + roomName + "] | " + modeStatus + " | Den pin: [F] | Chia khoa: " + keyStatus + " | Ket sat: " + safeStatus;
+    std::string hudTop = "[" + roomName + "] | " + modeStatus + " | Den pin: " + uvStatus + " | Co vat: " + std::to_string(interactionMgr.keysCollected) + "/3";
     drawList->AddRectFilled(ImVec2(10.0f, 10.0f), ImVec2(10.0f + ImGui::CalcTextSize(hudTop.c_str()).x + 16.0f, 32.0f),
                            IM_COL32(15, 15, 20, 200), 4.0f);
     drawList->AddText(ImVec2(18.0f, 13.0f), IM_COL32(210, 235, 255, 240), hudTop.c_str());
 
-    // Objective Reminder Banner
-    if (interactionMgr.hasGoldenKey && !interactionMgr.exitUnlocked) {
-        std::string objGuide = ">> [MUC TIEU] Da co Chia Khoa Vang! Hay quay ra sau lung den Cua Thoat Hiem [EXIT] de mo cua!";
+    // Dynamic Objective Hint Banner
+    if (!objectiveHint.empty()) {
+        std::string objGuide = ">> [MUC TIEU] " + objectiveHint;
         ImVec2 guideSize = ImGui::CalcTextSize(objGuide.c_str());
         drawList->AddRectFilled(ImVec2(10.0f, 38.0f), ImVec2(10.0f + guideSize.x + 16.0f, 60.0f),
-                               IM_COL32(20, 40, 20, 220), 4.0f);
+                               IM_COL32(15, 30, 42, 230), 4.0f);
         drawList->AddRect(ImVec2(10.0f, 38.0f), ImVec2(10.0f + guideSize.x + 16.0f, 60.0f),
-                          IM_COL32(50, 220, 100, 240), 4.0f);
-        drawList->AddText(ImVec2(18.0f, 41.0f), IM_COL32(100, 255, 140, 255), objGuide.c_str());
+                          IM_COL32(50, 210, 255, 240), 4.0f);
+        drawList->AddText(ImVec2(18.0f, 41.0f), IM_COL32(120, 235, 255, 255), objGuide.c_str());
     }
 
     // 4. Horror Heartbeat / Fear Indicator (Bottom-left)

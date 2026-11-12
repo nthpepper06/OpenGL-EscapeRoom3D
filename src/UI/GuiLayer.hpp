@@ -40,6 +40,7 @@ public:
                 int currentRoomIndex,
                 const std::string& currentRoomName,
                 float fearFactor,
+                const std::string& objectiveHint,
                 PostProcessor& postProcessor,
                 ShadowPipeline& shadowPipeline,
                 ParticleSystem& particleSystem,
@@ -66,6 +67,7 @@ private:
                        const std::string& promptText,
                        const std::string& roomName,
                        float fearFactor,
+                       const std::string& objectiveHint,
                        int windowWidth,
                        int windowHeight);
     void renderKeypadModal(InteractionManager& interactionMgr);

@@ -39,10 +39,13 @@ public:
 
     void setPosition(const glm::vec3& newPos);
     glm::vec3 getPosition() const;
+    void setRoomBounds(const glm::vec4& bounds);
+    glm::vec4 getRoomBounds() const { return roomBounds; }
 
 private:
     Camera* camera = nullptr;
     glm::vec3 currentPosition{0.0f, 1.68f, 2.5f};
+    glm::vec4 roomBounds{-4.5f, 4.5f, -4.5f, 4.5f};
     float baseEyeHeight = 1.68f;
 
     void handleKeyboardInput(GLFWwindow* window, float dt, glm::vec3& wishDir);

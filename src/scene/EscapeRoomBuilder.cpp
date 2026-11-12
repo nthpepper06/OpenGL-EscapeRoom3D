@@ -860,7 +860,7 @@ std::shared_ptr<SceneObject> EscapeRoomBuilder::buildExitDoor(
     auto cubeMesh = PrimitiveGenerator::createCube();
     auto cylinderMesh = PrimitiveGenerator::createCylinder(32);
 
-    auto doorRoot = std::make_shared<SceneObject>(prefix + "_root", "Exit Door Assembly", PrimitiveType::None);
+    auto doorRoot = std::make_shared<SceneObject>(prefix, "Exit Door Assembly", PrimitiveType::None);
     doorRoot->position = position;
     doorRoot->rotation = glm::vec3(0.0f, rotationY, 0.0f);
     doorRoot->interactType = InteractionType::ExitDoor; // Root itself is interactable

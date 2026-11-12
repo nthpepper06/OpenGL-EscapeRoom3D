@@ -48,6 +48,12 @@ enum class PrimitiveType {
     Plane
 };
 
+enum class RenderLayer {
+    Both = 0,
+    RealOnly = 1,
+    MirrorOnly = 2
+};
+
 enum class InteractionType {
     None,
     LightSwitch,    // Toggles ceiling point light
@@ -56,5 +62,10 @@ enum class InteractionType {
     SafeKeypad,     // Enter PIN to unlock safe
     SafeDoor,       // Swings safe door open
     GoldenKey,      // Collect key for exit door
-    ExitDoor        // Escape room exit door
+    ExitDoor,       // Escape room exit door
+    Totem,          // Room 1: Rotate shadow-casting totem (0, 90, 180, 270)
+    FuseItem,       // Room 2: Collectible electrical fuse
+    BreakerBox,     // Room 2: Circuit breaker to restore power
+    IsolationGate,  // Room 2: Iron bars security gate
+    MirrorBust      // Room 3: Rotatable bust/candelabra for symmetry puzzle
 };

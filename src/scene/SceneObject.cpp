@@ -149,8 +149,14 @@ void SceneObject::update(float deltaTime) {
     }
 }
 
-void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const std::string& selectedId) const {
+void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const std::string& selectedId, RenderLayer passLayer) const {
     if (!isVisible) return;
+
+    // Filter by RenderLayer:
+    // If drawing real world only, skip mirror-only objects
+    if (passLayer == RenderLayer::RealOnly && renderLayer == RenderLayer::MirrorOnly) return;
+    // If drawing planar mirror reflection pass only, skip real-only objects
+    if (passLayer == RenderLayer::MirrorOnly && renderLayer == RenderLayer::RealOnly) return;
 
     if (mesh && primitiveType != PrimitiveType::None) {
         glm::mat4 model = getWorldMatrix();
@@ -171,6 +177,8 @@ void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const
         shader.setFloat("material.ao", ao);
         shader.setVec3("material.emissiveColor", material.emissiveColor);
         shader.setFloat("material.emissiveIntensity", material.emissiveIntensity);
+        shader.setBool("material.isFluorescent", material.isFluorescent);
+        shader.setVec3("material.fluorescentColor", material.fluorescentColor);
 
         // Resolve maps with seamless fallback to diffuse/textureId
         unsigned int albedoTex = material.albedoMap ? material.albedoMap : (material.useTexture ? material.textureId : 0);
@@ -247,7 +255,7 @@ void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const
 
     for (const auto& child : children) {
         if (child) {
-            child->draw(shader, hoveredId, selectedId);
+            child->draw(shader, hoveredId, selectedId, passLayer);
         }
     }
 }

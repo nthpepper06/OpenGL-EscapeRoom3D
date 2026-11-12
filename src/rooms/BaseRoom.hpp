@@ -16,6 +16,7 @@ public:
     glm::vec3 spawnPosition = glm::vec3(0.0f, 1.7f, 2.5f);
     float spawnYaw = -90.0f;
     float spawnPitch = 0.0f;
+    glm::vec4 roomBounds = glm::vec4(-5.0f, 5.0f, -5.0f, 5.0f); // minX, maxX, minZ, maxZ
 
     PointLight pointLight;
     AmbientLight ambientLight;
@@ -54,6 +55,11 @@ public:
         if (d >= fearDistanceThreshold) return 0.0f;
         float factor = 1.0f - (d / fearDistanceThreshold);
         return glm::clamp(factor * factor, 0.0f, 1.0f);
+    }
+
+    virtual std::string getObjectiveHint(const InteractionManager& im) const {
+        (void)im;
+        return "";
     }
 
     virtual void reset(InteractionManager& interactionMgr) {

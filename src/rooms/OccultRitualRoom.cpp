@@ -6,23 +6,25 @@
 
 OccultRitualRoom::OccultRitualRoom() {
     theme = RoomTheme::OccultRitual;
-    name = "Occult Ritual Chamber";
-    description = "A grim subterranean stone crypt covered in blood runes and burning candles.";
+    name = "Occult Ritual Grand Chamber";
+    description = "A colossal subterranean stone crypt with 4 towering pillars, carved shadow-totems, and a sealed stone altar.";
     jsonFileName = "occult_room.json";
     cluePin = "6661";
 
-    spawnPosition = glm::vec3(0.0f, 1.7f, 2.8f);
+    // New 12m x 12m spatial dimensions
+    roomBounds = glm::vec4(-6.0f, 6.0f, -6.0f, 6.0f);
+    spawnPosition = glm::vec3(0.0f, 1.7f, 4.2f);
     spawnYaw = -90.0f;
     spawnPitch = 0.0f;
 
     // Atmospheric horror lighting (Eerie amber/red flickering candle light retuned for HDR)
-    pointLight.position = glm::vec3(0.0f, 2.6f, -1.0f);
+    pointLight.position = glm::vec3(0.0f, 3.8f, 1.2f);
     pointLight.color = glm::vec3(1.0f, 0.45f, 0.20f);
-    pointLight.baseIntensity = 9.5f;
-    pointLight.intensity = 9.5f;
+    pointLight.baseIntensity = 12.0f;
+    pointLight.intensity = 12.0f;
     pointLight.constant = 1.0f;
-    pointLight.linear = 0.14f;
-    pointLight.quadratic = 0.07f;
+    pointLight.linear = 0.10f;
+    pointLight.quadratic = 0.04f;
     pointLight.flickerEnabled = true;
     pointLight.flickerSpeed = 7.5f;
     pointLight.flickerNoiseDepth = 0.40f;
@@ -32,14 +34,24 @@ OccultRitualRoom::OccultRitualRoom() {
     iblIntensity = 1.15f;
     ambientAO = 1.0f;
     fogColor = glm::vec3(0.12f, 0.04f, 0.04f);
-    fogDensity = 0.055f;
+    fogDensity = 0.045f;
     fogHeightFalloff = 0.35f;
     inscatterIntensity = 1.0f;
 
-    fearSourcePosition = glm::vec3(0.0f, 0.8f, -2.5f);
-    fearDistanceThreshold = 3.2f;
+    fearSourcePosition = glm::vec3(0.0f, 0.8f, 0.0f);
+    fearDistanceThreshold = 4.0f;
     baseVignette = 0.50f;
     baseChromatic = 0.004f;
+}
+
+std::string OccultRitualRoom::getObjectiveHint(const InteractionManager& im) const {
+    if (im.hasGoldenKey) {
+        return "Đã có Chìa Khóa Nghi Lễ! Hãy bước tới Cửa Thoát Hiểm ở phía Nam để tiếp tục.";
+    }
+    if (im.altarUnlocked) {
+        return "Bệ thờ đã mở! Hãy lại gần lấy Chìa Khóa Nghi Lễ & Mảnh Sigil #1.";
+    }
+    return "Xoay 3 Cột Totem [E] sao cho bóng đổ khớp với 3 Cổ Tự trên tường phía Bắc.";
 }
 
 void OccultRitualRoom::build(InteractionManager& interactionMgr) {
@@ -50,9 +62,7 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     // Procedural PBR Texture Sets
     PbrTextureSet stonePbr = Texture::createStoneBrickPbr(512, 512);
     PbrTextureSet ritualPbr = Texture::createRitualCirclePbr(512, 512);
-    PbrTextureSet woodPbr = Texture::createWoodPbr(512, 512);
     PbrTextureSet metalPbr = Texture::createMetalPbr(512, 512);
-    unsigned int noteTex = Texture::createNoteTexture("RITUAL CIPHER", "PIN: " + cluePin, 256, 256);
 
     auto applyStonePbr = [&](const std::shared_ptr<SceneObject>& obj, const glm::vec3& tint = glm::vec3(1.0f)) {
         obj->material.albedoColor = tint;
@@ -71,13 +81,13 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     rootNode = std::make_shared<SceneObject>("room_occult_root", "Occult Ritual Room Root", PrimitiveType::None);
 
     // ==========================================
-    // 1. ROOM SHELL (10m x 4.5m x 10m)
+    // 1. EXPANDED ROOM SHELL (12m x 5.5m x 12m)
     // ==========================================
     // Floor with Blood Pentagram Rune
     auto floor = std::make_shared<SceneObject>("floor_occult", "Ritual Floor", PrimitiveType::Plane);
     floor->mesh = planeMesh;
     floor->position = glm::vec3(0.0f, 0.0f, 0.0f);
-    floor->scale = glm::vec3(10.0f, 1.0f, 10.0f);
+    floor->scale = glm::vec3(12.0f, 1.0f, 12.0f);
     floor->material.albedoColor = glm::vec3(1.0f);
     floor->material.albedoMap = ritualPbr.albedo;
     floor->material.normalMap = ritualPbr.normal;
@@ -95,43 +105,43 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     floor->material.textureId = ritualPbr.albedo;
     rootNode->addChild(floor);
 
-    // Ceiling
-    auto ceiling = std::make_shared<SceneObject>("ceiling_occult", "Crypt Ceiling", PrimitiveType::Cube);
+    // Ceiling (5.5m height)
+    auto ceiling = std::make_shared<SceneObject>("ceiling_occult", "Crypt Vaulted Ceiling", PrimitiveType::Cube);
     ceiling->mesh = cubeMesh;
-    ceiling->position = glm::vec3(0.0f, 4.5f, 0.0f);
-    ceiling->scale = glm::vec3(10.0f, 0.2f, 10.0f);
-    applyStonePbr(ceiling, glm::vec3(0.45f, 0.42f, 0.40f));
+    ceiling->position = glm::vec3(0.0f, 5.5f, 0.0f);
+    ceiling->scale = glm::vec3(12.0f, 0.2f, 12.0f);
+    applyStonePbr(ceiling, glm::vec3(0.42f, 0.38f, 0.36f));
     rootNode->addChild(ceiling);
 
-    // Back Wall (-Z)
-    auto backWall = std::make_shared<SceneObject>("back_wall_occult", "Crypt Back Wall", PrimitiveType::Cube);
+    // North Wall (-Z, with shadow target engravings)
+    auto backWall = std::make_shared<SceneObject>("back_wall_occult", "Crypt North Wall", PrimitiveType::Cube);
     backWall->mesh = cubeMesh;
-    backWall->position = glm::vec3(0.0f, 2.25f, -5.0f);
-    backWall->scale = glm::vec3(10.0f, 4.5f, 0.2f);
+    backWall->position = glm::vec3(0.0f, 2.75f, -6.0f);
+    backWall->scale = glm::vec3(12.0f, 5.5f, 0.2f);
     applyStonePbr(backWall, glm::vec3(0.85f));
 
-    // Front Wall (+Z)
-    auto frontWall = std::make_shared<SceneObject>("front_wall_occult", "Crypt Front Wall", PrimitiveType::Cube);
+    // South Wall (+Z, with exit door)
+    auto frontWall = std::make_shared<SceneObject>("front_wall_occult", "Crypt South Wall", PrimitiveType::Cube);
     frontWall->mesh = cubeMesh;
-    frontWall->position = glm::vec3(0.0f, 2.25f, 5.0f);
-    frontWall->scale = glm::vec3(10.0f, 4.5f, 0.2f);
+    frontWall->position = glm::vec3(0.0f, 2.75f, 6.0f);
+    frontWall->scale = glm::vec3(12.0f, 5.5f, 0.2f);
     applyStonePbr(frontWall, glm::vec3(0.85f));
 
-    // Left Wall (-X)
-    auto leftWall = std::make_shared<SceneObject>("left_wall_occult", "Crypt Left Wall", PrimitiveType::Cube);
+    // West Wall (-X)
+    auto leftWall = std::make_shared<SceneObject>("left_wall_occult", "Crypt West Wall", PrimitiveType::Cube);
     leftWall->mesh = cubeMesh;
-    leftWall->position = glm::vec3(-5.0f, 2.25f, 0.0f);
-    leftWall->scale = glm::vec3(0.2f, 4.5f, 10.0f);
+    leftWall->position = glm::vec3(-6.0f, 2.75f, 0.0f);
+    leftWall->scale = glm::vec3(0.2f, 5.5f, 12.0f);
     applyStonePbr(leftWall, glm::vec3(0.85f));
 
-    // Right Wall (+X)
-    auto rightWall = std::make_shared<SceneObject>("right_wall_occult", "Crypt Right Wall", PrimitiveType::Cube);
+    // East Wall (+X)
+    auto rightWall = std::make_shared<SceneObject>("right_wall_occult", "Crypt East Wall", PrimitiveType::Cube);
     rightWall->mesh = cubeMesh;
-    rightWall->position = glm::vec3(5.0f, 2.25f, 0.0f);
-    rightWall->scale = glm::vec3(0.2f, 4.5f, 10.0f);
+    rightWall->position = glm::vec3(6.0f, 2.75f, 0.0f);
+    rightWall->scale = glm::vec3(0.2f, 5.5f, 12.0f);
     applyStonePbr(rightWall, glm::vec3(0.85f));
 
-    // Static Mesh Batching (Phase 3: 4 walls batched into 1 draw call)
+    // Batch static outer stone walls
     std::vector<std::shared_ptr<SceneObject>> staticWalls = { backWall, frontWall, leftWall, rightWall };
     auto batchedWalls = MeshBatcher::batchObjects("walls_occult_batched", "Crypt Stone Walls", staticWalls, backWall->material);
     if (batchedWalls) {
@@ -140,52 +150,63 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
         for (auto& w : staticWalls) rootNode->addChild(w);
     }
 
-    // 4 Crypt Stone Pillars
+    // ==========================================
+    // 2. 4 MASSIVE CENTRAL STONE PILLARS
+    // ==========================================
     glm::vec3 pillarPositions[4] = {
-        {-3.5f, 2.25f, -3.5f},
-        { 3.5f, 2.25f, -3.5f},
-        {-3.5f, 2.25f,  3.5f},
-        { 3.5f, 2.25f,  3.5f}
+        {-3.2f, 2.75f, -3.2f},
+        { 3.2f, 2.75f, -3.2f},
+        {-3.2f, 2.75f,  3.2f},
+        { 3.2f, 2.75f,  3.2f}
     };
     for (int i = 0; i < 4; ++i) {
-        auto pillar = std::make_shared<SceneObject>("pillar_occult_" + std::to_string(i+1), "Stone Pillar", PrimitiveType::Cylinder);
+        auto pillar = std::make_shared<SceneObject>("pillar_occult_" + std::to_string(i+1), "Colossal Stone Pillar", PrimitiveType::Cylinder);
         pillar->mesh = cylinderMesh;
         pillar->position = pillarPositions[i];
-        pillar->scale = glm::vec3(0.45f, 4.5f, 0.45f);
-        applyStonePbr(pillar, glm::vec3(0.7f));
+        pillar->scale = glm::vec3(0.70f, 5.5f, 0.70f);
+        applyStonePbr(pillar, glm::vec3(0.75f));
         rootNode->addChild(pillar);
     }
 
     // ==========================================
-    // 2. SACRIFICIAL ALTAR & CANDLES
+    // 3. SACRIFICIAL ALTAR & HIDDEN KEY MECHANISM
     // ==========================================
     auto altarRoot = std::make_shared<SceneObject>("altar_root", "Sacrificial Altar Root", PrimitiveType::None);
-    altarRoot->position = glm::vec3(0.0f, 0.0f, -2.5f);
+    altarRoot->position = glm::vec3(0.0f, 0.0f, 0.0f);
     rootNode->addChild(altarRoot);
 
-    auto altarBase = std::make_shared<SceneObject>("altar_base", "Altar Slab", PrimitiveType::Cube);
-    altarBase->mesh = PrimitiveGenerator::createBeveledCube(2.6f, 0.9f, 1.4f, 0.05f, 2);
+    auto altarBase = std::make_shared<SceneObject>("altar_base", "Altar Slab Base", PrimitiveType::Cube);
+    altarBase->mesh = PrimitiveGenerator::createBeveledCube(3.2f, 0.9f, 1.8f, 0.06f, 2);
     altarBase->position = glm::vec3(0.0f, 0.45f, 0.0f);
     altarBase->scale = glm::vec3(1.0f, 1.0f, 1.0f);
     applyStonePbr(altarBase, glm::vec3(0.35f, 0.30f, 0.32f));
     altarRoot->addChild(altarBase);
 
-    // Skull on Altar
+    // Sliding Altar Lid (opens upon solving the shadow alignment puzzle)
+    auto altarLid = std::make_shared<SceneObject>("altar_lid", "Altar Sliding Stone Slab", PrimitiveType::Cube);
+    altarLid->mesh = PrimitiveGenerator::createBeveledCube(3.1f, 0.15f, 1.7f, 0.04f, 2);
+    altarLid->position = glm::vec3(0.0f, 0.95f, 0.0f);
+    altarLid->basePosition = altarLid->position;
+    altarLid->openPositionOffset = glm::vec3(0.0f, 0.0f, -1.3f); // Slides back when puzzle solved
+    applyStonePbr(altarLid, glm::vec3(0.40f, 0.34f, 0.36f));
+    altarRoot->addChild(altarLid);
+    interactionMgr.altarLidObject = altarLid;
+
+    // Skull on Altar Lid
     auto skull = std::make_shared<SceneObject>("altar_skull", "Occult Skull", PrimitiveType::Cube);
     skull->mesh = cubeMesh;
-    skull->position = glm::vec3(0.0f, 1.05f, 0.0f);
+    skull->position = glm::vec3(0.0f, 0.20f, 0.0f);
     skull->scale = glm::vec3(0.35f, 0.32f, 0.40f);
     skull->material.albedoColor = glm::vec3(0.85f, 0.82f, 0.70f);
     skull->material.roughness = 0.65f;
-    skull->material.diffuseColor = glm::vec3(0.85f, 0.82f, 0.70f);
-    altarRoot->addChild(skull);
+    altarLid->addChild(skull);
 
     // 4 Bloody Candles on Altar Corners
     glm::vec3 candleOffsets[4] = {
-        {-1.05f, 1.05f, -0.45f},
-        { 1.05f, 1.05f, -0.45f},
-        {-1.05f, 1.05f,  0.45f},
-        { 1.05f, 1.05f,  0.45f}
+        {-1.25f, 0.20f, -0.65f},
+        { 1.25f, 0.20f, -0.65f},
+        {-1.25f, 0.20f,  0.65f},
+        { 1.25f, 0.20f,  0.65f}
     };
     for (int i = 0; i < 4; ++i) {
         auto candle = std::make_shared<SceneObject>("candle_" + std::to_string(i+1), "Ritual Candle", PrimitiveType::Cylinder);
@@ -193,114 +214,90 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
         candle->position = candleOffsets[i];
         candle->scale = glm::vec3(0.06f, 0.35f, 0.06f);
         candle->material.albedoColor = glm::vec3(0.75f, 0.12f, 0.15f);
-        candle->material.roughness = 0.35f; // Glossy wax
-        candle->material.diffuseColor = glm::vec3(0.75f, 0.12f, 0.15f); // Red wax
-        altarRoot->addChild(candle);
+        candle->material.roughness = 0.35f;
+        altarLid->addChild(candle);
 
-        // Candle Flame (Glowing Emissive Source)
         auto flame = std::make_shared<SceneObject>("flame_" + std::to_string(i+1), "Candle Flame", PrimitiveType::Cube);
         flame->mesh = cubeMesh;
         flame->position = candleOffsets[i] + glm::vec3(0.0f, 0.22f, 0.0f);
         flame->scale = glm::vec3(0.04f, 0.08f, 0.04f);
         flame->material.albedoColor = glm::vec3(1.0f, 0.85f, 0.3f);
         flame->material.emissiveColor = glm::vec3(1.0f, 0.85f, 0.3f);
-        flame->material.emissiveIntensity = 4.0f; // Radiant HDR flame
-        flame->material.diffuseColor = glm::vec3(1.0f, 0.8f, 0.2f);
-        altarRoot->addChild(flame);
+        flame->material.emissiveIntensity = 4.0f;
+        altarLid->addChild(flame);
+    }
+
+    // Ritual Golden Key inside the altar compartment
+    auto ritualKey = EscapeRoomBuilder::buildOrnateGoldenKey(interactionMgr);
+    ritualKey->position = glm::vec3(0.0f, 0.72f, 0.0f);
+    ritualKey->scale = glm::vec3(0.24f);
+    ritualKey->interactType = InteractionType::GoldenKey;
+    altarRoot->addChild(ritualKey);
+    interactionMgr.keyObject = ritualKey;
+
+    // ==========================================
+    // 4. SHADOW ALIGNMENT PUZZLE: 3 ROTATABLE TOTEMS
+    // ==========================================
+    glm::vec3 totemPositions[3] = {
+        {-2.2f, 0.0f, -2.0f},
+        { 0.0f, 0.0f, -2.8f},
+        { 2.2f, 0.0f, -2.0f}
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        auto totemBase = std::make_shared<SceneObject>("totem_pedestal_" + std::to_string(i+1), "Totem Pedestal", PrimitiveType::Cylinder);
+        totemBase->mesh = cylinderMesh;
+        totemBase->position = totemPositions[i];
+        totemBase->scale = glm::vec3(0.45f, 0.5f, 0.45f);
+        applyStonePbr(totemBase, glm::vec3(0.5f));
+        rootNode->addChild(totemBase);
+
+        // Rotatable effigy top
+        auto totemStatue = std::make_shared<SceneObject>("totem_" + std::to_string(i+1), "Rotatable Shadow Totem #" + std::to_string(i+1), PrimitiveType::Cube);
+        totemStatue->mesh = PrimitiveGenerator::createBeveledCube(0.40f, 1.4f, 0.30f, 0.03f, 2);
+        totemStatue->position = glm::vec3(0.0f, 0.95f, 0.0f);
+        totemStatue->scale = glm::vec3(1.0f, 1.0f, 1.0f);
+        totemStatue->interactType = InteractionType::Totem;
+        totemStatue->rotation = glm::vec3(0.0f, interactionMgr.totemAngles[i], 0.0f);
+        applyStonePbr(totemStatue, glm::vec3(0.80f, 0.70f, 0.65f));
+        totemBase->addChild(totemStatue);
+
+        // Distinct carving feature that casts directional shadows
+        auto arm = std::make_shared<SceneObject>("totem_arm_" + std::to_string(i+1), "Totem Projection Arm", PrimitiveType::Cube);
+        arm->mesh = cubeMesh;
+        arm->position = glm::vec3(0.28f, 0.25f, 0.0f);
+        arm->scale = glm::vec3(0.35f, 0.15f, 0.15f);
+        arm->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+        totemStatue->addChild(arm);
+    }
+
+    // 3 Target Rune Inscriptions on North Wall (-Z)
+    glm::vec3 runePositions[3] = {
+        {-2.2f, 2.4f, -5.88f},
+        { 0.0f, 2.4f, -5.88f},
+        { 2.2f, 2.4f, -5.88f}
+    };
+    for (int i = 0; i < 3; ++i) {
+        auto rune = std::make_shared<SceneObject>("rune_target_" + std::to_string(i+1), "Shadow Target Rune", PrimitiveType::Cube);
+        rune->mesh = cubeMesh;
+        rune->position = runePositions[i];
+        rune->scale = glm::vec3(0.9f, 0.9f, 0.04f);
+        rune->material.albedoColor = glm::vec3(0.3f, 0.1f, 0.1f);
+        rune->material.emissiveColor = glm::vec3(0.9f, 0.2f, 0.15f);
+        rune->material.emissiveIntensity = 2.2f; // Glowing blood rune on wall
+        rootNode->addChild(rune);
     }
 
     // ==========================================
-    // 3. OFFERING CHEST & SLIDING DRAWER (PUZZLE)
-    // ==========================================
-    auto chestRoot = std::make_shared<SceneObject>("chest_root", "Offering Chest", PrimitiveType::Cube);
-    chestRoot->mesh = cubeMesh;
-    chestRoot->position = glm::vec3(-3.2f, 0.45f, -1.0f);
-    chestRoot->scale = glm::vec3(1.1f, 0.9f, 1.3f);
-    chestRoot->material.albedoColor = glm::vec3(0.45f, 0.25f, 0.15f);
-    chestRoot->material.albedoMap = woodPbr.albedo;
-    chestRoot->material.normalMap = woodPbr.normal;
-    chestRoot->material.roughnessMap = woodPbr.roughness;
-    chestRoot->material.useAlbedoMap = true;
-    chestRoot->material.useNormalMap = true;
-    chestRoot->material.useRoughnessMap = true;
-    chestRoot->material.useTexture = true;
-    chestRoot->material.textureId = woodPbr.albedo;
-    rootNode->addChild(chestRoot);
-
-    // Sliding Drawer Container (Interactive)
-    auto drawer = std::make_shared<SceneObject>("desk_drawer", "Offering Drawer", PrimitiveType::None);
-    drawer->position = glm::vec3(0.0f, 0.0f, 0.05f);
-    drawer->basePosition = drawer->position;
-    drawer->openPositionOffset = glm::vec3(0.0f, 0.0f, 0.85f); // Slides forward
-    drawer->scale = glm::vec3(0.9f, 0.4f, 1.0f);
-    drawer->interactType = InteractionType::DeskDrawer;
-    chestRoot->addChild(drawer);
-    interactionMgr.drawerObject = drawer;
-
-    // Drawer Bottom Base
-    auto drawerBottom = std::make_shared<SceneObject>("drawer_bottom", "Drawer Base", PrimitiveType::Cube);
-    drawerBottom->mesh = cubeMesh;
-    drawerBottom->position = glm::vec3(0.0f, -0.15f, 0.0f);
-    drawerBottom->scale = glm::vec3(0.80f, 0.04f, 0.95f);
-    drawerBottom->material.diffuseColor = glm::vec3(0.40f, 0.22f, 0.12f);
-    drawerBottom->material.useTexture = true;
-    drawerBottom->material.textureId = woodPbr.albedo;
-    drawer->addChild(drawerBottom);
-
-    // Drawer Front Panel
-    auto drawerFront = std::make_shared<SceneObject>("drawer_front", "Drawer Front", PrimitiveType::Cube);
-    drawerFront->mesh = cubeMesh;
-    drawerFront->position = glm::vec3(0.0f, 0.0f, 0.45f);
-    drawerFront->scale = glm::vec3(0.85f, 0.35f, 0.04f);
-    drawerFront->material.diffuseColor = glm::vec3(0.48f, 0.25f, 0.14f);
-    drawerFront->material.useTexture = true;
-    drawerFront->material.textureId = woodPbr.albedo;
-    drawerFront->interactType = InteractionType::DeskDrawer;
-    drawer->addChild(drawerFront);
-
-    // Drawer Handle
-    auto drawerHandle = std::make_shared<SceneObject>("drawer_handle", "Drawer Handle", PrimitiveType::Cube);
-    drawerHandle->mesh = cubeMesh;
-    drawerHandle->position = glm::vec3(0.0f, 0.0f, 0.05f);
-    drawerHandle->scale = glm::vec3(0.25f, 0.05f, 0.05f);
-    drawerHandle->material.albedoColor = glm::vec3(0.85f, 0.70f, 0.2f);
-    drawerHandle->material.metallic = 0.95f;
-    drawerHandle->material.roughness = 0.22f;
-    drawerHandle->material.diffuseColor = glm::vec3(0.8f, 0.65f, 0.2f);
-    drawerFront->addChild(drawerHandle);
-
-    // Clue Note inside Drawer
-    auto clueNote = std::make_shared<SceneObject>("clue_note", "Ritual Cipher Note", PrimitiveType::Cube);
-    clueNote->mesh = cubeMesh;
-    clueNote->position = glm::vec3(0.0f, -0.11f, 0.05f);
-    clueNote->scale = glm::vec3(0.55f, 0.02f, 0.40f);
-    clueNote->material.diffuseColor = glm::vec3(1.0f);
-    clueNote->material.useTexture = true;
-    clueNote->material.textureId = noteTex;
-    clueNote->interactType = InteractionType::SecretNote;
-    drawer->addChild(clueNote);
-
-    // ==========================================
-    // 4. HEAVY CRYPT VAULT SAFE & ORNATE GOLDEN KEY (PUZZLE)
-    // ==========================================
-    auto safe = EscapeRoomBuilder::buildHeavyVaultSafe(interactionMgr, "occult_safe",
-        glm::vec3(3.2f, 0.0f, -1.0f), 0.0f, metalPbr.albedo, stonePbr.albedo,
-        glm::vec3(0.18f, 0.16f, 0.20f), glm::vec3(0.92f, 0.85f, 0.65f));
-    rootNode->addChild(safe);
-
-    // ==========================================
-    // 5. HIGH-VISIBILITY ILLUMINATED EXIT DOOR
+    // 5. ILLUMINATED SOUTH EXIT DOOR
     // ==========================================
     auto exitPortal = EscapeRoomBuilder::buildExitDoor(
         interactionMgr, "occult_door",
-        glm::vec3(0.0f, 0.0f, 4.88f), 0.0f,
+        glm::vec3(0.0f, 0.0f, 5.88f), 0.0f,
         stonePbr.albedo, metalPbr.albedo,
         glm::vec3(0.38f, 0.35f, 0.38f),
         glm::vec3(0.36f, 0.15f, 0.15f), // Crimson demonic door
         glm::vec3(1.0f, 0.35f, 0.10f)  // Fiery amber glowing EXIT sign
     );
     rootNode->addChild(exitPortal);
-
-    // Set correct PIN in InteractionManager
-    interactionMgr.correctSafePin = cluePin;
 }

@@ -6,4 +6,5 @@ class AbandonedAsylumRoom : public BaseRoom {
 public:
     AbandonedAsylumRoom();
     void build(InteractionManager& interactionMgr) override;
+    std::string getObjectiveHint(const InteractionManager& im) const override;
 };

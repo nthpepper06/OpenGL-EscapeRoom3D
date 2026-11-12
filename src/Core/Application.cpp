@@ -218,6 +218,7 @@ void Application::switchRoom(int index) {
     // Reset camera to room's designated spawn point
     camera = Camera(room->spawnPosition, glm::vec3(0.0f, 1.0f, 0.0f), room->spawnYaw, room->spawnPitch);
     playerController.setPosition(camera.position);
+    playerController.setRoomBounds(room->roomBounds);
     interactionMgr.currentRoomId = currentRoomIndex;
 
     // Apply room-specific post-processing baseline
@@ -363,7 +364,7 @@ void Application::run() {
         gpuProfiler.beginPass(GpuPass::PlanarReflection);
         if (currentRoomIndex == 2 && planarReflection.enabled) {
             glm::mat4 refView, refProj;
-            glm::vec3 mirrorPos(0.0f, 2.1f, -4.84f);
+            glm::vec3 mirrorPos(0.0f, 2.4f, -7.84f);
             glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
             planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
 
@@ -373,12 +374,13 @@ void Application::run() {
             lightingShader.setMat4("view", refView);
             lightingShader.setVec3("viewPos", camera.position);
             lightingShader.setBool("usePlanarReflection", false);
+            lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
             lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
             lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
             lightingShader.setInt("debugViewMode", 0);
 
             if (sceneRoot) {
-                sceneRoot->draw(lightingShader, "", "");
+                sceneRoot->draw(lightingShader, "", "", RenderLayer::MirrorOnly);
             }
             planarReflection.endRender();
         }
@@ -480,10 +482,11 @@ void Application::run() {
         lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
         lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
+        lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
         if (sceneRoot) {
-            sceneRoot->draw(lightingShader, hoveredObjectId, selectedId);
+            sceneRoot->draw(lightingShader, hoveredObjectId, selectedId, RenderLayer::RealOnly);
         }
 
         // Render Atmospheric Dust Motes
@@ -523,6 +526,7 @@ void Application::run() {
                         currentRoomIndex,
                         currentRoomName,
                         currentFearFactor,
+                        rooms[currentRoomIndex]->getObjectiveHint(interactionMgr),
                         postProcessor,
                         shadowPipeline,
                         particleSystem,
@@ -620,6 +624,30 @@ void Application::onMouseMove(double xpos, double ypos) {
 
 void Application::onMouseButton(int button, int action, int mods) {
     if (action != GLFW_PRESS) return;
+
+    // Play Mode: Right click toggles UV Blacklight mode
+    if (appMode == AppMode::PlayMode && button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (!spotLight.enabled) {
+            spotLight.enabled = true;
+            interactionMgr.isUvLightActive = false;
+            spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
+            spotLight.intensity = 22.0f;
+            interactionMgr.setMessage("Da BAT den pin thuong. Nhan [Chuot phai / F] de chuyen sang Den UV!", 3.5f);
+        } else {
+            interactionMgr.isUvLightActive = !interactionMgr.isUvLightActive;
+            if (interactionMgr.isUvLightActive) {
+                spotLight.color = glm::vec3(0.40f, 0.10f, 1.0f);
+                spotLight.intensity = 18.0f;
+                interactionMgr.setMessage("[DEN PIN UV KICH HOAT] Anh sang tim giup phat hien mau son da quang an tren tuong!", 4.0f);
+            } else {
+                spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
+                spotLight.intensity = 22.0f;
+                interactionMgr.setMessage("[DEN PIN TIEU CHUAN] Da chuyen ve den pin thuong.", 3.0f);
+            }
+        }
+        audioEngine.playKeypadBeep(true);
+        return;
+    }
 
     // Viewport Picking in Edit Mode
     if (appMode == AppMode::EditMode && button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -725,10 +753,27 @@ void Application::onKey(int key, int scancode, int action, int mods) {
         return;
     }
 
-    // Toggle Flashlight via F key
+    // Toggle Flashlight & UV Blacklight via F key
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        spotLight.enabled = !spotLight.enabled;
-        interactionMgr.setMessage(spotLight.enabled ? "Da BAT den pin (Flashlight)." : "Da TAT den pin.", 2.0f);
+        if (!spotLight.enabled) {
+            spotLight.enabled = true;
+            interactionMgr.isUvLightActive = false;
+            spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
+            spotLight.intensity = 22.0f;
+            interactionMgr.setMessage("Da BAT den pin thuong. Nhan [F / Chuot phai] de chuyen sang Den UV!", 3.5f);
+        } else {
+            interactionMgr.isUvLightActive = !interactionMgr.isUvLightActive;
+            if (interactionMgr.isUvLightActive) {
+                spotLight.color = glm::vec3(0.40f, 0.10f, 1.0f);
+                spotLight.intensity = 18.0f;
+                interactionMgr.setMessage("[DEN PIN UV KICH HOAT] Anh sang tim giup phat hien mau son da quang an tren tuong!", 4.0f);
+            } else {
+                spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
+                spotLight.intensity = 22.0f;
+                interactionMgr.setMessage("[DEN PIN TIEU CHUAN] Da chuyen ve den pin thuong.", 3.0f);
+            }
+        }
+        audioEngine.playKeypadBeep(true);
         return;
     }
 
@@ -865,7 +910,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
 
         if (currentRoomIndex == 2 && planarReflection.enabled) {
             glm::mat4 refView, refProj;
-            glm::vec3 mirrorPos(0.0f, 2.1f, -4.84f);
+            glm::vec3 mirrorPos(0.0f, 2.4f, -7.84f);
             glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
             planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
 
@@ -875,12 +920,13 @@ void Application::runBenchmarkAndCaptureScreenshots() {
             lightingShader.setMat4("view", refView);
             lightingShader.setVec3("viewPos", camera.position);
             lightingShader.setBool("usePlanarReflection", false);
+            lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
             lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
             lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
             lightingShader.setInt("debugViewMode", 0);
 
             if (sceneRoot) {
-                sceneRoot->draw(lightingShader, "", "");
+                sceneRoot->draw(lightingShader, "", "", RenderLayer::MirrorOnly);
             }
             planarReflection.endRender();
         }
@@ -972,10 +1018,11 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
         lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
+        lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
         if (sceneRoot) {
-            sceneRoot->draw(lightingShader, hoveredObjectId, selectedId);
+            sceneRoot->draw(lightingShader, hoveredObjectId, selectedId, RenderLayer::RealOnly);
         }
 
         if (particleSystem.enabled) {
@@ -993,7 +1040,9 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         guiLayer.beginFrame();
         guiLayer.render(appMode, sceneRoot, pointLight, spotLight, ambientLight,
                         interactionMgr, camera, hoveredObjectId, windowWidth, windowHeight,
-                        currentRoomIndex, currentRoomName, currentFearFactor, postProcessor,
+                        currentRoomIndex, currentRoomName, currentFearFactor,
+                        rooms[currentRoomIndex]->getObjectiveHint(interactionMgr),
+                        postProcessor,
                         shadowPipeline, particleSystem, ssaoPipeline, audioEngine,
                         gpuProfiler, graphicsSettings,
                         [this](int r) { switchRoom(r); },
@@ -1104,159 +1153,237 @@ void Application::runBenchmarkAndCaptureScreenshots() {
 
 void Application::runBugDiagnostics() {
     std::cout << "\n========================================================\n";
-    std::cout << "  [SYSTEMATIC DEBUGGING: DRAWER & CABINET TRACE]\n";
+    std::cout << "  [SYSTEMATIC REGRESSION TEST: 3 UNIQUE ROOM MECHANICS]\n";
     std::cout << "========================================================\n\n";
 
-    for (int r = 0; r < 3; ++r) {
-        switchRoom(r);
-        std::cout << ">>> TESTING ROOM " << r << ": " << rooms[r]->name << " <<<\n";
+    // ==========================================
+    // ROOM 0: OCCULT RITUAL ROOM (SHADOW TOTEM ALIGNMENT)
+    // ==========================================
+    {
+        switchRoom(0);
+        std::cout << ">>> [TEST 1/3] ROOM 0: " << rooms[0]->name << " <<<\n";
+        std::cout << "Checking Room Dimensions: 12m x 12m, bounds=(" 
+                  << rooms[0]->roomBounds.x << ", " << rooms[0]->roomBounds.y << ", "
+                  << rooms[0]->roomBounds.z << ", " << rooms[0]->roomBounds.w << ")\n";
 
-        // 1. Trace Drawer
-        std::cout << "\n--- STEP 1: TRACING DRAWER (id: desk_drawer) ---\n";
-        auto drawer = sceneRoot->findById("desk_drawer");
-        auto drawerFront = sceneRoot->findById("drawer_front");
-        auto drawerBottom = sceneRoot->findById("drawer_bottom");
-        auto clueNote = sceneRoot->findById("clue_note");
+        auto altarLid = sceneRoot->findById("altar_lid");
+        auto totem1 = sceneRoot->findById("totem_1");
+        auto totem2 = sceneRoot->findById("totem_2");
+        auto totem3 = sceneRoot->findById("totem_3");
+        auto ritualKey = sceneRoot->findById("golden_key");
+        auto exitDoor = sceneRoot->findById("occult_door");
 
-        if (!drawer) {
-            std::cout << "[FAIL] desk_drawer NOT FOUND in scene hierarchy!\n";
-        } else {
-            std::cout << "[1.1 Object Info] desk_drawer found. interactType=" << static_cast<int>(drawer->interactType)
-                      << " isInteractable=" << drawer->isInteractable() << "\n";
-            AABB initialBox = drawer->getWorldAABB();
-            std::cout << "[1.2 Collider AABB] min=(" << initialBox.min.x << ", " << initialBox.min.y << ", " << initialBox.min.z
-                      << ") max=(" << initialBox.max.x << ", " << initialBox.max.y << ", " << initialBox.max.z << ")\n";
-
-            glm::vec3 drawerCenter = (initialBox.min + initialBox.max) * 0.5f;
-            glm::vec3 testOrigin = drawerCenter + glm::vec3(0.0f, 0.2f, 1.8f);
-            glm::vec3 testDir = glm::normalize(drawerCenter - testOrigin);
-            Ray testRay = { testOrigin, testDir };
-
-            std::vector<std::shared_ptr<SceneObject>> objects;
-            sceneRoot->collectAll(objects);
-            RaycastHit hit = Raycaster::castRay(testRay, objects, 4.5f, true);
-
-            std::cout << "[1.3 Raycast Test] Ray origin=(" << testOrigin.x << ", " << testOrigin.y << ", " << testOrigin.z
-                      << ") dir=(" << testDir.x << ", " << testDir.y << ", " << testDir.z << ")\n";
-            if (hit.hasHit && hit.object) {
-                std::cout << "[1.3 Raycast Result] HIT object=" << hit.object->id << " (" << hit.object->name << ") dist=" << hit.distance << "\n";
-                std::string prompt = interactionMgr.getPromptText(hit.object);
-                std::cout << "[1.4 Prompt Text] \"" << prompt << "\"\n";
-            } else {
-                std::cout << "[1.3 Raycast Result] MISS! No interactable object hit by raycast!\n";
-            }
-
-            glm::mat4 drawerMat0 = drawer->getWorldMatrix();
-            glm::vec3 drawerPos0 = glm::vec3(drawerMat0[3]);
-            glm::mat4 frontMat0 = drawerFront ? drawerFront->getWorldMatrix() : glm::mat4(1.0f);
-            glm::vec3 frontPos0 = glm::vec3(frontMat0[3]);
-            glm::mat4 bottomMat0 = drawerBottom ? drawerBottom->getWorldMatrix() : glm::mat4(1.0f);
-            glm::vec3 bottomPos0 = glm::vec3(bottomMat0[3]);
-            glm::mat4 noteMat0 = clueNote ? clueNote->getWorldMatrix() : glm::mat4(1.0f);
-            glm::vec3 notePos0 = glm::vec3(noteMat0[3]);
-
-            std::cout << "[1.5 Initial Transforms at t=0]\n";
-            std::cout << "    drawer world pos:       (" << drawerPos0.x << ", " << drawerPos0.y << ", " << drawerPos0.z << ")\n";
-            std::cout << "    drawer_front world pos: (" << frontPos0.x << ", " << frontPos0.y << ", " << frontPos0.z << ")\n";
-            std::cout << "    drawer_bottom world pos:(" << bottomPos0.x << ", " << bottomPos0.y << ", " << bottomPos0.z << ")\n";
-            std::cout << "    clue_note world pos:    (" << notePos0.x << ", " << notePos0.y << ", " << notePos0.z << ")\n";
-
-            std::cout << "[1.6 Input Key E -> interactionMgr.interact]\n";
-            interactionMgr.interact(drawer, pointLight);
-            std::cout << "    drawer->isOpen = " << (drawer->isOpen ? "true" : "false")
-                      << " statusMessage = \"" << interactionMgr.statusMessage << "\"\n";
-
-            for (int f = 0; f < 30; ++f) {
-                rooms[r]->update(0.016f, f * 0.016f, camera.position);
-            }
-
-            glm::mat4 drawerMat1 = drawer->getWorldMatrix();
-            glm::vec3 drawerPos1 = glm::vec3(drawerMat1[3]);
-            glm::mat4 frontMat1 = drawerFront ? drawerFront->getWorldMatrix() : glm::mat4(1.0f);
-            glm::vec3 frontPos1 = glm::vec3(frontMat1[3]);
-            glm::mat4 bottomMat1 = drawerBottom ? drawerBottom->getWorldMatrix() : glm::mat4(1.0f);
-            glm::vec3 bottomPos1 = glm::vec3(bottomMat1[3]);
-            glm::mat4 noteMat1 = clueNote ? clueNote->getWorldMatrix() : glm::mat4(1.0f);
-            glm::vec3 notePos1 = glm::vec3(noteMat1[3]);
-
-            std::cout << "[1.7 Updated Transforms after 30 frames of update]\n";
-            std::cout << "    drawer animProgress:    " << drawer->animProgress << "\n";
-            std::cout << "    drawer world pos:       (" << drawerPos1.x << ", " << drawerPos1.y << ", " << drawerPos1.z << ")"
-                      << " Delta=" << glm::distance(drawerPos0, drawerPos1) << "\n";
-            std::cout << "    drawer_front world pos: (" << frontPos1.x << ", " << frontPos1.y << ", " << frontPos1.z << ")"
-                      << " Delta=" << glm::distance(frontPos0, frontPos1) << "\n";
-            std::cout << "    drawer_bottom world pos:(" << bottomPos1.x << ", " << bottomPos1.y << ", " << bottomPos1.z << ")"
-                      << " Delta=" << glm::distance(bottomPos0, bottomPos1) << "\n";
-            std::cout << "    clue_note world pos:    (" << notePos1.x << ", " << notePos1.y << ", " << notePos1.z << ")"
-                      << " Delta=" << glm::distance(notePos0, notePos1) << "\n";
-
-            if (glm::distance(frontPos0, frontPos1) < 0.001f) {
-                std::cout << ">>> [BUG DETECTED IN DRAWER] drawer_front Delta is 0.0! Visible meshes of drawer DID NOT MOVE!\n";
-            } else {
-                std::cout << ">>> [SUCCESS] Drawer front moved by " << glm::distance(frontPos0, frontPos1) << " units.\n";
-            }
+        if (!altarLid || !totem1 || !totem2 || !totem3 || !ritualKey || !exitDoor) {
+            std::cerr << "[FAIL] Core puzzle objects missing in Room 0!\n";
+            exit(1);
         }
 
-        // 2. Trace Safe / Locked Cabinet
-        std::cout << "\n--- STEP 2: TRACING LOCKED CABINET / SAFE (id: safe_hinge / safe_door_panel) ---\n";
-        auto safeHinge = sceneRoot->findById("safe_hinge");
-        auto safeDoor = sceneRoot->findById("safe_door_panel");
-
-        if (!safeHinge || !safeDoor) {
-            std::cout << "[FAIL] safe_hinge or safe_door_panel NOT FOUND!\n";
-        } else {
-            std::cout << "[2.1 Object Info] safeDoor found. interactType=" << static_cast<int>(safeDoor->interactType)
-                      << " safeHinge->isLocked=" << safeHinge->isLocked << " safeUnlocked=" << interactionMgr.safeUnlocked << "\n";
-            AABB doorBox = safeDoor->getWorldAABB();
-            std::cout << "[2.2 Safe Door AABB] min=(" << doorBox.min.x << ", " << doorBox.min.y << ", " << doorBox.min.z
-                      << ") max=(" << doorBox.max.x << ", " << doorBox.max.y << ", " << doorBox.max.z << ")\n";
-
-            glm::vec3 doorCenter = (doorBox.min + doorBox.max) * 0.5f;
-            glm::vec3 testOrigin = doorCenter + glm::vec3(0.0f, 0.0f, 1.5f);
-            glm::vec3 testDir = glm::normalize(doorCenter - testOrigin);
-            Ray testRay = { testOrigin, testDir };
-
-            std::vector<std::shared_ptr<SceneObject>> objects;
-            sceneRoot->collectAll(objects);
-            RaycastHit hit = Raycaster::castRay(testRay, objects, 4.5f, true);
-
-            if (hit.hasHit && hit.object) {
-                std::cout << "[2.3 Raycast Result] HIT object=" << hit.object->id << " (" << hit.object->name << ") dist=" << hit.distance << "\n";
-                std::cout << "[2.4 Prompt Text] \"" << interactionMgr.getPromptText(hit.object) << "\"\n";
-            }
-
-            glm::mat4 doorMat0 = safeDoor->getWorldMatrix();
-            glm::vec3 doorPos0 = glm::vec3(doorMat0[3]);
-
-            std::cout << "[2.5 Initial Transforms at t=0]\n";
-            std::cout << "    safe_hinge rotation:    (" << safeHinge->rotation.x << ", " << safeHinge->rotation.y << ", " << safeHinge->rotation.z << ")\n";
-            std::cout << "    safe_door_panel pos:    (" << doorPos0.x << ", " << doorPos0.y << ", " << doorPos0.z << ")\n";
-
-            std::cout << "[2.6 Submitting PIN: " << rooms[r]->cluePin << "]\n";
-            interactionMgr.checkPin(rooms[r]->cluePin);
-            std::cout << "    safeUnlocked=" << interactionMgr.safeUnlocked << " safeHinge->isOpen=" << safeHinge->isOpen << "\n";
-
-            for (int f = 0; f < 30; ++f) {
-                rooms[r]->update(0.016f, f * 0.016f, camera.position);
-            }
-
-            glm::mat4 doorMat1 = safeDoor->getWorldMatrix();
-            glm::vec3 doorPos1 = glm::vec3(doorMat1[3]);
-
-            std::cout << "[2.7 Updated Transforms after 30 frames of update]\n";
-            std::cout << "    safe_hinge animProgress: " << safeHinge->animProgress << "\n";
-            std::cout << "    safe_hinge rotation:     (" << safeHinge->rotation.x << ", " << safeHinge->rotation.y << ", " << safeHinge->rotation.z << ")\n";
-            std::cout << "    safe_door_panel pos:     (" << doorPos1.x << ", " << doorPos1.y << ", " << doorPos1.z << ")"
-                      << " Delta=" << glm::distance(doorPos0, doorPos1) << "\n";
-
-            if (glm::distance(doorPos0, doorPos1) < 0.001f) {
-                std::cout << ">>> [BUG DETECTED IN SAFE] safe_door_panel Delta is 0.0! Door slab DID NOT ROTATE OR MOVE!\n";
-            } else {
-                std::cout << ">>> [SUCCESS] Safe door moved by " << glm::distance(doorPos0, doorPos1) << " units.\n";
-            }
+        std::cout << "[1.1] Verifying 3 Rotatable Totems interactType...\n";
+        if (totem1->interactType != InteractionType::Totem ||
+            totem2->interactType != InteractionType::Totem ||
+            totem3->interactType != InteractionType::Totem) {
+            std::cerr << "[FAIL] Totems do not have InteractionType::Totem!\n";
+            exit(1);
         }
-        std::cout << "\n--------------------------------------------------------\n";
+
+        std::cout << "[1.2] Rotating Totems to Target Angles (Totem1=90, Totem2=180, Totem3=270)...\n";
+        // Totem 1: rotate once (0 -> 90)
+        interactionMgr.interact(totem1, pointLight);
+        // Totem 2: rotate twice (0 -> 90 -> 180)
+        interactionMgr.interact(totem2, pointLight);
+        interactionMgr.interact(totem2, pointLight);
+        // Totem 3: rotate thrice (0 -> 90 -> 180 -> 270)
+        interactionMgr.interact(totem3, pointLight);
+        interactionMgr.interact(totem3, pointLight);
+        interactionMgr.interact(totem3, pointLight);
+
+        if (!interactionMgr.altarUnlocked) {
+            std::cerr << "[FAIL] Altar failed to unlock after totems reached target angles!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Altar unlocked! altarUnlocked=" << interactionMgr.altarUnlocked << "\n";
+
+        // Simulate 30 frames of update for smooth sliding lid animation
+        glm::vec3 lidPos0 = glm::vec3(altarLid->getWorldMatrix()[3]);
+        for (int f = 0; f < 30; ++f) {
+            rooms[0]->update(0.016f, f * 0.016f, camera.position);
+        }
+        glm::vec3 lidPos1 = glm::vec3(altarLid->getWorldMatrix()[3]);
+        float lidDelta = glm::distance(lidPos0, lidPos1);
+        std::cout << "[1.3] Altar Lid Slide Animation Delta: " << lidDelta << " meters.\n";
+        if (lidDelta < 0.1f) {
+            std::cerr << "[FAIL] Altar lid did not slide open!\n";
+            exit(1);
+        }
+
+        // Pick up Ritual Key & Sigil #1
+        std::cout << "[1.4] Collecting Ritual Key...\n";
+        interactionMgr.interact(ritualKey, pointLight);
+        if (!interactionMgr.hasGoldenKey || interactionMgr.keysCollected < 1) {
+            std::cerr << "[FAIL] Failed to collect Ritual Key!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Ritual Key collected! Total keys: " << interactionMgr.keysCollected << "/3\n";
+
+        // Interact with Exit Door
+        std::cout << "[1.5] Unlocking South Exit Door with Key...\n";
+        interactionMgr.interact(exitDoor, pointLight);
+        if (!interactionMgr.requestRoomTransition) {
+            std::cerr << "[FAIL] Exit door did not trigger room transition!\n";
+            exit(1);
+        }
+        std::cout << ">>> [PASS] Room 0 Shadow Totem Alignment verified 100%.\n\n";
     }
+
+    // ==========================================
+    // ROOM 1: ABANDONED ASYLUM (FUSES, BREAKER & UV BLACKLIGHT)
+    // ==========================================
+    {
+        switchRoom(1);
+        std::cout << ">>> [TEST 2/3] ROOM 1: " << rooms[1]->name << " <<<\n";
+        std::cout << "Checking Room Dimensions: 14m x 8m, bounds=(" 
+                  << rooms[1]->roomBounds.x << ", " << rooms[1]->roomBounds.y << ", "
+                  << rooms[1]->roomBounds.z << ", " << rooms[1]->roomBounds.w << ")\n";
+
+        auto fuse1 = sceneRoot->findById("fuse_1");
+        auto fuse2 = sceneRoot->findById("fuse_2");
+        auto breakerBox = sceneRoot->findById("breaker_box");
+        auto ironGate = sceneRoot->findById("iron_bars_gate");
+        auto uvPanel = sceneRoot->findById("uv_wall_runes");
+        auto exitDoor = sceneRoot->findById("asylum_door");
+
+        if (!fuse1 || !fuse2 || !breakerBox || !ironGate || !uvPanel || !exitDoor) {
+            std::cerr << "[FAIL] Core puzzle objects missing in Room 1!\n";
+            exit(1);
+        }
+
+        std::cout << "[2.1] Collecting 2 Fuses (Trolley & Washbasin)...\n";
+        interactionMgr.interact(fuse1, pointLight);
+        interactionMgr.interact(fuse2, pointLight);
+        if (interactionMgr.fusesCollected != 2) {
+            std::cerr << "[FAIL] Fuses collected count is not 2! Count=" << interactionMgr.fusesCollected << "\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Both fuses collected (2/2).\n";
+
+        std::cout << "[2.2] Installing Fuses into Breaker Box & Restoring Power...\n";
+        interactionMgr.interact(breakerBox, pointLight);
+        if (!interactionMgr.powerRestored) {
+            std::cerr << "[FAIL] Power not restored after interacting with breaker box!\n";
+            exit(1);
+        }
+        if (!ironGate->isOpen) {
+            std::cerr << "[FAIL] Security gate did not open after power restoration!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Power restored! Ceiling lights fluorescent, security gate opened.\n";
+
+        // Simulate 30 frames for iron gate sliding
+        glm::vec3 gatePos0 = glm::vec3(ironGate->getWorldMatrix()[3]);
+        for (int f = 0; f < 30; ++f) {
+            rooms[1]->update(0.016f, f * 0.016f, camera.position);
+        }
+        glm::vec3 gatePos1 = glm::vec3(ironGate->getWorldMatrix()[3]);
+        float gateDelta = glm::distance(gatePos0, gatePos1);
+        std::cout << "[2.3] Iron Gate Slide Animation Delta: " << gateDelta << " meters.\n";
+        if (gateDelta < 0.1f) {
+            std::cerr << "[FAIL] Security gate did not slide open!\n";
+            exit(1);
+        }
+
+        std::cout << "[2.4] Verifying UV Fluorescent Wall Panel...\n";
+        if (!uvPanel->material.isFluorescent) {
+            std::cerr << "[FAIL] Wall runes material is not marked isFluorescent!\n";
+            exit(1);
+        }
+        interactionMgr.isUvLightActive = true;
+        std::cout << ">>> [SUCCESS] UV Blacklight active. Fluorescent color=("
+                  << uvPanel->material.fluorescentColor.r << ", "
+                  << uvPanel->material.fluorescentColor.g << ", "
+                  << uvPanel->material.fluorescentColor.b << ")\n";
+
+        std::cout << "[2.5] Submitting Clue PIN 4108 to Isolation Exit Door Keypad...\n";
+        bool pinOk = interactionMgr.checkPin("4108");
+        if (!pinOk || !interactionMgr.safeUnlocked) {
+            std::cerr << "[FAIL] Submitting correct PIN 4108 failed!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Door unlocked via PIN 4108!\n";
+
+        auto asylumKey = sceneRoot->findById("golden_key");
+        if (asylumKey) {
+            interactionMgr.interact(asylumKey, pointLight);
+        }
+        std::cout << ">>> [PASS] Room 1 Circuit Breaker & UV Blacklight verified 100%.\n\n";
+    }
+
+    // ==========================================
+    // ROOM 2: HAUNTED MIRROR GALLERY (MIRROR-ONLY ANOMALIES & SYMMETRY)
+    // ==========================================
+    {
+        switchRoom(2);
+        std::cout << ">>> [TEST 3/3] ROOM 2: " << rooms[2]->name << " <<<\n";
+        std::cout << "Checking Room Dimensions: 8m x 16m, bounds=(" 
+                  << rooms[2]->roomBounds.x << ", " << rooms[2]->roomBounds.y << ", "
+                  << rooms[2]->roomBounds.z << ", " << rooms[2]->roomBounds.w << ")\n";
+
+        auto bust1 = sceneRoot->findById("bust_1");
+        auto bust2 = sceneRoot->findById("bust_2");
+        auto bust3 = sceneRoot->findById("bust_3");
+        auto ghost1 = sceneRoot->findById("mirror_ghost_guide_1");
+        auto ghost2 = sceneRoot->findById("mirror_ghost_guide_2");
+        auto ghost3 = sceneRoot->findById("mirror_ghost_guide_3");
+        auto centerMirror = sceneRoot->findById("center_mirror");
+        auto exitDoor = sceneRoot->findById("mirror_door");
+
+        if (!bust1 || !bust2 || !bust3 || !ghost1 || !ghost2 || !ghost3 || !centerMirror || !exitDoor) {
+            std::cerr << "[FAIL] Core puzzle objects missing in Room 2!\n";
+            exit(1);
+        }
+
+        std::cout << "[3.1] Verifying RenderLayer separation (RealOnly vs MirrorOnly)...\n";
+        if (ghost1->renderLayer != RenderLayer::MirrorOnly ||
+            ghost2->renderLayer != RenderLayer::MirrorOnly ||
+            ghost3->renderLayer != RenderLayer::MirrorOnly) {
+            std::cerr << "[FAIL] Ghost guides are not set to RenderLayer::MirrorOnly!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Ghost guides verified as RenderLayer::MirrorOnly.\n";
+
+        std::cout << "[3.2] Rotating Busts to Match Mirror World Symmetry (Bust1=180, Bust2=90, Bust3=270)...\n";
+        // Bust 1: rotate twice (0 -> 90 -> 180)
+        interactionMgr.interact(bust1, pointLight);
+        interactionMgr.interact(bust1, pointLight);
+        // Bust 2: rotate once (0 -> 90)
+        interactionMgr.interact(bust2, pointLight);
+        // Bust 3: rotate thrice (0 -> 90 -> 180 -> 270)
+        interactionMgr.interact(bust3, pointLight);
+        interactionMgr.interact(bust3, pointLight);
+        interactionMgr.interact(bust3, pointLight);
+
+        if (!interactionMgr.mirrorPuzzleSolved) {
+            std::cerr << "[FAIL] Mirror symmetry puzzle did not solve after rotating busts!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] Mirror symmetry puzzle solved! mirrorPuzzleSolved=" << interactionMgr.mirrorPuzzleSolved << "\n";
+
+        auto finalKey = sceneRoot->findById("golden_key");
+        if (finalKey) {
+            interactionMgr.interact(finalKey, pointLight);
+        }
+        interactionMgr.interact(exitDoor, pointLight);
+
+        if (!interactionMgr.gameWon) {
+            std::cerr << "[FAIL] gameWon is false after solving all 3 rooms!\n";
+            exit(1);
+        }
+        std::cout << ">>> [SUCCESS] GAME WON! All 3 rooms completed and verified!\n";
+        std::cout << ">>> [PASS] Room 2 Mirror Anomaly & Symmetry verified 100%.\n\n";
+    }
+
+    std::cout << "========================================================\n";
+    std::cout << ">>> [ALL REGRESSION TESTS PASSED]: 3/3 rooms verified 100%.\n";
+    std::cout << "========================================================\n";
 }
 
 void Application::runSmokeTest() {
@@ -1298,7 +1425,7 @@ void Application::runSmokeTest() {
 
             if (r == 2 && planarReflection.enabled) {
                 glm::mat4 refView, refProj;
-                planarReflection.computeReflectionMatrices(camera, glm::vec3(0, 2.1f, -4.84f), glm::vec3(0, 0, 1), 1.0f, refView, refProj);
+                planarReflection.computeReflectionMatrices(camera, glm::vec3(0.0f, 2.4f, -7.84f), glm::vec3(0.0f, 0.0f, 1.0f), 1.0f, refView, refProj);
                 planarReflection.beginRender();
                 planarReflection.endRender();
             }
@@ -1306,7 +1433,7 @@ void Application::runSmokeTest() {
             postProcessor.beginRender();
             lightingShader.use();
             if (sceneRoot) {
-                sceneRoot->draw(lightingShader, "", "");
+                sceneRoot->draw(lightingShader, "", "", RenderLayer::Both);
             }
             postProcessor.endRender();
 

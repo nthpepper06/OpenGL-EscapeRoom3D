@@ -142,7 +142,7 @@ void ShadowPipeline::renderSpotShadow(const SpotLight& spot, const std::shared_p
     root->collectAll(objects);
 
     for (const auto& obj : objects) {
-        if (!obj || !obj->isVisible || !obj->mesh) continue;
+        if (!obj || !obj->isVisible || !obj->mesh || obj->renderLayer == RenderLayer::MirrorOnly) continue;
         spotDepthShader.setMat4("model", obj->getWorldMatrix());
         obj->mesh->draw();
     }
@@ -189,7 +189,7 @@ void ShadowPipeline::renderPointShadow(const PointLight& point, const std::share
         pointCubeShader.setMat4("lightSpaceMatrix", shadowTransforms[face]);
 
         for (const auto& obj : objects) {
-            if (!obj || !obj->isVisible || !obj->mesh) continue;
+            if (!obj || !obj->isVisible || !obj->mesh || obj->renderLayer == RenderLayer::MirrorOnly) continue;
             pointCubeShader.setMat4("model", obj->getWorldMatrix());
             obj->mesh->draw();
         }

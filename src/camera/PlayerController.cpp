@@ -22,6 +22,10 @@ void PlayerController::setPosition(const glm::vec3& newPos) {
     }
 }
 
+void PlayerController::setRoomBounds(const glm::vec4& bounds) {
+    roomBounds = bounds;
+}
+
 glm::vec3 PlayerController::getPosition() const {
     return currentPosition;
 }
@@ -51,24 +55,46 @@ void PlayerController::handleKeyboardInput(GLFWwindow* window, float dt, glm::ve
 void PlayerController::collectStaticColliders(const std::shared_ptr<SceneObject>& node, std::vector<AABB>& colliders) {
     if (!node || !node->isVisible) return;
 
-    // Obstacles with solid bounding boxes (excluding floor, ceiling, triggers, and open drawers)
-    if (node->id != "floor" && node->id != "floor_mirror" && node->id != "floor_occult" && node->id != "floor_asylum" &&
-        node->id != "ceiling" && node->id != "ceiling_mirror" && node->id != "ceiling_occult" && node->id != "ceiling_asylum" &&
-        node->id != "room_root" && node->id != "room_occult_root" && node->id != "room_asylum_root" && node->id != "room_mirror_root" &&
-        node->id != "golden_key" && node->id != "key_shaft" && node->id != "key_bow" && node->id != "key_ring" &&
-        node->id != "clue_note" && node->id != "desk_drawer" && node->id != "safe_hinge" && node->id != "safe_door_panel") {
+    // Skip items, triggers, open doors, and mirror-only ghostly objects
+    if (node->renderLayer == RenderLayer::MirrorOnly) return;
 
-        // Check if it's a prominent furniture or pedestal obstacle
-        if (node->id.find("altar") != std::string::npos ||
-            node->id.find("stand") != std::string::npos ||
-            node->id.find("cabinet") != std::string::npos ||
+    bool isFloorOrCeiling = (node->id.find("floor") != std::string::npos || node->id.find("ceiling") != std::string::npos);
+    bool isPickupOrSmall = (node->id.find("key") != std::string::npos ||
+                            node->id.find("fuse") != std::string::npos ||
+                            node->id.find("note") != std::string::npos ||
+                            node->id.find("flame") != std::string::npos ||
+                            node->id.find("skull") != std::string::npos ||
+                            node->id.find("rune") != std::string::npos ||
+                            node->id.find("clue") != std::string::npos);
+    bool isOpenPassable = (node->isOpen && (node->id.find("door") != std::string::npos ||
+                                            node->id.find("gate") != std::string::npos ||
+                                            node->id.find("drawer") != std::string::npos));
+
+    if (!isFloorOrCeiling && !isPickupOrSmall && !isOpenPassable && node->primitiveType != PrimitiveType::None) {
+        // Check if it's a solid architectural or obstacle element
+        if (node->id.find("pillar") != std::string::npos ||
+            node->id.find("altar") != std::string::npos ||
+            node->id.find("totem") != std::string::npos ||
+            node->id.find("partition") != std::string::npos ||
+            node->id.find("bars") != std::string::npos ||
+            (node->id.find("gate") != std::string::npos && !node->isOpen) ||
+            node->id.find("wall_inner") != std::string::npos ||
+            node->id.find("breaker") != std::string::npos ||
             node->id.find("gurney") != std::string::npos ||
+            node->id.find("trolley") != std::string::npos ||
+            node->id.find("basin") != std::string::npos ||
+            node->id.find("sink") != std::string::npos ||
+            node->id.find("pedestal") != std::string::npos ||
+            node->id.find("bust") != std::string::npos ||
             node->id.find("desk") != std::string::npos ||
-            node->id.find("pillar") != std::string::npos) {
-            
+            node->id.find("cabinet") != std::string::npos ||
+            node->id.find("safe") != std::string::npos) {
+
             AABB box = node->getWorldAABB();
-            // Only add substantial vertical colliders
-            if ((box.max.y - box.min.y) > 0.3f && (box.max.x - box.min.x) > 0.2f) {
+            // Solid barrier dimensions check
+            if ((box.max.y - box.min.y) > 0.25f &&
+                (box.max.x - box.min.x) > 0.12f &&
+                (box.max.z - box.min.z) > 0.12f) {
                 colliders.push_back(box);
             }
         }
@@ -129,10 +155,10 @@ void PlayerController::resolveCollisions(glm::vec3& pos, glm::vec3& vel, float d
         }
 
         // Enforce room outer perimeter bounds
-        float roomMinX = -4.5f + playerRadius;
-        float roomMaxX =  4.5f - playerRadius;
-        float roomMinZ = -4.5f + playerRadius;
-        float roomMaxZ =  4.5f - playerRadius;
+        float roomMinX = roomBounds.x + playerRadius;
+        float roomMaxX = roomBounds.y - playerRadius;
+        float roomMinZ = roomBounds.z + playerRadius;
+        float roomMaxZ = roomBounds.w - playerRadius;
 
         if (pos.x < roomMinX) { pos.x = roomMinX; vel.x = 0.0f; }
         if (pos.x > roomMaxX) { pos.x = roomMaxX; vel.x = 0.0f; }

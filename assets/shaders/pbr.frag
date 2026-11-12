@@ -33,6 +33,9 @@ struct Material {
 
     bool useEmissiveMap;
     sampler2D emissiveMap;
+
+    bool isFluorescent;
+    vec3 fluorescentColor;
 };
 
 struct PointLight {
@@ -62,6 +65,7 @@ uniform Material material;
 uniform PointLight pointLight;
 uniform SpotLight spotLight;
 uniform vec3 viewPos;
+uniform bool isUvLightActive;
 
 // IBL Split-Sum Inputs
 uniform samplerCube irradianceMap;
@@ -278,6 +282,21 @@ void main()
     vec3 emissive = material.emissiveColor * material.emissiveIntensity;
     if (material.useEmissiveMap) {
         emissive *= texture(material.emissiveMap, TexCoords).rgb;
+    }
+
+    // UV Blacklight Fluorescent Activation
+    if (material.isFluorescent) {
+        if (isUvLightActive && spotLight.enabled) {
+            vec3 toLight = spotLight.position - FragPos;
+            float dist = length(toLight);
+            vec3 L = normalize(toLight);
+            float theta = dot(L, normalize(-spotLight.direction));
+            if (theta > spotLight.outerCutOff && dist < 14.0) {
+                float coneFactor = smoothstep(spotLight.outerCutOff, spotLight.cutOff, theta);
+                float distAtten = 1.0 / (1.0 + 0.08 * dist + 0.04 * dist * dist);
+                emissive += material.fluorescentColor * (6.5 * coneFactor * distAtten);
+            }
+        }
     }
 
     // Debug View Modes

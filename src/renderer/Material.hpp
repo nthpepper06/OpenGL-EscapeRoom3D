@@ -11,6 +11,10 @@ struct Material {
     glm::vec3 emissiveColor = glm::vec3(0.0f);
     float emissiveIntensity = 1.0f;
 
+    // UV Fluorescent Blacklight Response
+    bool isFluorescent = false;
+    glm::vec3 fluorescentColor = glm::vec3(0.2f, 0.95f, 1.0f);
+
     // PBR Texture Maps (0 = none)
     unsigned int albedoMap = 0;
     unsigned int normalMap = 0;

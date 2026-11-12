@@ -23,6 +23,7 @@ public:
     void setScale(const glm::vec3& newScale);
 
     bool isVisible = true;
+    RenderLayer renderLayer = RenderLayer::Both;
 
     // Parent-Child hierarchy
     SceneObject* parent = nullptr;
@@ -54,7 +55,7 @@ public:
     bool isInteractable() const { return interactType != InteractionType::None; }
 
     void update(float deltaTime);
-    void draw(const Shader& shader, const std::string& hoveredId = "", const std::string& selectedId = "") const;
+    void draw(const Shader& shader, const std::string& hoveredId = "", const std::string& selectedId = "", RenderLayer passLayer = RenderLayer::Both) const;
 
     std::shared_ptr<SceneObject> findById(const std::string& targetId);
     void collectAll(std::vector<std::shared_ptr<SceneObject>>& outList);
