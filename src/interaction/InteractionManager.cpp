@@ -63,7 +63,32 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
             break;
         }
         case InteractionType::SecretNote: {
-            setMessage("Manh giay mat ma ghi ro: [MA PIN KET SAT LA " + correctSafePin + "] -> Hay den ket sat goc phong de nhap!", 8.0f);
+            std::string loreTitle = "";
+            std::string loreBody = "";
+            if (currentRoomId == 0) {
+                loreTitle = "NHAT KY HIEN TE CUA DR. ELIAS VANCE (1893)";
+                loreBody = "Ngay 13 thang 11, 1893:\n"
+                           "Nhung benh nhan tam than khong phai la ganh nang, ho la vat hien te hoan hao.\n"
+                           "Ta da phong an Manh Co Vat dau tien vao chiec ket sat sat ngam.\n"
+                           "Ma so giai phong nghi le duoc khac ghi tren buc tuong mau:\n\n"
+                           "        >>> MA PIN KET SAT: " + correctSafePin + " <<<\n\n"
+                           "Hay mo ket sat de lay Chia Khoa Vang va Manh Sigil!";
+            } else if (currentRoomId == 1) {
+                loreTitle = "HO SO BENH AN TRICH XUAT - BENH VIEN TAM THAN";
+                loreBody = "Benh an #4108 - Doi tuong: Elias Vance.\n"
+                           "Doi tuong nghe thay tieng thi tham tu ben kia tam guong.\n"
+                           "Doi tuong da giau chia khoa buong giam vao tu ho so thep.\n\n"
+                           "        >>> MA PIN KET SAT: " + correctSafePin + " <<<\n\n"
+                           "Canh bao: Khong duoc nhin vao tam guong phong so 3!";
+            } else {
+                loreTitle = "LOI NGUYEN PHONG AN GUONG QUY";
+                loreBody = "Tien si Vance da bien mat vao ben trong the gioi guong.\n"
+                           "De pha vo vong lap ac mong va mo cua thoat hiem cuoi cung,\n"
+                           "nguoi choi can phai so huu du ca 3 Chia Khoa Vang va 3 Manh Sigil!\n\n"
+                           "        >>> MA PIN KET SAT CUOI: " + correctSafePin + " <<<\n";
+            }
+            openInspect(InspectType::SecretNote, loreTitle, loreBody);
+            setMessage("Dang doc [Manh Giay Mat Ma]! Nhan [E] hoac [ESC] de dong lai.", 4.0f);
             break;
         }
         case InteractionType::SafeKeypad: {
@@ -93,22 +118,49 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 return;
             }
             hasGoldenKey = true;
+            if (currentRoomId >= 0 && currentRoomId < 3 && !hasSigil[currentRoomId]) {
+                hasSigil[currentRoomId] = true;
+                sigilsCollected++;
+                keysCollected++;
+            }
             obj->isVisible = false;
-            setMessage("DA NHAT DUOC CHIA KHOA VANG! Hay quay ra sau lung den Cua Thoat Hiem [EXIT] de mo cua!", 8.0f);
+            std::string keyTitle = "CHIA KHOA VANG & MANH SIGIL CUA VANCE [" + std::to_string(keysCollected) + "/3]";
+            std::string keyBody = "Ban da thu thap thanh cong Chia Khoa Vang va Manh Co Vat Sigil #" + std::to_string(currentRoomId + 1) + "!\n"
+                                  "Co vat toa ra anh sang vang kim chong lai bong toi.\n"
+                                  "Tong so co vat hien co: " + std::to_string(keysCollected) + "/3.\n\n"
+                                  "Hay tien ve phia Cua Thoat Hiem [EXIT] de mo phong tiep theo!";
+            openInspect(InspectType::GoldenKey, keyTitle, keyBody);
+            setMessage("DA NHAT DUOC CHIA KHOA VANG & MANH SIGIL [" + std::to_string(keysCollected) + "/3]!", 8.0f);
             break;
         }
         case InteractionType::ExitDoor: {
-            if (hasGoldenKey) {
-                if (exitDoorObject) {
-                    exitDoorObject->isOpen = true;
-                    exitDoorObject->isLocked = false;
+            if (currentRoomId == 2) {
+                // Final room: requires all 3 keys!
+                if (keysCollected >= 3) {
+                    if (exitDoorObject) {
+                        exitDoorObject->isOpen = true;
+                        exitDoorObject->isLocked = false;
+                    }
+                    obj->isOpen = true;
+                    exitUnlocked = true;
+                    gameWon = true;
+                    setMessage("CHUC MUNG! Ban da thu thap du 3 Chia Khoa Vang va pha giai toan bo bi an ac mong!", 10.0f);
+                } else {
+                    setMessage("CUA THOAT HIEM CUOI BI PHONG AN! Can du 3 Chia Khoa Vang de mo (Hien co: " + std::to_string(keysCollected) + "/3).", 6.0f);
                 }
-                obj->isOpen = true;
-                exitUnlocked = true;
-                requestRoomTransition = true;
-                setMessage("MO KHOA THANH CONG! Cua thoat hiem bung mo! Dang chuyen sang can phong tiep theo...", 6.0f);
             } else {
-                setMessage("Cua thoat hiem dang bi KHOA CHAT! Hay tim manh giay & mo ket sat lay Chia Khoa Vang!", 5.0f);
+                if (hasGoldenKey) {
+                    if (exitDoorObject) {
+                        exitDoorObject->isOpen = true;
+                        exitDoorObject->isLocked = false;
+                    }
+                    obj->isOpen = true;
+                    exitUnlocked = true;
+                    requestRoomTransition = true;
+                    setMessage("MO KHOA THANH CONG! Cua thoat hiem bung mo! Dang chuyen sang can phong tiep theo...", 6.0f);
+                } else {
+                    setMessage("Cua thoat hiem dang bi KHOA CHAT! Hay tim manh giay & mo ket sat lay Chia Khoa Vang!", 5.0f);
+                }
             }
             break;
         }
@@ -155,4 +207,24 @@ void InteractionManager::resetGameState() {
     if (keyObject) keyObject->isVisible = true;
 
     setMessage("Escape Room reset! Find the clue, unlock the safe, and escape!", 5.0f);
+}
+
+void InteractionManager::openInspect(InspectType type, const std::string& title, const std::string& body) {
+    isInspectMode = true;
+    currentInspectType = type;
+    inspectTitle = title;
+    inspectBody = body;
+    inspectYaw = 0.0f;
+    inspectPitch = 0.0f;
+}
+
+void InteractionManager::closeInspect() {
+    isInspectMode = false;
+    currentInspectType = InspectType::None;
+}
+
+void InteractionManager::rotateInspect(float dx, float dy) {
+    inspectYaw += dx * 0.4f;
+    inspectPitch += dy * 0.4f;
+    inspectPitch = std::clamp(inspectPitch, -80.0f, 80.0f);
 }

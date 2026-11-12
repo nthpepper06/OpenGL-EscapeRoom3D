@@ -116,6 +116,8 @@ set(ESCAPE_ROOM_SOURCES
     src/core/Application.cpp
     src/camera/Camera.hpp
     src/camera/Camera.cpp
+    src/camera/PlayerController.hpp
+    src/camera/PlayerController.cpp
     src/renderer/Shader.hpp
     src/renderer/Shader.cpp
     src/renderer/Mesh.hpp

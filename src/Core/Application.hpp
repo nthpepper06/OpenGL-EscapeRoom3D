@@ -2,6 +2,7 @@
 
 #include "core/Common.hpp"
 #include "camera/Camera.hpp"
+#include "camera/PlayerController.hpp"
 #include "renderer/Shader.hpp"
 #include "renderer/Light.hpp"
 #include "renderer/PostProcessor.hpp"
@@ -56,6 +57,7 @@ private:
     AppMode appMode = AppMode::PlayMode;
 
     Camera camera;
+    PlayerController playerController;
     Shader lightingShader;
     PostProcessor postProcessor;
     IblPipeline iblPipeline;

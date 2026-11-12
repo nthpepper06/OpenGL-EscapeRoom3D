@@ -178,6 +178,9 @@ bool Application::init(int width, int height, const std::string& title) {
     rooms.push_back(std::make_shared<AbandonedAsylumRoom>());
     rooms.push_back(std::make_shared<MirrorRoom>());
 
+    // Initialize Player Controller
+    playerController.init(&camera);
+
     // Load first room (Occult Ritual Chamber)
     switchRoom(0);
 
@@ -203,6 +206,8 @@ void Application::switchRoom(int index) {
 
     // Reset camera to room's designated spawn point
     camera = Camera(room->spawnPosition, glm::vec3(0.0f, 1.0f, 0.0f), room->spawnYaw, room->spawnPitch);
+    playerController.setPosition(camera.position);
+    interactionMgr.currentRoomId = currentRoomIndex;
 
     // Apply room-specific post-processing baseline
     postProcessor.vignetteStrength = room->baseVignette;
@@ -256,16 +261,17 @@ void Application::run() {
             }
         }
 
-        // Auto-manage cursor visibility when keypad modal opens or closes
-        if (interactionMgr.showKeypadModal && !prevKeypadOpen) {
+        // Auto-manage cursor visibility when keypad modal or 3D inspect modal opens or closes
+        bool modalActive = interactionMgr.showKeypadModal || interactionMgr.isInspectMode;
+        if (modalActive && !prevKeypadOpen) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        } else if (!interactionMgr.showKeypadModal && prevKeypadOpen) {
+        } else if (!modalActive && prevKeypadOpen) {
             if (appMode == AppMode::PlayMode) {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 firstMouse = true;
             }
         }
-        prevKeypadOpen = interactionMgr.showKeypadModal;
+        prevKeypadOpen = modalActive;
 
         // Process inputs
         processInput(deltaTime);
@@ -499,20 +505,9 @@ void Application::run() {
 }
 
 void Application::processInput(float dt) {
-    if (interactionMgr.showKeypadModal) return; // Freeze movement while typing PIN
-
+    bool freeze = (interactionMgr.showKeypadModal || interactionMgr.isInspectMode);
     if (appMode == AppMode::PlayMode) {
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.processKeyboard(CameraMovement::Forward, dt);
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.processKeyboard(CameraMovement::Backward, dt);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.processKeyboard(CameraMovement::Left, dt);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.processKeyboard(CameraMovement::Right, dt);
-
-        // Keep player inside room bounds (X: -4.5 to 4.5, Z: -4.5 to 4.5, Y: 1.7)
-        camera.clampToBounds(glm::vec3(-4.5f, 1.7f, -4.5f), glm::vec3(4.5f, 1.7f, 4.5f));
+        playerController.update(dt, window, freeze, sceneRoot);
     }
 }
 
@@ -563,19 +558,24 @@ void Application::onFramebufferSize(int width, int height) {
 void Application::onMouseMove(double xpos, double ypos) {
     if (interactionMgr.showKeypadModal) return;
 
-    if (appMode == AppMode::PlayMode) {
-        if (firstMouse) {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
-
-        float xoffset = static_cast<float>(xpos - lastX);
-        float yoffset = static_cast<float>(lastY - ypos); // Reversed since y-coordinates go from bottom to top
-
+    if (firstMouse) {
         lastX = xpos;
         lastY = ypos;
+        firstMouse = false;
+    }
 
+    float xoffset = static_cast<float>(xpos - lastX);
+    float yoffset = static_cast<float>(lastY - ypos); // Reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    if (interactionMgr.isInspectMode) {
+        interactionMgr.rotateInspect(xoffset, yoffset);
+        return;
+    }
+
+    if (appMode == AppMode::PlayMode) {
         camera.processMouseMovement(xoffset, yoffset);
     }
 }
@@ -607,6 +607,15 @@ void Application::onMouseButton(int button, int action, int mods) {
 
 void Application::onKey(int key, int scancode, int action, int mods) {
     if (action != GLFW_PRESS && action != GLFW_REPEAT) return;
+
+    // Direct inspection handling
+    if (interactionMgr.isInspectMode) {
+        if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_E || key == GLFW_KEY_I) {
+            interactionMgr.closeInspect();
+            return;
+        }
+        return;
+    }
 
     // Direct hardware keyboard input for Electronic Safe Keypad
     if (interactionMgr.showKeypadModal) {
@@ -690,6 +699,23 @@ void Application::onKey(int key, int scancode, int action, int mods) {
             if (targetObj) {
                 interactionMgr.interact(targetObj, pointLight);
             }
+        }
+        return;
+    }
+
+    // Inspect key I (Play Mode only)
+    if (key == GLFW_KEY_I && action == GLFW_PRESS && appMode == AppMode::PlayMode) {
+        if (interactionMgr.hasGoldenKey) {
+            interactionMgr.openInspect(InspectType::GoldenKey, "CHIA KHOA VANG & SIGIL",
+                                       "Co vat toa ra anh sang kim loai phan chieu khong gian xung quanh.\n"
+                                       "Vat pham can thiet de mo khoa Cua Thoat Hiem.");
+        } else if (interactionMgr.sigilsCollected > 0) {
+            interactionMgr.openInspect(InspectType::SigilFragment, "MANH SIGIL CO THU",
+                                       "Manh phu chu chua dung linh hon nan nhan cua Tien si Vance.");
+        } else {
+            interactionMgr.openInspect(InspectType::SecretNote, "THU TICH CUA DR. ELIAS VANCE",
+                                       "Ghi chu ve thuat phong an va ma so bao mat phong hien tai:\n"
+                                       "Ma PIN ket sat: " + interactionMgr.correctSafePin);
         }
         return;
     }

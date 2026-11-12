@@ -71,6 +71,11 @@ void GuiLayer::render(AppMode appMode,
         renderKeypadModal(interactionMgr);
     }
 
+    // 3D Inspection dialog if active
+    if (interactionMgr.isInspectMode) {
+        renderInspectModal(interactionMgr, windowWidth, windowHeight);
+    }
+
     // Victory celebration if escaped
     if (interactionMgr.gameWon) {
         renderVictoryModal(interactionMgr, onSwitchRoom);
@@ -507,27 +512,79 @@ void GuiLayer::renderKeypadModal(InteractionManager& interactionMgr) {
     ImGui::End();
 }
 
-void GuiLayer::renderVictoryModal(InteractionManager& interactionMgr, std::function<void(int)> onSwitchRoom) {
-    ImGui::SetNextWindowSize(ImVec2(440, 220), ImGuiCond_Always);
-    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - 220.0f,
-                                   ImGui::GetIO().DisplaySize.y * 0.5f - 110.0f), ImGuiCond_Always);
+void GuiLayer::renderInspectModal(InteractionManager& interactionMgr, int windowWidth, int windowHeight) {
+    float modalW = 540.0f;
+    float modalH = 400.0f;
+    ImGui::SetNextWindowSize(ImVec2(modalW, modalH), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(float(windowWidth) * 0.5f - modalW * 0.5f,
+                                   float(windowHeight) * 0.5f - modalH * 0.5f), ImGuiCond_Always);
 
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-    if (ImGui::Begin("MISSION ACCOMPLISHED!", nullptr, flags)) {
+    if (ImGui::Begin("3D INSPECT MODE [ESC / E to close]", nullptr, flags)) {
         ImGui::Spacing();
-        ImGui::TextColored(ImVec4(1.0f, 0.84f, 0.0f, 1.0f), "XUAT SAC! BAN DA THOAT HIEM THANH CONG!");
-        ImGui::Text("Ban da giai xong cau do va mo duoc canh cua kinh di!");
+        if (interactionMgr.currentInspectType == InspectType::SecretNote) {
+            ImGui::TextColored(ImVec4(1.0f, 0.88f, 0.45f, 1.0f), "%s", interactionMgr.inspectTitle.c_str());
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.14f, 0.12f, 0.10f, 0.95f));
+            if (ImGui::BeginChild("NoteBody", ImVec2(modalW - 30.0f, 240.0f), true)) {
+                ImGui::Spacing();
+                ImGui::TextWrapped("%s", interactionMgr.inspectBody.c_str());
+            }
+            ImGui::EndChild();
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::TextColored(ImVec4(1.0f, 0.84f, 0.0f, 1.0f), "%s", interactionMgr.inspectTitle.c_str());
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(0.3f, 0.9f, 1.0f, 1.0f), "[3D Turntable Active: Di chuot de xoay 3D | Yaw: %.1f deg, Pitch: %.1f deg]",
+                               interactionMgr.inspectYaw, interactionMgr.inspectPitch);
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.10f, 0.12f, 0.16f, 0.95f));
+            if (ImGui::BeginChild("ArtifactBody", ImVec2(modalW - 30.0f, 210.0f), true)) {
+                ImGui::Spacing();
+                ImGui::TextWrapped("%s", interactionMgr.inspectBody.c_str());
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.85f, 0.75f, 0.35f, 1.0f), "Thuoc tinh co vat: Chieu dai 28cm | Kim loai vang co dai toa sang HDR");
+            }
+            ImGui::EndChild();
+            ImGui::PopStyleColor();
+        }
+
+        ImGui::Spacing();
+        if (ImGui::Button("Dong kiem tra [ESC / E]", ImVec2(modalW - 30.0f, 36.0f))) {
+            interactionMgr.closeInspect();
+        }
+    }
+    ImGui::End();
+}
+
+void GuiLayer::renderVictoryModal(InteractionManager& interactionMgr, std::function<void(int)> onSwitchRoom) {
+    ImGui::SetNextWindowSize(ImVec2(500, 260), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - 250.0f,
+                                   ImGui::GetIO().DisplaySize.y * 0.5f - 130.0f), ImGuiCond_Always);
+
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+    if (ImGui::Begin("MISSION ACCOMPLISHED - ESCAPED THE NIGHTMARE!", nullptr, flags)) {
+        ImGui::Spacing();
+        ImGui::TextColored(ImVec4(1.0f, 0.84f, 0.0f, 1.0f), "XUAT SAC! BAN DA THOAT HIEM TOAN VEN!");
+        ImGui::TextWrapped("Ban da giai xong toan bo 3 can phong kinh di va thu thap du ca 3 Chia Khoa Vang & Manh Sigil cua Dr. Elias Vance!");
+        ImGui::Spacing();
+        ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.4f, 1.0f), "Phong an guong quy da bi pha vo. Can phong tro nen thanh tinh.");
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
 
-        if (ImGui::Button("Tien vao Phong tiep theo", ImVec2(200, 42))) {
-            interactionMgr.gameWon = false;
-            interactionMgr.requestRoomTransition = true;
+        if (interactionMgr.currentRoomId < 2) {
+            if (ImGui::Button("Tien vao Phong tiep theo", ImVec2(230, 42))) {
+                interactionMgr.gameWon = false;
+                interactionMgr.requestRoomTransition = true;
+            }
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Choi lai tu dau", ImVec2(190, 42))) {
+        if (ImGui::Button("Choi lai tu Phong 1", ImVec2(230, 42))) {
             interactionMgr.resetGameState();
+            if (onSwitchRoom) onSwitchRoom(0);
         }
     }
     ImGui::End();

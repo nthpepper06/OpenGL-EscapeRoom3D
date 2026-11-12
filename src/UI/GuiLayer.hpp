@@ -60,6 +60,7 @@ private:
                        int windowWidth,
                        int windowHeight);
     void renderKeypadModal(InteractionManager& interactionMgr);
+    void renderInspectModal(InteractionManager& interactionMgr, int windowWidth, int windowHeight);
     void renderVictoryModal(InteractionManager& interactionMgr, std::function<void(int)> onSwitchRoom);
 };
 
