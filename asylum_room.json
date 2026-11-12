@@ -256,7 +256,7 @@
           0.0,
           0.0
         ],
-        "primitiveType": "None",
+        "primitiveType": "Cube",
         "rotation": [
           0.0,
           0.0,
@@ -1093,7 +1093,7 @@
                 ],
                 "position": [
                   0.0,
-                  0.0,
+                  -0.03999999910593033,
                   0.02500000037252903
                 ],
                 "primitiveType": "Cube",
@@ -1105,6 +1105,55 @@
                 "scale": [
                   0.3499999940395355,
                   0.3499999940395355,
+                  0.019999999552965164
+                ]
+              },
+              {
+                "children": [],
+                "id": "uv_order_1",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Position #1",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.2199999988079071,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.05999999865889549,
                   0.019999999552965164
                 ]
               }
@@ -1128,7 +1177,7 @@
               ],
               "useTexture": false
             },
-            "name": "Cipher Plate",
+            "name": "Cipher Plate [1]",
             "openPositionOffset": [
               0.0,
               0.0,
@@ -1242,7 +1291,7 @@
                 ],
                 "position": [
                   0.0,
-                  0.0,
+                  -0.03999999910593033,
                   0.02500000037252903
                 ],
                 "primitiveType": "Cube",
@@ -1254,6 +1303,55 @@
                 "scale": [
                   0.3499999940395355,
                   0.3499999940395355,
+                  0.019999999552965164
+                ]
+              },
+              {
+                "children": [],
+                "id": "uv_order_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Position #2",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.2199999988079071,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.05999999865889549,
                   0.019999999552965164
                 ]
               }
@@ -1277,7 +1375,7 @@
               ],
               "useTexture": false
             },
-            "name": "Cipher Plate",
+            "name": "Cipher Plate [2]",
             "openPositionOffset": [
               0.0,
               0.0,
@@ -1391,7 +1489,7 @@
                 ],
                 "position": [
                   0.0,
-                  0.0,
+                  -0.03999999910593033,
                   0.02500000037252903
                 ],
                 "primitiveType": "Cube",
@@ -1403,6 +1501,55 @@
                 "scale": [
                   0.3499999940395355,
                   0.3499999940395355,
+                  0.019999999552965164
+                ]
+              },
+              {
+                "children": [],
+                "id": "uv_order_3",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Position #3",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.2199999988079071,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.05999999865889549,
                   0.019999999552965164
                 ]
               }
@@ -1426,7 +1573,7 @@
               ],
               "useTexture": false
             },
-            "name": "Cipher Plate",
+            "name": "Cipher Plate [3]",
             "openPositionOffset": [
               0.0,
               0.0,
@@ -1540,7 +1687,7 @@
                 ],
                 "position": [
                   0.0,
-                  0.0,
+                  -0.03999999910593033,
                   0.02500000037252903
                 ],
                 "primitiveType": "Cube",
@@ -1552,6 +1699,55 @@
                 "scale": [
                   0.3499999940395355,
                   0.3499999940395355,
+                  0.019999999552965164
+                ]
+              },
+              {
+                "children": [],
+                "id": "uv_order_4",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Position #4",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.2199999988079071,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.05999999865889549,
                   0.019999999552965164
                 ]
               }
@@ -1575,7 +1771,7 @@
               ],
               "useTexture": false
             },
-            "name": "Cipher Plate",
+            "name": "Cipher Plate [4]",
             "openPositionOffset": [
               0.0,
               0.0,
@@ -1653,7 +1849,7 @@
       },
       {
         "children": [],
-        "id": "key_stand",
+        "id": "specimen_table",
         "interactType": "None",
         "isLocked": false,
         "isOpen": false,
@@ -1672,7 +1868,7 @@
           ],
           "useTexture": false
         },
-        "name": "Specimen Stand",
+        "name": "Specimen Examination Stand",
         "openPositionOffset": [
           0.0,
           0.0,
@@ -1698,301 +1894,6 @@
           0.4000000059604645,
           1.0,
           0.4000000059604645
-        ]
-      },
-      {
-        "children": [
-          {
-            "children": [],
-            "id": "key_bow",
-            "interactType": "None",
-            "isLocked": false,
-            "isOpen": false,
-            "isVisible": true,
-            "material": {
-              "diffuse": [
-                1.0,
-                0.8500000238418579,
-                0.20000000298023224
-              ],
-              "shininess": 128.0,
-              "specular": [
-                1.0,
-                0.949999988079071,
-                0.699999988079071
-              ],
-              "useTexture": false
-            },
-            "name": "Key Handle Ring",
-            "openPositionOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "openRotationOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "position": [
-              -0.1599999964237213,
-              0.0,
-              0.0
-            ],
-            "primitiveType": "Cylinder",
-            "rotation": [
-              90.0,
-              0.0,
-              0.0
-            ],
-            "scale": [
-              0.18000000715255737,
-              0.03999999910593033,
-              0.18000000715255737
-            ]
-          },
-          {
-            "children": [],
-            "id": "key_hole",
-            "interactType": "None",
-            "isLocked": false,
-            "isOpen": false,
-            "isVisible": true,
-            "material": {
-              "diffuse": [
-                0.3499999940395355,
-                0.15000000596046448,
-                0.18000000715255737
-              ],
-              "shininess": 32.0,
-              "specular": [
-                0.5,
-                0.5,
-                0.5
-              ],
-              "useTexture": false
-            },
-            "name": "Key Ring Hole",
-            "openPositionOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "openRotationOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "position": [
-              -0.1599999964237213,
-              0.004999999888241291,
-              0.0
-            ],
-            "primitiveType": "Cylinder",
-            "rotation": [
-              90.0,
-              0.0,
-              0.0
-            ],
-            "scale": [
-              0.09000000357627869,
-              0.05000000074505806,
-              0.09000000357627869
-            ]
-          },
-          {
-            "children": [],
-            "id": "key_stem",
-            "interactType": "None",
-            "isLocked": false,
-            "isOpen": false,
-            "isVisible": true,
-            "material": {
-              "diffuse": [
-                1.0,
-                0.8500000238418579,
-                0.20000000298023224
-              ],
-              "shininess": 128.0,
-              "specular": [
-                1.0,
-                0.949999988079071,
-                0.699999988079071
-              ],
-              "useTexture": false
-            },
-            "name": "Key Shaft",
-            "openPositionOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "openRotationOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "position": [
-              0.03999999910593033,
-              0.0,
-              0.0
-            ],
-            "primitiveType": "Cylinder",
-            "rotation": [
-              0.0,
-              0.0,
-              90.0
-            ],
-            "scale": [
-              0.03999999910593033,
-              0.2800000011920929,
-              0.03999999910593033
-            ]
-          },
-          {
-            "children": [],
-            "id": "key_bit",
-            "interactType": "None",
-            "isLocked": false,
-            "isOpen": false,
-            "isVisible": true,
-            "material": {
-              "diffuse": [
-                1.0,
-                0.8500000238418579,
-                0.20000000298023224
-              ],
-              "shininess": 128.0,
-              "specular": [
-                1.0,
-                0.949999988079071,
-                0.699999988079071
-              ],
-              "useTexture": false
-            },
-            "name": "Key Bit Teeth",
-            "openPositionOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "openRotationOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "position": [
-              0.14000000059604645,
-              0.0,
-              0.05999999865889549
-            ],
-            "primitiveType": "Cube",
-            "rotation": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "scale": [
-              0.07999999821186066,
-              0.029999999329447746,
-              0.07999999821186066
-            ]
-          },
-          {
-            "children": [],
-            "id": "key_bit2",
-            "interactType": "None",
-            "isLocked": false,
-            "isOpen": false,
-            "isVisible": true,
-            "material": {
-              "diffuse": [
-                1.0,
-                0.8500000238418579,
-                0.20000000298023224
-              ],
-              "shininess": 128.0,
-              "specular": [
-                1.0,
-                0.949999988079071,
-                0.699999988079071
-              ],
-              "useTexture": false
-            },
-            "name": "Key Notch",
-            "openPositionOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "openRotationOffset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "position": [
-              0.07999999821186066,
-              0.0,
-              0.05000000074505806
-            ],
-            "primitiveType": "Cube",
-            "rotation": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "scale": [
-              0.03999999910593033,
-              0.029999999329447746,
-              0.05999999865889549
-            ]
-          }
-        ],
-        "id": "golden_key",
-        "interactType": "GoldenKey",
-        "isLocked": false,
-        "isOpen": false,
-        "isVisible": true,
-        "material": {
-          "diffuse": [
-            0.800000011920929,
-            0.800000011920929,
-            0.800000011920929
-          ],
-          "shininess": 32.0,
-          "specular": [
-            0.5,
-            0.5,
-            0.5
-          ],
-          "useTexture": false
-        },
-        "name": "Golden Key of Escape",
-        "openPositionOffset": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "openRotationOffset": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "position": [
-          3.5,
-          1.149999976158142,
-          -1.7999999523162842
-        ],
-        "primitiveType": "None",
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          0.23999999463558197,
-          0.23999999463558197,
-          0.23999999463558197
         ]
       },
       {
@@ -2513,7 +2414,7 @@
                       ],
                       "useTexture": true
                     },
-                    "name": "Door Upper Inset",
+                    "name": "Door Upper Inset Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -2527,7 +2428,7 @@
                     "position": [
                       0.0,
                       0.7200000286102295,
-                      0.02500000037252903
+                      0.09000000357627869
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -2562,7 +2463,7 @@
                       ],
                       "useTexture": true
                     },
-                    "name": "Door Lower Inset",
+                    "name": "Door Lower Inset Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -2576,7 +2477,7 @@
                     "position": [
                       0.0,
                       -0.7200000286102295,
-                      0.02500000037252903
+                      0.09000000357627869
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -2611,7 +2512,7 @@
                       ],
                       "useTexture": true
                     },
-                    "name": "Door Reinforcement Beam",
+                    "name": "Door Reinforcement Beam Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -2625,7 +2526,154 @@
                     "position": [
                       0.0,
                       0.0,
-                      0.03500000014901161
+                      0.0949999988079071
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.899999976158142,
+                      0.20000000298023224,
+                      0.03999999910593033
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "asylum_door_panel_upper_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.14760001003742218,
+                        0.21319998800754547,
+                        0.19679999351501465
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Upper Inset Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.7200000286102295,
+                      -0.09000000357627869
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.7000000476837158,
+                      1.149999976158142,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "asylum_door_panel_lower_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.14760001003742218,
+                        0.21319998800754547,
+                        0.19679999351501465
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Lower Inset Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      -0.7200000286102295,
+                      -0.09000000357627869
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.7000000476837158,
+                      1.149999976158142,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "asylum_door_panel_mid_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.22500000894069672,
+                        0.32499998807907104,
+                        0.29999998211860657
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Reinforcement Beam Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.0,
+                      -0.0949999988079071
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -2857,7 +2905,7 @@
                       ],
                       "useTexture": false
                     },
-                    "name": "Brass Lock Assembly",
+                    "name": "Brass Lock Assembly Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -2871,7 +2919,56 @@
                     "position": [
                       0.7200000286102295,
                       -0.07999999821186066,
-                      0.06499999761581421
+                      0.0949999988079071
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.23999999463558197,
+                      0.47999998927116394,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "asylum_door_lock_plate_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8399999737739563,
+                        0.25
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.800000011920929
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Brass Lock Assembly Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.7200000286102295,
+                      -0.07999999821186066,
+                      -0.0949999988079071
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -2930,7 +3027,7 @@
                 "scale": [
                   2.0,
                   3.200000047683716,
-                  0.11999999731779099
+                  0.1599999964237213
                 ]
               }
             ],
@@ -2979,6 +3076,55 @@
               1.0,
               1.0,
               1.0
+            ]
+          },
+          {
+            "children": [],
+            "id": "asylum_door_portal_backing",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.05999999865889549,
+                0.05999999865889549,
+                0.07000000029802322
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Doorway Portal Backing",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              1.7000000476837158,
+              -0.1599999964237213
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              2.299999952316284,
+              3.4000000953674316,
+              0.07999999821186066
             ]
           }
         ],

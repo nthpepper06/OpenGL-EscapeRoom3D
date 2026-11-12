@@ -256,7 +256,7 @@
           0.0,
           0.0
         ],
-        "primitiveType": "None",
+        "primitiveType": "Cube",
         "rotation": [
           0.0,
           0.0,
@@ -303,7 +303,7 @@
         "position": [
           0.0,
           2.4000000953674316,
-          -7.880000114440918
+          -7.820000171661377
         ],
         "primitiveType": "Cube",
         "rotation": [
@@ -352,7 +352,7 @@
         "position": [
           0.0,
           2.4000000953674316,
-          -7.889999866485596
+          -7.860000133514404
         ],
         "primitiveType": "Cube",
         "rotation": [
@@ -1478,7 +1478,7 @@
                       ],
                       "useTexture": true
                     },
-                    "name": "Door Upper Inset",
+                    "name": "Door Upper Inset Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -1492,7 +1492,7 @@
                     "position": [
                       0.0,
                       0.7200000286102295,
-                      0.02500000037252903
+                      0.09000000357627869
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -1527,7 +1527,7 @@
                       ],
                       "useTexture": true
                     },
-                    "name": "Door Lower Inset",
+                    "name": "Door Lower Inset Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -1541,7 +1541,7 @@
                     "position": [
                       0.0,
                       -0.7200000286102295,
-                      0.02500000037252903
+                      0.09000000357627869
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -1576,7 +1576,7 @@
                       ],
                       "useTexture": true
                     },
-                    "name": "Door Reinforcement Beam",
+                    "name": "Door Reinforcement Beam Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -1590,7 +1590,154 @@
                     "position": [
                       0.0,
                       0.0,
-                      0.03500000014901161
+                      0.0949999988079071
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.899999976158142,
+                      0.20000000298023224,
+                      0.03999999910593033
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "mirror_door_panel_upper_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.27880001068115234,
+                        0.164000004529953,
+                        0.11479999870061874
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Upper Inset Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.7200000286102295,
+                      -0.09000000357627869
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.7000000476837158,
+                      1.149999976158142,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "mirror_door_panel_lower_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.27880001068115234,
+                        0.164000004529953,
+                        0.11479999870061874
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Lower Inset Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      -0.7200000286102295,
+                      -0.09000000357627869
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      1.7000000476837158,
+                      1.149999976158142,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "mirror_door_panel_mid_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        0.42500001192092896,
+                        0.25,
+                        0.17499999701976776
+                      ],
+                      "shininess": 32.0,
+                      "specular": [
+                        0.5,
+                        0.5,
+                        0.5
+                      ],
+                      "useTexture": true
+                    },
+                    "name": "Door Reinforcement Beam Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.0,
+                      0.0,
+                      -0.0949999988079071
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -1822,7 +1969,7 @@
                       ],
                       "useTexture": false
                     },
-                    "name": "Brass Lock Assembly",
+                    "name": "Brass Lock Assembly Front",
                     "openPositionOffset": [
                       0.0,
                       0.0,
@@ -1836,7 +1983,56 @@
                     "position": [
                       0.7200000286102295,
                       -0.07999999821186066,
-                      0.06499999761581421
+                      0.0949999988079071
+                    ],
+                    "primitiveType": "Cube",
+                    "rotation": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "scale": [
+                      0.23999999463558197,
+                      0.47999998927116394,
+                      0.029999999329447746
+                    ]
+                  },
+                  {
+                    "children": [],
+                    "id": "mirror_door_lock_plate_bk",
+                    "interactType": "ExitDoor",
+                    "isLocked": false,
+                    "isOpen": false,
+                    "isVisible": true,
+                    "material": {
+                      "diffuse": [
+                        1.0,
+                        0.8399999737739563,
+                        0.25
+                      ],
+                      "shininess": 128.0,
+                      "specular": [
+                        1.0,
+                        0.949999988079071,
+                        0.800000011920929
+                      ],
+                      "useTexture": false
+                    },
+                    "name": "Brass Lock Assembly Back",
+                    "openPositionOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "openRotationOffset": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "position": [
+                      0.7200000286102295,
+                      -0.07999999821186066,
+                      -0.0949999988079071
                     ],
                     "primitiveType": "Cube",
                     "rotation": [
@@ -1895,7 +2091,7 @@
                 "scale": [
                   2.0,
                   3.200000047683716,
-                  0.11999999731779099
+                  0.1599999964237213
                 ]
               }
             ],
@@ -1944,6 +2140,55 @@
               1.0,
               1.0,
               1.0
+            ]
+          },
+          {
+            "children": [],
+            "id": "mirror_door_portal_backing",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.05999999865889549,
+                0.05999999865889549,
+                0.07000000029802322
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Doorway Portal Backing",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              1.7000000476837158,
+              -0.1599999964237213
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              2.299999952316284,
+              3.4000000953674316,
+              0.07999999821186066
             ]
           }
         ],
