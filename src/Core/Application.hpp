@@ -6,6 +6,9 @@
 #include "renderer/Light.hpp"
 #include "renderer/PostProcessor.hpp"
 #include "renderer/IblPipeline.hpp"
+#include "renderer/ShadowPipeline.hpp"
+#include "renderer/ParticleSystem.hpp"
+#include "renderer/SsaoPipeline.hpp"
 #include "scene/SceneObject.hpp"
 #include "scene/SceneSerializer.hpp"
 #include "interaction/InteractionManager.hpp"
@@ -55,6 +58,9 @@ private:
     Shader lightingShader;
     PostProcessor postProcessor;
     IblPipeline iblPipeline;
+    ShadowPipeline shadowPipeline;
+    ParticleSystem particleSystem;
+    SsaoPipeline ssaoPipeline;
 
     PointLight pointLight;
     SpotLight spotLight;

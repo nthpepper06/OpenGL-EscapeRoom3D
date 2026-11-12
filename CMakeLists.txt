@@ -128,6 +128,12 @@ set(ESCAPE_ROOM_SOURCES
     src/renderer/Texture.cpp
     src/renderer/IblPipeline.hpp
     src/renderer/IblPipeline.cpp
+    src/renderer/ShadowPipeline.hpp
+    src/renderer/ShadowPipeline.cpp
+    src/renderer/ParticleSystem.hpp
+    src/renderer/ParticleSystem.cpp
+    src/renderer/SsaoPipeline.hpp
+    src/renderer/SsaoPipeline.cpp
     src/renderer/PostProcessor.hpp
     src/renderer/PostProcessor.cpp
     src/rooms/BaseRoom.hpp

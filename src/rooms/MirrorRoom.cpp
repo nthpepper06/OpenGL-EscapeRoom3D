@@ -30,6 +30,10 @@ MirrorRoom::MirrorRoom() {
     ambientLight.intensity = 0.25f;
     iblIntensity = 1.35f;
     ambientAO = 1.0f;
+    fogColor = glm::vec3(0.08f, 0.06f, 0.14f);
+    fogDensity = 0.045f;
+    fogHeightFalloff = 0.32f;
+    inscatterIntensity = 0.9f;
 
     fearSourcePosition = glm::vec3(0.0f, 2.0f, -4.8f);
     fearDistanceThreshold = 3.2f;

@@ -10,11 +10,13 @@ out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
 out mat3 TBN;
+out vec4 FragPosSpotSpace;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
+uniform mat4 spotLightMatrix;
 
 void main()
 {
@@ -28,6 +30,8 @@ void main()
     vec3 B = cross(N, T);
     TBN = mat3(T, B, N);
     Normal = N;
+
+    FragPosSpotSpace = spotLightMatrix * worldPos;
 
     gl_Position = projection * view * worldPos;
 }

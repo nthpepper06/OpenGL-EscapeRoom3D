@@ -30,6 +30,10 @@ AbandonedAsylumRoom::AbandonedAsylumRoom() {
     ambientLight.intensity = 0.20f;
     iblIntensity = 1.25f;
     ambientAO = 1.0f;
+    fogColor = glm::vec3(0.06f, 0.12f, 0.10f);
+    fogDensity = 0.060f;
+    fogHeightFalloff = 0.38f;
+    inscatterIntensity = 1.0f;
 
     fearSourcePosition = glm::vec3(-1.6f, 0.6f, -1.0f);
     fearDistanceThreshold = 3.0f;

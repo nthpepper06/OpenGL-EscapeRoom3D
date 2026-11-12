@@ -24,6 +24,12 @@ public:
     float iblIntensity = 1.2f;
     float ambientAO = 1.0f;
 
+    // Atmosphere & Fog settings
+    glm::vec3 fogColor = glm::vec3(0.08f, 0.08f, 0.12f);
+    float fogDensity = 0.045f;
+    float fogHeightFalloff = 0.4f;
+    float inscatterIntensity = 0.8f;
+
     std::shared_ptr<SceneObject> rootNode;
 
     // Horror parameters

@@ -53,6 +53,9 @@ void GuiLayer::render(AppMode appMode,
                       const std::string& currentRoomName,
                       float fearFactor,
                       PostProcessor& postProcessor,
+                      ShadowPipeline& shadowPipeline,
+                      ParticleSystem& particleSystem,
+                      SsaoPipeline& ssaoPipeline,
                       std::function<void(int)> onSwitchRoom,
                       std::function<void()> onSaveScene,
                       std::function<void()> onLoadScene) {
@@ -126,7 +129,7 @@ void GuiLayer::render(AppMode appMode,
 
         renderHierarchy(root);
         renderInspector(interactionMgr);
-        renderLighting(pointLight, spotLight, ambientLight, postProcessor, fearFactor);
+        renderLighting(pointLight, spotLight, ambientLight, postProcessor, shadowPipeline, particleSystem, ssaoPipeline, fearFactor);
     }
 }
 
@@ -242,11 +245,12 @@ void GuiLayer::renderInspector(InteractionManager& interactionMgr) {
 }
 
 void GuiLayer::renderLighting(PointLight& pointLight, SpotLight& spotLight, AmbientLight& ambientLight,
-                              PostProcessor& postProcessor, float fearFactor) {
-    ImGui::SetNextWindowPos(ImVec2(10, 490), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(340, 320), ImGuiCond_FirstUseEver);
+                              PostProcessor& postProcessor, ShadowPipeline& shadowPipeline,
+                              ParticleSystem& particleSystem, SsaoPipeline& ssaoPipeline, float fearFactor) {
+    ImGui::SetNextWindowPos(ImVec2(10, 470), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(380, 420), ImGuiCond_FirstUseEver);
 
-    if (ImGui::Begin("Lighting & Horror FX", nullptr)) {
+    if (ImGui::Begin("Lighting & Atmosphere FX", nullptr)) {
         // Point light (Ceiling / Altar lamp)
         if (ImGui::TreeNode("Horror Point Light (Flickering)")) {
             ImGui::Checkbox("Enabled", &pointLight.enabled);
@@ -255,7 +259,7 @@ void GuiLayer::renderLighting(PointLight& pointLight, SpotLight& spotLight, Ambi
             ImGui::SliderFloat("Flicker Noise Depth", &pointLight.flickerNoiseDepth, 0.0f, 1.0f);
             ImGui::DragFloat3("Position", &pointLight.position.x, 0.1f);
             ImGui::ColorEdit3("Color", &pointLight.color.r);
-            ImGui::SliderFloat("Base Intensity", &pointLight.baseIntensity, 0.0f, 15.0f);
+            ImGui::SliderFloat("Base Intensity", &pointLight.baseIntensity, 0.0f, 25.0f);
             ImGui::TextDisabled("Live Intensity: %.2f", pointLight.intensity);
             ImGui::TreePop();
         }
@@ -264,7 +268,58 @@ void GuiLayer::renderLighting(PointLight& pointLight, SpotLight& spotLight, Ambi
         if (ImGui::TreeNode("Camera Flashlight (F)")) {
             ImGui::Checkbox("Flashlight Enabled##spot", &spotLight.enabled);
             ImGui::ColorEdit3("Color##spot", &spotLight.color.r);
-            ImGui::SliderFloat("Intensity##spot", &spotLight.intensity, 0.0f, 15.0f);
+            ImGui::SliderFloat("Intensity##spot", &spotLight.intensity, 0.0f, 40.0f);
+            ImGui::TreePop();
+        }
+
+        // Dynamic Shadows (Phase 2)
+        if (ImGui::TreeNodeEx("Dynamic Shadows (Phase 2)", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "Spot Shadow (Rotated Poisson PCF)");
+            ImGui::SliderFloat("Spot Bias Min", &shadowPipeline.spotBiasMin, 0.0001f, 0.01f, "%.4f");
+            ImGui::SliderFloat("Spot Bias Max", &shadowPipeline.spotBiasMax, 0.001f, 0.02f, "%.4f");
+            ImGui::SliderFloat("Spot Normal Bias", &shadowPipeline.spotNormalBias, 0.0f, 0.1f, "%.3f");
+            ImGui::SliderFloat("PCF Filter Radius", &shadowPipeline.spotPcfRadius, 0.5f, 4.0f, "%.1f");
+            ImGui::SliderInt("PCF Taps", &shadowPipeline.spotPcfTaps, 4, 16);
+
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Ceiling Omnidirectional Shadow Cubemap");
+            ImGui::Checkbox("Point Shadow Enabled", &shadowPipeline.pointShadowEnabled);
+            ImGui::SliderFloat("Point Bias Min", &shadowPipeline.pointBiasMin, 0.001f, 0.02f, "%.4f");
+            ImGui::SliderFloat("Point Bias Max", &shadowPipeline.pointBiasMax, 0.005f, 0.05f, "%.4f");
+            ImGui::SliderFloat("Point Normal Bias", &shadowPipeline.pointNormalBias, 0.0f, 0.1f, "%.3f");
+            if (ImGui::Button("Force Rebake Point Shadow Cubemap")) {
+                shadowPipeline.markPointShadowDirty();
+            }
+            ImGui::TreePop();
+        }
+
+        // SSAO Pipeline (Phase 2)
+        if (ImGui::TreeNodeEx("Screen Space Ambient Occlusion (Phase 2)", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Checkbox("Enable SSAO", &ssaoPipeline.enabled);
+            ImGui::SliderFloat("SSAO Radius", &ssaoPipeline.radius, 0.1f, 1.5f, "%.2f");
+            ImGui::SliderFloat("SSAO Bias", &ssaoPipeline.bias, 0.005f, 0.08f, "%.3f");
+            ImGui::SliderFloat("SSAO Power", &ssaoPipeline.power, 0.5f, 4.0f, "%.1f");
+            ImGui::SliderInt("SSAO Kernel Samples", &ssaoPipeline.kernelSize, 8, 32);
+            ImGui::TreePop();
+        }
+
+        // HDR Bloom & Post-Processing (Phase 2)
+        if (ImGui::TreeNodeEx("HDR Bloom & Film Grain (Phase 2)", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Checkbox("Enable Bloom", &postProcessor.bloomEnabled);
+            ImGui::SliderFloat("Bloom Intensity", &postProcessor.bloomIntensity, 0.0f, 3.0f, "%.2f");
+            ImGui::SliderFloat("Bloom Threshold", &postProcessor.bloomThreshold, 0.5f, 3.0f, "%.2f");
+            ImGui::SliderFloat("Film Grain Strength", &postProcessor.filmGrainStrength, 0.0f, 0.10f, "%.3f");
+            ImGui::SliderFloat("Vignette Strength", &postProcessor.vignetteStrength, 0.0f, 1.0f);
+            ImGui::SliderFloat("Chromatic Aberration", &postProcessor.chromaticAberrationStrength, 0.0f, 0.02f, "%.4f");
+            ImGui::ProgressBar(fearFactor, ImVec2(0.0f, 0.0f), "Fear Level");
+            ImGui::TreePop();
+        }
+
+        // Atmospheric Dust Particles (Phase 2)
+        if (ImGui::TreeNode("Atmospheric Dust Motes (Phase 2)")) {
+            ImGui::Checkbox("Dust Particles Enabled", &particleSystem.enabled);
+            ImGui::SliderInt("Particle Count", &particleSystem.activeCount, 50, 450);
+            ImGui::SliderFloat("Particle Size", &particleSystem.particleBaseSize, 0.01f, 0.10f, "%.3f");
             ImGui::TreePop();
         }
 
@@ -285,19 +340,13 @@ void GuiLayer::renderLighting(PointLight& pointLight, SpotLight& spotLight, Ambi
                 "3: Roughness (Linear)",
                 "4: Metallic (Linear)",
                 "5: Ambient Occlusion (AO)",
-                "6: IBL Contribution Only"
+                "6: IBL Contribution Only",
+                "7: Direct Shadows Only",
+                "8: SSAO Factor Only"
             };
             ImGui::Combo("Debug View", &debugViewMode, debugModes, IM_ARRAYSIZE(debugModes));
             ImGui::SliderFloat("IBL Split-Sum Intensity", &iblIntensity, 0.0f, 5.0f, "%.2f");
             ImGui::SliderFloat("Ambient AO Modulation", &ambientAO, 0.0f, 2.0f, "%.2f");
-            ImGui::TreePop();
-        }
-
-        // Post-Processing Horror Shaders
-        if (ImGui::TreeNode("Horror Post-Processing FX")) {
-            ImGui::SliderFloat("Vignette Strength", &postProcessor.vignetteStrength, 0.0f, 1.0f);
-            ImGui::SliderFloat("Chromatic Aberration", &postProcessor.chromaticAberrationStrength, 0.0f, 0.02f, "%.4f");
-            ImGui::ProgressBar(fearFactor, ImVec2(0.0f, 0.0f), "Fear Level");
             ImGui::TreePop();
         }
 

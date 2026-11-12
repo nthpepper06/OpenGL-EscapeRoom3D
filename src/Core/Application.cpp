@@ -156,6 +156,17 @@ bool Application::init(int width, int height, const std::string& title) {
         }
     }
 
+    // Initialize Phase 2 Rendering Systems
+    if (!shadowPipeline.init(1024, 512)) {
+        std::cerr << "[Warning] ShadowPipeline initialization failed.\n";
+    }
+    if (!particleSystem.init(450)) {
+        std::cerr << "[Warning] ParticleSystem initialization failed.\n";
+    }
+    if (!ssaoPipeline.init(windowWidth, windowHeight)) {
+        std::cerr << "[Warning] SsaoPipeline initialization failed.\n";
+    }
+
     // Initialize Dear ImGui UI Layer
     guiLayer.init(window);
 
@@ -197,6 +208,9 @@ void Application::switchRoom(int index) {
     // Synchronize IBL ambient controls
     guiLayer.iblIntensity = room->iblIntensity;
     guiLayer.ambientAO = room->ambientAO;
+
+    // Invalidate static point shadow cubemap to force rebake for the new room
+    shadowPipeline.markPointShadowDirty();
 
     // Save initial room configuration
     SceneSerializer::saveToFile(sceneFilePath, sceneRoot, pointLight, spotLight, ambientLight);
@@ -270,16 +284,50 @@ void Application::run() {
         spotLight.position = camera.position;
         spotLight.direction = camera.front;
 
+        // Check if dynamic objects moved to invalidate static point shadow cubemap
+        bool dynamicPropsMoving = false;
+        if (interactionMgr.drawerObject && interactionMgr.drawerObject->animProgress > 0.0f && interactionMgr.drawerObject->animProgress < 1.0f) {
+            dynamicPropsMoving = true;
+        }
+        if (interactionMgr.safeDoorObject && interactionMgr.safeDoorObject->animProgress > 0.0f && interactionMgr.safeDoorObject->animProgress < 1.0f) {
+            dynamicPropsMoving = true;
+        }
+        if (dynamicPropsMoving) {
+            shadowPipeline.markPointShadowDirty();
+        }
+
         // ==========================================
-        // PASS 1: RENDER 3D SCENE TO FBO TEXTURE
+        // PASS 0A: SPOTLIGHT SHADOW MAP PASS
+        // ==========================================
+        if (spotLight.enabled) {
+            shadowPipeline.renderSpotShadow(spotLight, sceneRoot);
+        }
+
+        // ==========================================
+        // PASS 0B: OMNIDIRECTIONAL POINT SHADOW CUBEMAP PASS (CACHED)
+        // ==========================================
+        if (pointLight.enabled && shadowPipeline.pointShadowEnabled) {
+            shadowPipeline.renderPointShadow(pointLight, sceneRoot);
+        }
+
+        glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth / (float)windowHeight);
+        glm::mat4 view = camera.getViewMatrix();
+
+        // ==========================================
+        // PASS 0C: SSAO GEOMETRY PREPASS & COMPUTATION
+        // ==========================================
+        if (ssaoPipeline.enabled) {
+            ssaoPipeline.renderGeometryPrepass(view, projection, sceneRoot);
+            ssaoPipeline.renderSSAO(projection);
+        }
+
+        // ==========================================
+        // PASS 1: RENDER 3D SCENE TO FBO TEXTURE (HDR)
         // ==========================================
         postProcessor.bypassTonemap = (guiLayer.debugViewMode > 0);
         postProcessor.beginRender();
 
         lightingShader.use();
-
-        glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth / (float)windowHeight);
-        glm::mat4 view = camera.getViewMatrix();
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
         lightingShader.setVec3("viewPos", camera.position);
@@ -322,6 +370,43 @@ void Application::run() {
         glBindTexture(GL_TEXTURE_2D, iblPipeline.getBrdfLUT());
         lightingShader.setInt("brdfLUT", 8);
 
+        // Phase 2: Shadows
+        glActiveTexture(GL_TEXTURE9);
+        glBindTexture(GL_TEXTURE_2D, shadowPipeline.getSpotShadowMap());
+        lightingShader.setInt("spotShadowMap", 9);
+        lightingShader.setMat4("spotLightMatrix", shadowPipeline.getSpotLightMatrix());
+        lightingShader.setBool("spotShadowEnabled", spotLight.enabled);
+        lightingShader.setFloat("spotBiasMin", shadowPipeline.spotBiasMin);
+        lightingShader.setFloat("spotBiasMax", shadowPipeline.spotBiasMax);
+        lightingShader.setFloat("spotNormalBias", shadowPipeline.spotNormalBias);
+        lightingShader.setFloat("spotPcfRadius", shadowPipeline.spotPcfRadius);
+        lightingShader.setInt("spotPcfTaps", shadowPipeline.spotPcfTaps);
+
+        glActiveTexture(GL_TEXTURE10);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, shadowPipeline.getPointShadowCubemap());
+        lightingShader.setInt("pointShadowCubemap", 10);
+        lightingShader.setBool("pointShadowEnabled", shadowPipeline.pointShadowEnabled && pointLight.enabled);
+        lightingShader.setFloat("pointLightFarPlane", shadowPipeline.getPointFarPlane());
+        lightingShader.setFloat("pointBiasMin", shadowPipeline.pointBiasMin);
+        lightingShader.setFloat("pointBiasMax", shadowPipeline.pointBiasMax);
+        lightingShader.setFloat("pointNormalBias", shadowPipeline.pointNormalBias);
+
+        // Phase 2: SSAO
+        glActiveTexture(GL_TEXTURE11);
+        glBindTexture(GL_TEXTURE_2D, ssaoPipeline.getSsaoTexture());
+        lightingShader.setInt("ssaoTexture", 11);
+        lightingShader.setBool("ssaoEnabled", ssaoPipeline.enabled);
+        lightingShader.setVec2("screenSize", glm::vec2((float)windowWidth, (float)windowHeight));
+
+        // Phase 2: Fog & Atmosphere
+        if (currentRoomIndex >= 0 && currentRoomIndex < static_cast<int>(rooms.size())) {
+            lightingShader.setVec3("fogColor", rooms[currentRoomIndex]->fogColor);
+            lightingShader.setFloat("fogDensity", rooms[currentRoomIndex]->fogDensity);
+        } else {
+            lightingShader.setVec3("fogColor", glm::vec3(0.04f, 0.03f, 0.05f));
+            lightingShader.setFloat("fogDensity", 0.04f);
+        }
+
         lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
         lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
@@ -331,11 +416,17 @@ void Application::run() {
             sceneRoot->draw(lightingShader, hoveredObjectId, selectedId);
         }
 
+        // Render Atmospheric Dust Motes
+        if (particleSystem.enabled) {
+            particleSystem.update(deltaTime, totalTime, camera.position);
+            particleSystem.render(view, projection, camera.position, spotLight);
+        }
+
         postProcessor.endRender();
 
         // ==========================================
         // PASS 2: HORROR POST-PROCESSING TO SCREEN
-        // (Vignette + Chromatic Aberration + Panic Heartbeat)
+        // (Bloom + Vignette + Chromatic Aberration + Panic Heartbeat + Film Grain)
         // ==========================================
         postProcessor.render(totalTime, currentFearFactor);
 
@@ -360,6 +451,9 @@ void Application::run() {
                         currentRoomName,
                         currentFearFactor,
                         postProcessor,
+                        shadowPipeline,
+                        particleSystem,
+                        ssaoPipeline,
                         [this](int roomIdx) { switchRoom(roomIdx); },
                         [this]() { saveCurrentScene(); },
                         [this]() { loadSceneFile(); });
@@ -429,6 +523,7 @@ void Application::onFramebufferSize(int width, int height) {
     windowHeight = height;
     glViewport(0, 0, width, height);
     postProcessor.resize(width, height);
+    ssaoPipeline.resize(width, height);
 }
 
 void Application::onMouseMove(double xpos, double ypos) {
@@ -653,12 +748,25 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         spotLight.position = camera.position;
         spotLight.direction = camera.front;
 
+        if (spotLight.enabled) {
+            shadowPipeline.renderSpotShadow(spotLight, sceneRoot);
+        }
+        if (pointLight.enabled && shadowPipeline.pointShadowEnabled) {
+            shadowPipeline.renderPointShadow(pointLight, sceneRoot);
+        }
+
+        glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth / (float)windowHeight);
+        glm::mat4 view = camera.getViewMatrix();
+
+        if (ssaoPipeline.enabled) {
+            ssaoPipeline.renderGeometryPrepass(view, projection, sceneRoot);
+            ssaoPipeline.renderSSAO(projection);
+        }
+
         postProcessor.bypassTonemap = (guiLayer.debugViewMode > 0);
         postProcessor.beginRender();
 
         lightingShader.use();
-        glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth / (float)windowHeight);
-        glm::mat4 view = camera.getViewMatrix();
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
         lightingShader.setVec3("viewPos", camera.position);
@@ -697,6 +805,42 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         glBindTexture(GL_TEXTURE_2D, iblPipeline.getBrdfLUT());
         lightingShader.setInt("brdfLUT", 8);
 
+        // Phase 2: Shadows
+        glActiveTexture(GL_TEXTURE9);
+        glBindTexture(GL_TEXTURE_2D, shadowPipeline.getSpotShadowMap());
+        lightingShader.setInt("spotShadowMap", 9);
+        lightingShader.setMat4("spotLightMatrix", shadowPipeline.getSpotLightMatrix());
+        lightingShader.setBool("spotShadowEnabled", spotLight.enabled);
+        lightingShader.setFloat("spotBiasMin", shadowPipeline.spotBiasMin);
+        lightingShader.setFloat("spotBiasMax", shadowPipeline.spotBiasMax);
+        lightingShader.setFloat("spotNormalBias", shadowPipeline.spotNormalBias);
+        lightingShader.setFloat("spotPcfRadius", shadowPipeline.spotPcfRadius);
+        lightingShader.setInt("spotPcfTaps", shadowPipeline.spotPcfTaps);
+
+        glActiveTexture(GL_TEXTURE10);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, shadowPipeline.getPointShadowCubemap());
+        lightingShader.setInt("pointShadowCubemap", 10);
+        lightingShader.setBool("pointShadowEnabled", shadowPipeline.pointShadowEnabled && pointLight.enabled);
+        lightingShader.setFloat("pointLightFarPlane", shadowPipeline.getPointFarPlane());
+        lightingShader.setFloat("pointBiasMin", shadowPipeline.pointBiasMin);
+        lightingShader.setFloat("pointBiasMax", shadowPipeline.pointBiasMax);
+        lightingShader.setFloat("pointNormalBias", shadowPipeline.pointNormalBias);
+
+        // Phase 2: SSAO
+        glActiveTexture(GL_TEXTURE11);
+        glBindTexture(GL_TEXTURE_2D, ssaoPipeline.getSsaoTexture());
+        lightingShader.setInt("ssaoTexture", 11);
+        lightingShader.setBool("ssaoEnabled", ssaoPipeline.enabled);
+        lightingShader.setVec2("screenSize", glm::vec2((float)windowWidth, (float)windowHeight));
+
+        if (currentRoomIndex >= 0 && currentRoomIndex < static_cast<int>(rooms.size())) {
+            lightingShader.setVec3("fogColor", rooms[currentRoomIndex]->fogColor);
+            lightingShader.setFloat("fogDensity", rooms[currentRoomIndex]->fogDensity);
+        } else {
+            lightingShader.setVec3("fogColor", glm::vec3(0.04f, 0.03f, 0.05f));
+            lightingShader.setFloat("fogDensity", 0.04f);
+        }
+
         lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
         lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
@@ -705,6 +849,12 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         if (sceneRoot) {
             sceneRoot->draw(lightingShader, hoveredObjectId, selectedId);
         }
+
+        if (particleSystem.enabled) {
+            particleSystem.update(dt, t, camera.position);
+            particleSystem.render(view, projection, camera.position, spotLight);
+        }
+
         postProcessor.endRender();
 
         postProcessor.render(t, currentFearFactor);
@@ -716,6 +866,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         guiLayer.render(appMode, sceneRoot, pointLight, spotLight, ambientLight,
                         interactionMgr, camera, hoveredObjectId, windowWidth, windowHeight,
                         currentRoomIndex, currentRoomName, currentFearFactor, postProcessor,
+                        shadowPipeline, particleSystem, ssaoPipeline,
                         [this](int r) { switchRoom(r); },
                         [this]() { saveCurrentScene(); },
                         [this]() { loadSceneFile(); });

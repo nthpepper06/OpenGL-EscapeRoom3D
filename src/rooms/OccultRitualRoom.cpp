@@ -30,6 +30,10 @@ OccultRitualRoom::OccultRitualRoom() {
     ambientLight.intensity = 0.25f;
     iblIntensity = 1.15f;
     ambientAO = 1.0f;
+    fogColor = glm::vec3(0.12f, 0.04f, 0.04f);
+    fogDensity = 0.055f;
+    fogHeightFalloff = 0.35f;
+    inscatterIntensity = 1.0f;
 
     fearSourcePosition = glm::vec3(0.0f, 0.8f, -2.5f);
     fearDistanceThreshold = 3.2f;
