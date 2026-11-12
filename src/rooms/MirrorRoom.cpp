@@ -165,9 +165,10 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     // ==========================================
     // 2. COLOSSAL HAUNTED GRAND MIRROR ON NORTH WALL
     // ==========================================
+    // Offset +0.02 along normal (+Z) to avoid Z-fighting against ornate frame and wall
     auto centerMirror = std::make_shared<SceneObject>("center_mirror", "Haunted Grand Mirror", PrimitiveType::Cube);
     centerMirror->mesh = cubeMesh;
-    centerMirror->position = glm::vec3(0.0f, 2.4f, -7.88f);
+    centerMirror->position = glm::vec3(0.0f, 2.4f, -7.82f);
     centerMirror->scale = glm::vec3(6.4f, 3.8f, 0.08f);
     applyMirrorPbr(centerMirror);
     rootNode->addChild(centerMirror);
@@ -175,7 +176,7 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     // Ornate Golden Mirror Frame
     auto mirrorFrame = std::make_shared<SceneObject>("mirror_frame", "Ornate Gilded Frame", PrimitiveType::Cube);
     mirrorFrame->mesh = PrimitiveGenerator::createBeveledCube(6.7f, 4.1f, 0.10f, 0.04f, 2);
-    mirrorFrame->position = glm::vec3(0.0f, 2.4f, -7.89f);
+    mirrorFrame->position = glm::vec3(0.0f, 2.4f, -7.86f);
     mirrorFrame->material.albedoColor = glm::vec3(0.92f, 0.80f, 0.35f); // Burnished gold
     mirrorFrame->material.metallic = 0.95f;
     mirrorFrame->material.roughness = 0.25f;

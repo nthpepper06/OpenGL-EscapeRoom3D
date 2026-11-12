@@ -131,11 +131,14 @@ void PlanarReflection::beginRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glFrontFace(GL_CW); // Inverted face winding due to reflection
-    glDisable(GL_CULL_FACE); // Disable cull face during reflection pass to eliminate all flipped/missing polygon flickering
+    glEnable(GL_CLIP_DISTANCE0);
 }
 
 void PlanarReflection::endRender() {
+    glDisable(GL_CLIP_DISTANCE0);
     glFrontFace(GL_CCW);
     if (stateGuard) {
         stateGuard->restore();

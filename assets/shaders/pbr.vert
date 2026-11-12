@@ -17,12 +17,15 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
 uniform mat4 spotLightMatrix;
+uniform vec4 clipPlane;
 
 void main()
 {
     vec4 worldPos = model * vec4(aPos, 1.0);
     FragPos = vec3(worldPos);
     TexCoords = aTexCoords;
+
+    gl_ClipDistance[0] = dot(worldPos, clipPlane);
 
     vec3 N = normalize(normalMatrix * aNormal);
     vec3 T = normalize(normalMatrix * aTangent);

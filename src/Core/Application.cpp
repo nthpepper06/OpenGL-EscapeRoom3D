@@ -152,6 +152,11 @@ bool Application::init(int width, int height, const std::string& title) {
         uvDecalShader.loadFromFiles("uv_decal.vert", "uv_decal.frag");
     }
 
+    // Load Dedicated Planar Mirror Shaders
+    if (!mirrorShader.loadFromFiles("assets/shaders/mirror.vert", "assets/shaders/mirror.frag")) {
+        mirrorShader.loadFromFiles("mirror.vert", "mirror.frag");
+    }
+
     // Initialize Post-Processing FBO Pipeline
     std::string postVert = "assets/shaders/post_process.vert";
     std::string postFrag = "assets/shaders/post_process.frag";
@@ -507,8 +512,9 @@ void Application::run() {
         // ==========================================
         gpuProfiler.beginPass(GpuPass::PlanarReflection);
         if (currentRoomIndex == 2 && planarReflection.enabled) {
+            GLStateGuard refGuard;
             glm::mat4 refView, refProj;
-            glm::vec3 mirrorPos(0.0f, 2.4f, -7.84f);
+            glm::vec3 mirrorPos(0.0f, 2.4f, -7.82f);
             glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
             planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
 
@@ -517,6 +523,7 @@ void Application::run() {
             lightingShader.setMat4("projection", refProj);
             lightingShader.setMat4("view", refView);
             lightingShader.setVec3("viewPos", camera.position);
+            lightingShader.setVec4("clipPlane", glm::vec4(mirrorNormal, -glm::dot(mirrorNormal, mirrorPos) + 0.02f));
             lightingShader.setBool("usePlanarReflection", false);
             lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
             lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
@@ -628,6 +635,7 @@ void Application::run() {
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
         lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
         lightingShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
+        lightingShader.setVec4("clipPlane", glm::vec4(0.0f));
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
         bool inspectingItem = interactionMgr.isInspectMode && 
@@ -639,8 +647,35 @@ void Application::run() {
             interactionMgr.keyObject->isVisible = false; // Hide from world pass while inspecting
         }
 
+        auto centerMirror = (currentRoomIndex == 2 && sceneRoot) ? sceneRoot->findById("center_mirror") : nullptr;
+        if (centerMirror) centerMirror->isVisible = false; // Dedicated mirror shader handles mirror face (no direct PBR specular)
+
         if (sceneRoot) {
             sceneRoot->draw(lightingShader, hoveredObjectId, selectedId, RenderLayer::RealOnly);
+        }
+
+        if (centerMirror) centerMirror->isVisible = true;
+
+        // ------------------------------------------------------------------------
+        // PASS 1A-MIRROR: DEDICATED PLANAR MIRROR SURFACE SHADING
+        // (Soft-shoulder bloom clamp, zero specular blowout, antique patina)
+        // ------------------------------------------------------------------------
+        if (currentRoomIndex == 2 && planarReflection.enabled && centerMirror && centerMirror->mesh) {
+            mirrorShader.use();
+            mirrorShader.setMat4("projection", projection);
+            mirrorShader.setMat4("view", view);
+            mirrorShader.setMat4("model", centerMirror->getWorldMatrix());
+            mirrorShader.setMat3("normalMatrix", centerMirror->getNormalMatrix());
+            mirrorShader.setVec3("viewPos", camera.position);
+            mirrorShader.setVec2("screenSize", glm::vec2((float)windowWidth, (float)windowHeight));
+            mirrorShader.setFloat("bloomThreshold", postProcessor.bloomThreshold);
+            mirrorShader.setVec4("clipPlane", glm::vec4(0.0f));
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, planarReflection.getReflectionTexture());
+            mirrorShader.setInt("planarReflectionMap", 0);
+
+            centerMirror->mesh->draw();
         }
 
         // ------------------------------------------------------------------------
@@ -1161,7 +1196,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
 
         if (currentRoomIndex == 2 && planarReflection.enabled) {
             glm::mat4 refView, refProj;
-            glm::vec3 mirrorPos(0.0f, 2.4f, -7.84f);
+            glm::vec3 mirrorPos(0.0f, 2.4f, -7.82f);
             glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
             planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
 
@@ -1170,6 +1205,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
             lightingShader.setMat4("projection", refProj);
             lightingShader.setMat4("view", refView);
             lightingShader.setVec3("viewPos", camera.position);
+            lightingShader.setVec4("clipPlane", glm::vec4(mirrorNormal, -glm::dot(mirrorNormal, mirrorPos) + 0.02f));
             lightingShader.setBool("usePlanarReflection", false);
             lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
             lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
@@ -1273,8 +1309,31 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         lightingShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
+        auto centerMirror = (currentRoomIndex == 2 && sceneRoot) ? sceneRoot->findById("center_mirror") : nullptr;
+        if (centerMirror) centerMirror->isVisible = false;
+
         if (sceneRoot) {
             sceneRoot->draw(lightingShader, hoveredObjectId, selectedId, RenderLayer::RealOnly);
+        }
+
+        if (centerMirror) centerMirror->isVisible = true;
+
+        if (currentRoomIndex == 2 && planarReflection.enabled && centerMirror && centerMirror->mesh) {
+            mirrorShader.use();
+            mirrorShader.setMat4("projection", projection);
+            mirrorShader.setMat4("view", view);
+            mirrorShader.setMat4("model", centerMirror->getWorldMatrix());
+            mirrorShader.setMat3("normalMatrix", centerMirror->getNormalMatrix());
+            mirrorShader.setVec3("viewPos", camera.position);
+            mirrorShader.setVec2("screenSize", glm::vec2((float)windowWidth, (float)windowHeight));
+            mirrorShader.setFloat("bloomThreshold", postProcessor.bloomThreshold);
+            mirrorShader.setVec4("clipPlane", glm::vec4(0.0f));
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, planarReflection.getReflectionTexture());
+            mirrorShader.setInt("planarReflectionMap", 0);
+
+            centerMirror->mesh->draw();
         }
 
         // UV Decal overlay pass during benchmark capture

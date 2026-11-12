@@ -65,6 +65,7 @@ private:
     PlayerController playerController;
     Shader lightingShader;
     Shader uvDecalShader;
+    Shader mirrorShader;
     PostProcessor postProcessor;
     IblPipeline iblPipeline;
     ShadowPipeline shadowPipeline;
