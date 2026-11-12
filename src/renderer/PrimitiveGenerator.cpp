@@ -189,3 +189,207 @@ std::shared_ptr<Mesh> PrimitiveGenerator::createSphere(int sectorCount, int stac
 
     return std::make_shared<Mesh>(vertices, indices);
 }
+
+std::shared_ptr<Mesh> PrimitiveGenerator::createBeveledCube(float width, float height, float depth, float bevelRadius, int bevelSegments) {
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    bevelSegments = std::clamp(bevelSegments, 1, 8);
+    float maxR = std::min(width, std::min(height, depth)) * 0.45f;
+    bevelRadius = std::clamp(bevelRadius, 0.001f, maxR);
+
+    float hx = width * 0.5f - bevelRadius;
+    float hy = height * 0.5f - bevelRadius;
+    float hz = depth * 0.5f - bevelRadius;
+
+    auto calcUV = [&](const glm::vec3& p, const glm::vec3& n) -> glm::vec2 {
+        glm::vec3 an = glm::abs(n);
+        if (an.x >= an.y && an.x >= an.z) {
+            return glm::vec2((p.z / depth) + 0.5f, (p.y / height) + 0.5f);
+        } else if (an.y >= an.z) {
+            return glm::vec2((p.x / width) + 0.5f, (p.z / depth) + 0.5f);
+        } else {
+            return glm::vec2((p.x / width) + 0.5f, (p.y / height) + 0.5f);
+        }
+    };
+
+    auto addQuad = [&](const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3) {
+        unsigned int idx = static_cast<unsigned int>(vertices.size());
+        vertices.push_back(v0);
+        vertices.push_back(v1);
+        vertices.push_back(v2);
+        vertices.push_back(v3);
+        indices.push_back(idx);
+        indices.push_back(idx + 1);
+        indices.push_back(idx + 2);
+        indices.push_back(idx);
+        indices.push_back(idx + 2);
+        indices.push_back(idx + 3);
+    };
+
+    // 1. SIX FLAT FACES
+    // Front (+Z)
+    addQuad(
+        { {-hx, -hy, hz + bevelRadius}, {0, 0, 1}, calcUV({-hx, -hy, hz + bevelRadius}, {0,0,1}) },
+        { { hx, -hy, hz + bevelRadius}, {0, 0, 1}, calcUV({ hx, -hy, hz + bevelRadius}, {0,0,1}) },
+        { { hx,  hy, hz + bevelRadius}, {0, 0, 1}, calcUV({ hx,  hy, hz + bevelRadius}, {0,0,1}) },
+        { {-hx,  hy, hz + bevelRadius}, {0, 0, 1}, calcUV({-hx,  hy, hz + bevelRadius}, {0,0,1}) }
+    );
+    // Back (-Z)
+    addQuad(
+        { { hx, -hy, -hz - bevelRadius}, {0, 0, -1}, calcUV({ hx, -hy, -hz - bevelRadius}, {0,0,-1}) },
+        { {-hx, -hy, -hz - bevelRadius}, {0, 0, -1}, calcUV({-hx, -hy, -hz - bevelRadius}, {0,0,-1}) },
+        { {-hx,  hy, -hz - bevelRadius}, {0, 0, -1}, calcUV({-hx,  hy, -hz - bevelRadius}, {0,0,-1}) },
+        { { hx,  hy, -hz - bevelRadius}, {0, 0, -1}, calcUV({ hx,  hy, -hz - bevelRadius}, {0,0,-1}) }
+    );
+    // Top (+Y)
+    addQuad(
+        { {-hx, hy + bevelRadius,  hz}, {0, 1, 0}, calcUV({-hx, hy + bevelRadius,  hz}, {0,1,0}) },
+        { { hx, hy + bevelRadius,  hz}, {0, 1, 0}, calcUV({ hx, hy + bevelRadius,  hz}, {0,1,0}) },
+        { { hx, hy + bevelRadius, -hz}, {0, 1, 0}, calcUV({ hx, hy + bevelRadius, -hz}, {0,1,0}) },
+        { {-hx, hy + bevelRadius, -hz}, {0, 1, 0}, calcUV({-hx, hy + bevelRadius, -hz}, {0,1,0}) }
+    );
+    // Bottom (-Y)
+    addQuad(
+        { {-hx, -hy - bevelRadius, -hz}, {0, -1, 0}, calcUV({-hx, -hy - bevelRadius, -hz}, {0,-1,0}) },
+        { { hx, -hy - bevelRadius, -hz}, {0, -1, 0}, calcUV({ hx, -hy - bevelRadius, -hz}, {0,-1,0}) },
+        { { hx, -hy - bevelRadius,  hz}, {0, -1, 0}, calcUV({ hx, -hy - bevelRadius,  hz}, {0,-1,0}) },
+        { {-hx, -hy - bevelRadius,  hz}, {0, -1, 0}, calcUV({-hx, -hy - bevelRadius,  hz}, {0,-1,0}) }
+    );
+    // Right (+X)
+    addQuad(
+        { {hx + bevelRadius, -hy,  hz}, {1, 0, 0}, calcUV({hx + bevelRadius, -hy,  hz}, {1,0,0}) },
+        { {hx + bevelRadius, -hy, -hz}, {1, 0, 0}, calcUV({hx + bevelRadius, -hy, -hz}, {1,0,0}) },
+        { {hx + bevelRadius,  hy, -hz}, {1, 0, 0}, calcUV({hx + bevelRadius,  hy, -hz}, {1,0,0}) },
+        { {hx + bevelRadius,  hy,  hz}, {1, 0, 0}, calcUV({hx + bevelRadius,  hy,  hz}, {1,0,0}) }
+    );
+    // Left (-X)
+    addQuad(
+        { {-hx - bevelRadius, -hy, -hz}, {-1, 0, 0}, calcUV({-hx - bevelRadius, -hy, -hz}, {-1,0,0}) },
+        { {-hx - bevelRadius, -hy,  hz}, {-1, 0, 0}, calcUV({-hx - bevelRadius, -hy,  hz}, {-1,0,0}) },
+        { {-hx - bevelRadius,  hy,  hz}, {-1, 0, 0}, calcUV({-hx - bevelRadius,  hy,  hz}, {-1,0,0}) },
+        { {-hx - bevelRadius,  hy, -hz}, {-1, 0, 0}, calcUV({-hx - bevelRadius,  hy, -hz}, {-1,0,0}) }
+    );
+
+    // 2. TWELVE CYLINDRICAL BEVEL EDGES
+    // 4 Edges parallel to Z
+    auto addEdgeZ = [&](float cx, float cy, float startAngle, float endAngle) {
+        for (int i = 0; i < bevelSegments; ++i) {
+            float a0 = startAngle + (endAngle - startAngle) * ((float)i / bevelSegments);
+            float a1 = startAngle + (endAngle - startAngle) * ((float)(i + 1) / bevelSegments);
+            glm::vec3 n0(std::cos(a0), std::sin(a0), 0.0f);
+            glm::vec3 n1(std::cos(a1), std::sin(a1), 0.0f);
+            glm::vec3 p0A(cx + bevelRadius * n0.x, cy + bevelRadius * n0.y, -hz);
+            glm::vec3 p0B(cx + bevelRadius * n0.x, cy + bevelRadius * n0.y,  hz);
+            glm::vec3 p1B(cx + bevelRadius * n1.x, cy + bevelRadius * n1.y,  hz);
+            glm::vec3 p1A(cx + bevelRadius * n1.x, cy + bevelRadius * n1.y, -hz);
+            addQuad(
+                { p0A, n0, calcUV(p0A, n0) },
+                { p0B, n0, calcUV(p0B, n0) },
+                { p1B, n1, calcUV(p1B, n1) },
+                { p1A, n1, calcUV(p1A, n1) }
+            );
+        }
+    };
+    addEdgeZ( hx,  hy, 0.0f, (float)M_PI * 0.5f);
+    addEdgeZ(-hx,  hy, (float)M_PI * 0.5f, (float)M_PI);
+    addEdgeZ(-hx, -hy, (float)M_PI, (float)M_PI * 1.5f);
+    addEdgeZ( hx, -hy, (float)M_PI * 1.5f, (float)M_PI * 2.0f);
+
+    // 4 Edges parallel to X
+    auto addEdgeX = [&](float cy, float cz, float startAngle, float endAngle) {
+        for (int i = 0; i < bevelSegments; ++i) {
+            float a0 = startAngle + (endAngle - startAngle) * ((float)i / bevelSegments);
+            float a1 = startAngle + (endAngle - startAngle) * ((float)(i + 1) / bevelSegments);
+            glm::vec3 n0(0.0f, std::sin(a0), std::cos(a0));
+            glm::vec3 n1(0.0f, std::sin(a1), std::cos(a1));
+            glm::vec3 p0A(-hx, cy + bevelRadius * n0.y, cz + bevelRadius * n0.z);
+            glm::vec3 p0B( hx, cy + bevelRadius * n0.y, cz + bevelRadius * n0.z);
+            glm::vec3 p1B( hx, cy + bevelRadius * n1.y, cz + bevelRadius * n1.z);
+            glm::vec3 p1A(-hx, cy + bevelRadius * n1.y, cz + bevelRadius * n1.z);
+            addQuad(
+                { p0A, n0, calcUV(p0A, n0) },
+                { p0B, n0, calcUV(p0B, n0) },
+                { p1B, n1, calcUV(p1B, n1) },
+                { p1A, n1, calcUV(p1A, n1) }
+            );
+        }
+    };
+    addEdgeX( hy,  hz, (float)M_PI * 0.5f, 0.0f);
+    addEdgeX( hy, -hz, (float)M_PI, (float)M_PI * 0.5f);
+    addEdgeX(-hy, -hz, (float)M_PI * 1.5f, (float)M_PI);
+    addEdgeX(-hy,  hz, 0.0f, (float)M_PI * -0.5f);
+
+    // 4 Edges parallel to Y
+    auto addEdgeY = [&](float cx, float cz, float startAngle, float endAngle) {
+        for (int i = 0; i < bevelSegments; ++i) {
+            float a0 = startAngle + (endAngle - startAngle) * ((float)i / bevelSegments);
+            float a1 = startAngle + (endAngle - startAngle) * ((float)(i + 1) / bevelSegments);
+            glm::vec3 n0(std::sin(a0), 0.0f, std::cos(a0));
+            glm::vec3 n1(std::sin(a1), 0.0f, std::cos(a1));
+            glm::vec3 p0A(cx + bevelRadius * n0.x, -hy, cz + bevelRadius * n0.z);
+            glm::vec3 p0B(cx + bevelRadius * n0.x,  hy, cz + bevelRadius * n0.z);
+            glm::vec3 p1B(cx + bevelRadius * n1.x,  hy, cz + bevelRadius * n1.z);
+            glm::vec3 p1A(cx + bevelRadius * n1.x, -hy, cz + bevelRadius * n1.z);
+            addQuad(
+                { p0A, n0, calcUV(p0A, n0) },
+                { p0B, n0, calcUV(p0B, n0) },
+                { p1B, n1, calcUV(p1B, n1) },
+                { p1A, n1, calcUV(p1A, n1) }
+            );
+        }
+    };
+    addEdgeY( hx,  hz, 0.0f, (float)M_PI * 0.5f);
+    addEdgeY(-hx,  hz, (float)M_PI * 0.5f, (float)M_PI);
+    addEdgeY(-hx, -hz, (float)M_PI, (float)M_PI * 1.5f);
+    addEdgeY( hx, -hz, (float)M_PI * 1.5f, (float)M_PI * 2.0f);
+
+    // 3. EIGHT SPHERICAL CORNERS
+    auto addCorner = [&](float cx, float cy, float cz) {
+        float sx = (cx > 0.0f) ? 1.0f : -1.0f;
+        float sy = (cy > 0.0f) ? 1.0f : -1.0f;
+        float sz = (cz > 0.0f) ? 1.0f : -1.0f;
+
+        for (int j = 0; j < bevelSegments; ++j) {
+            float phi0 = ((float)j / bevelSegments) * ((float)M_PI * 0.5f);
+            float phi1 = ((float)(j + 1) / bevelSegments) * ((float)M_PI * 0.5f);
+
+            for (int i = 0; i < bevelSegments; ++i) {
+                float theta0 = ((float)i / bevelSegments) * ((float)M_PI * 0.5f);
+                float theta1 = ((float)(i + 1) / bevelSegments) * ((float)M_PI * 0.5f);
+
+                auto getCornerVertex = [&](float theta, float phi) -> Vertex {
+                    glm::vec3 n(
+                        sx * std::cos(phi) * std::sin(theta),
+                        sy * std::sin(phi),
+                        sz * std::cos(phi) * std::cos(theta)
+                    );
+                    glm::vec3 p(cx + bevelRadius * n.x, cy + bevelRadius * n.y, cz + bevelRadius * n.z);
+                    return { p, glm::normalize(n), calcUV(p, n) };
+                };
+
+                Vertex v0 = getCornerVertex(theta0, phi0);
+                Vertex v1 = getCornerVertex(theta1, phi0);
+                Vertex v2 = getCornerVertex(theta1, phi1);
+                Vertex v3 = getCornerVertex(theta0, phi1);
+
+                if ((sx * sy * sz) > 0.0f) {
+                    addQuad(v0, v1, v2, v3);
+                } else {
+                    addQuad(v0, v3, v2, v1);
+                }
+            }
+        }
+    };
+
+    addCorner( hx,  hy,  hz);
+    addCorner(-hx,  hy,  hz);
+    addCorner(-hx, -hy,  hz);
+    addCorner( hx, -hy,  hz);
+    addCorner( hx,  hy, -hz);
+    addCorner(-hx,  hy, -hz);
+    addCorner(-hx, -hy, -hz);
+    addCorner( hx, -hy, -hz);
+
+    return std::make_shared<Mesh>(vertices, indices);
+}

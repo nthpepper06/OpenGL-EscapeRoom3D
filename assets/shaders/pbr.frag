@@ -92,6 +92,10 @@ uniform sampler2D ssaoTexture;
 uniform bool ssaoEnabled;
 uniform vec2 screenSize;
 
+// Phase 3: Planar Reflection
+uniform sampler2D planarReflectionMap;
+uniform bool usePlanarReflection;
+
 // Phase 2: Fog & In-scatter
 uniform vec3 fogColor;
 uniform float fogDensity;
@@ -370,6 +374,15 @@ void main()
         vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
         vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
         vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
+
+        // Phase 3: Planar Reflection blending on smooth reflective mirror surfaces
+        if (usePlanarReflection && metallic > 0.7 && roughness < 0.35) {
+            vec2 refUV = gl_FragCoord.xy / screenSize;
+            refUV += (N.xy) * (0.02 * roughness);
+            refUV = clamp(refUV, 0.002, 0.998);
+            vec3 planarRef = texture(planarReflectionMap, refUV).rgb;
+            specularIBL = mix(specularIBL, planarRef * F, 0.88);
+        }
 
         // Modulate with material baked AO, ambientAO, and dynamic SSAO
         ambient = (kD * diffuseIBL + specularIBL) * (ao * ambientAO * ssaoFactor) * iblIntensity;

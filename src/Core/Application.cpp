@@ -166,6 +166,9 @@ bool Application::init(int width, int height, const std::string& title) {
     if (!ssaoPipeline.init(windowWidth, windowHeight)) {
         std::cerr << "[Warning] SsaoPipeline initialization failed.\n";
     }
+    if (!planarReflection.init(512)) {
+        std::cerr << "[Warning] PlanarReflection initialization failed.\n";
+    }
 
     // Initialize Dear ImGui UI Layer
     guiLayer.init(window);
@@ -322,6 +325,31 @@ void Application::run() {
         }
 
         // ==========================================
+        // PASS 0D: PLANAR REFLECTION PASS (ROOM 2: MIRROR ROOM)
+        // ==========================================
+        if (currentRoomIndex == 2 && planarReflection.enabled) {
+            glm::mat4 refView, refProj;
+            glm::vec3 mirrorPos(0.0f, 2.1f, -4.84f);
+            glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
+            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
+
+            planarReflection.beginRender();
+            lightingShader.use();
+            lightingShader.setMat4("projection", refProj);
+            lightingShader.setMat4("view", refView);
+            lightingShader.setVec3("viewPos", camera.position);
+            lightingShader.setBool("usePlanarReflection", false);
+            lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
+            lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
+            lightingShader.setInt("debugViewMode", 0);
+
+            if (sceneRoot) {
+                sceneRoot->draw(lightingShader, "", "");
+            }
+            planarReflection.endRender();
+        }
+
+        // ==========================================
         // PASS 1: RENDER 3D SCENE TO FBO TEXTURE (HDR)
         // ==========================================
         postProcessor.bypassTonemap = (guiLayer.debugViewMode > 0);
@@ -397,6 +425,12 @@ void Application::run() {
         lightingShader.setInt("ssaoTexture", 11);
         lightingShader.setBool("ssaoEnabled", ssaoPipeline.enabled);
         lightingShader.setVec2("screenSize", glm::vec2((float)windowWidth, (float)windowHeight));
+
+        // Phase 3: Planar Reflection
+        glActiveTexture(GL_TEXTURE12);
+        glBindTexture(GL_TEXTURE_2D, planarReflection.getReflectionTexture());
+        lightingShader.setInt("planarReflectionMap", 12);
+        lightingShader.setBool("usePlanarReflection", (currentRoomIndex == 2) && planarReflection.enabled);
 
         // Phase 2: Fog & Atmosphere
         if (currentRoomIndex >= 0 && currentRoomIndex < static_cast<int>(rooms.size())) {
@@ -763,6 +797,28 @@ void Application::runBenchmarkAndCaptureScreenshots() {
             ssaoPipeline.renderSSAO(projection);
         }
 
+        if (currentRoomIndex == 2 && planarReflection.enabled) {
+            glm::mat4 refView, refProj;
+            glm::vec3 mirrorPos(0.0f, 2.1f, -4.84f);
+            glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
+            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, 1.0f, refView, refProj);
+
+            planarReflection.beginRender();
+            lightingShader.use();
+            lightingShader.setMat4("projection", refProj);
+            lightingShader.setMat4("view", refView);
+            lightingShader.setVec3("viewPos", camera.position);
+            lightingShader.setBool("usePlanarReflection", false);
+            lightingShader.setFloat("iblIntensity", guiLayer.iblIntensity);
+            lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
+            lightingShader.setInt("debugViewMode", 0);
+
+            if (sceneRoot) {
+                sceneRoot->draw(lightingShader, "", "");
+            }
+            planarReflection.endRender();
+        }
+
         postProcessor.bypassTonemap = (guiLayer.debugViewMode > 0);
         postProcessor.beginRender();
 
@@ -832,6 +888,12 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         lightingShader.setInt("ssaoTexture", 11);
         lightingShader.setBool("ssaoEnabled", ssaoPipeline.enabled);
         lightingShader.setVec2("screenSize", glm::vec2((float)windowWidth, (float)windowHeight));
+
+        // Phase 3: Planar Reflection
+        glActiveTexture(GL_TEXTURE12);
+        glBindTexture(GL_TEXTURE_2D, planarReflection.getReflectionTexture());
+        lightingShader.setInt("planarReflectionMap", 12);
+        lightingShader.setBool("usePlanarReflection", (currentRoomIndex == 2) && planarReflection.enabled);
 
         if (currentRoomIndex >= 0 && currentRoomIndex < static_cast<int>(rooms.size())) {
             lightingShader.setVec3("fogColor", rooms[currentRoomIndex]->fogColor);

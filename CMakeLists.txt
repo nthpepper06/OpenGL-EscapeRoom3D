@@ -134,6 +134,10 @@ set(ESCAPE_ROOM_SOURCES
     src/renderer/ParticleSystem.cpp
     src/renderer/SsaoPipeline.hpp
     src/renderer/SsaoPipeline.cpp
+    src/renderer/PlanarReflection.hpp
+    src/renderer/PlanarReflection.cpp
+    src/renderer/MeshBatcher.hpp
+    src/renderer/MeshBatcher.cpp
     src/renderer/PostProcessor.hpp
     src/renderer/PostProcessor.cpp
     src/rooms/BaseRoom.hpp

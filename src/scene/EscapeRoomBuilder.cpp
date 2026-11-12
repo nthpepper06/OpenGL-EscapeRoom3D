@@ -737,11 +737,11 @@ std::shared_ptr<SceneObject> EscapeRoomBuilder::buildHeavyVaultSafe(InteractionM
     safeBody->addChild(safeHinge);
     interactionMgr.safeDoorObject = safeHinge;
 
-    // Heavy Armored Door Slab (Covers the full safe opening)
+    // Heavy Armored Door Slab (Covers the full safe opening with smooth beveled chamfer)
     auto safeDoor = std::make_shared<SceneObject>("safe_door_panel", "Reinforced Vault Door", PrimitiveType::Cube);
-    safeDoor->mesh = cubeMesh;
+    safeDoor->mesh = PrimitiveGenerator::createBeveledCube(1.08f, 0.96f, 0.12f, 0.02f, 2);
     safeDoor->position = glm::vec3(0.54f, 0.0f, 0.0f);
-    safeDoor->scale = glm::vec3(1.08f, 0.96f, 0.12f);
+    safeDoor->scale = glm::vec3(1.0f, 1.0f, 1.0f);
     safeDoor->material.albedoColor = primaryColor * 1.1f;
     safeDoor->material.metallic = 0.90f;
     safeDoor->material.roughness = 0.32f;

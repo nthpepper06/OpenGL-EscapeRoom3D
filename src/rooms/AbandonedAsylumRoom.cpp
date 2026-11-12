@@ -1,6 +1,7 @@
 #include "rooms/AbandonedAsylumRoom.hpp"
 #include "renderer/PrimitiveGenerator.hpp"
 #include "renderer/Texture.hpp"
+#include "renderer/MeshBatcher.hpp"
 #include "scene/EscapeRoomBuilder.hpp"
 
 AbandonedAsylumRoom::AbandonedAsylumRoom() {
@@ -104,7 +105,6 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     backWall->position = glm::vec3(0.0f, 2.0f, -5.0f);
     backWall->scale = glm::vec3(10.0f, 4.0f, 0.2f);
     applyAsylumTilePbr(backWall, glm::vec3(0.85f));
-    rootNode->addChild(backWall);
 
     // Front Wall (+Z)
     auto frontWall = std::make_shared<SceneObject>("front_wall_asylum", "Asylum Front Wall", PrimitiveType::Cube);
@@ -112,7 +112,6 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     frontWall->position = glm::vec3(0.0f, 2.0f, 5.0f);
     frontWall->scale = glm::vec3(10.0f, 4.0f, 0.2f);
     applyAsylumTilePbr(frontWall, glm::vec3(0.85f));
-    rootNode->addChild(frontWall);
 
     // Left Wall (-X)
     auto leftWall = std::make_shared<SceneObject>("left_wall_asylum", "Asylum Left Wall", PrimitiveType::Cube);
@@ -120,7 +119,6 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     leftWall->position = glm::vec3(-5.0f, 2.0f, 0.0f);
     leftWall->scale = glm::vec3(0.2f, 4.0f, 10.0f);
     applyAsylumTilePbr(leftWall, glm::vec3(0.85f));
-    rootNode->addChild(leftWall);
 
     // Right Wall (+X)
     auto rightWall = std::make_shared<SceneObject>("right_wall_asylum", "Asylum Right Wall", PrimitiveType::Cube);
@@ -128,7 +126,15 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     rightWall->position = glm::vec3(5.0f, 2.0f, 0.0f);
     rightWall->scale = glm::vec3(0.2f, 4.0f, 10.0f);
     applyAsylumTilePbr(rightWall, glm::vec3(0.85f));
-    rootNode->addChild(rightWall);
+
+    // Static Mesh Batching (Phase 3: 4 asylum walls batched into 1 draw call)
+    std::vector<std::shared_ptr<SceneObject>> staticWalls = { backWall, frontWall, leftWall, rightWall };
+    auto batchedWalls = MeshBatcher::batchObjects("walls_asylum_batched", "Asylum Tile Walls", staticWalls, backWall->material);
+    if (batchedWalls) {
+        rootNode->addChild(batchedWalls);
+    } else {
+        for (auto& w : staticWalls) rootNode->addChild(w);
+    }
 
     // ==========================================
     // 2. MEDICAL EXAMINATION GURNEY (STRETCHER)
@@ -185,9 +191,9 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     // 3. RUSTY FILE CABINET & SLIDING DRAWER
     // ==========================================
     auto cabinetRoot = std::make_shared<SceneObject>("cabinet_root", "Medical File Cabinet", PrimitiveType::Cube);
-    cabinetRoot->mesh = cubeMesh;
+    cabinetRoot->mesh = PrimitiveGenerator::createBeveledCube(1.1f, 1.7f, 0.9f, 0.035f, 2);
     cabinetRoot->position = glm::vec3(3.2f, 0.85f, -2.5f);
-    cabinetRoot->scale = glm::vec3(1.1f, 1.7f, 0.9f);
+    cabinetRoot->scale = glm::vec3(1.0f, 1.0f, 1.0f);
     cabinetRoot->material.diffuseColor = glm::vec3(0.25f, 0.32f, 0.28f); // Rusty olive
     cabinetRoot->material.useTexture = true;
     cabinetRoot->material.textureId = metalPbr.albedo;

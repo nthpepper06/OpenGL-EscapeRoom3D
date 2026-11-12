@@ -33,6 +33,9 @@ public:
     void computeTangents();
     void draw() const;
 
+    const std::vector<Vertex>& getVertices() const { return vertices; }
+    const std::vector<unsigned int>& getIndices() const { return indices; }
+
 private:
     void computeAABB();
 };

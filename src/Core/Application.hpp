@@ -18,6 +18,7 @@
 #include "rooms/OccultRitualRoom.hpp"
 #include "rooms/AbandonedAsylumRoom.hpp"
 #include "rooms/MirrorRoom.hpp"
+#include "renderer/PlanarReflection.hpp"
 
 class Application {
 public:
@@ -61,6 +62,7 @@ private:
     ShadowPipeline shadowPipeline;
     ParticleSystem particleSystem;
     SsaoPipeline ssaoPipeline;
+    PlanarReflection planarReflection;
 
     PointLight pointLight;
     SpotLight spotLight;

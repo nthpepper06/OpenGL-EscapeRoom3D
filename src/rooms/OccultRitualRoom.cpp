@@ -1,6 +1,7 @@
 #include "rooms/OccultRitualRoom.hpp"
 #include "renderer/PrimitiveGenerator.hpp"
 #include "renderer/Texture.hpp"
+#include "renderer/MeshBatcher.hpp"
 #include "scene/EscapeRoomBuilder.hpp"
 
 OccultRitualRoom::OccultRitualRoom() {
@@ -108,7 +109,6 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     backWall->position = glm::vec3(0.0f, 2.25f, -5.0f);
     backWall->scale = glm::vec3(10.0f, 4.5f, 0.2f);
     applyStonePbr(backWall, glm::vec3(0.85f));
-    rootNode->addChild(backWall);
 
     // Front Wall (+Z)
     auto frontWall = std::make_shared<SceneObject>("front_wall_occult", "Crypt Front Wall", PrimitiveType::Cube);
@@ -116,7 +116,6 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     frontWall->position = glm::vec3(0.0f, 2.25f, 5.0f);
     frontWall->scale = glm::vec3(10.0f, 4.5f, 0.2f);
     applyStonePbr(frontWall, glm::vec3(0.85f));
-    rootNode->addChild(frontWall);
 
     // Left Wall (-X)
     auto leftWall = std::make_shared<SceneObject>("left_wall_occult", "Crypt Left Wall", PrimitiveType::Cube);
@@ -124,7 +123,6 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     leftWall->position = glm::vec3(-5.0f, 2.25f, 0.0f);
     leftWall->scale = glm::vec3(0.2f, 4.5f, 10.0f);
     applyStonePbr(leftWall, glm::vec3(0.85f));
-    rootNode->addChild(leftWall);
 
     // Right Wall (+X)
     auto rightWall = std::make_shared<SceneObject>("right_wall_occult", "Crypt Right Wall", PrimitiveType::Cube);
@@ -132,7 +130,15 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     rightWall->position = glm::vec3(5.0f, 2.25f, 0.0f);
     rightWall->scale = glm::vec3(0.2f, 4.5f, 10.0f);
     applyStonePbr(rightWall, glm::vec3(0.85f));
-    rootNode->addChild(rightWall);
+
+    // Static Mesh Batching (Phase 3: 4 walls batched into 1 draw call)
+    std::vector<std::shared_ptr<SceneObject>> staticWalls = { backWall, frontWall, leftWall, rightWall };
+    auto batchedWalls = MeshBatcher::batchObjects("walls_occult_batched", "Crypt Stone Walls", staticWalls, backWall->material);
+    if (batchedWalls) {
+        rootNode->addChild(batchedWalls);
+    } else {
+        for (auto& w : staticWalls) rootNode->addChild(w);
+    }
 
     // 4 Crypt Stone Pillars
     glm::vec3 pillarPositions[4] = {
@@ -158,9 +164,9 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     rootNode->addChild(altarRoot);
 
     auto altarBase = std::make_shared<SceneObject>("altar_base", "Altar Slab", PrimitiveType::Cube);
-    altarBase->mesh = cubeMesh;
+    altarBase->mesh = PrimitiveGenerator::createBeveledCube(2.6f, 0.9f, 1.4f, 0.05f, 2);
     altarBase->position = glm::vec3(0.0f, 0.45f, 0.0f);
-    altarBase->scale = glm::vec3(2.6f, 0.9f, 1.4f);
+    altarBase->scale = glm::vec3(1.0f, 1.0f, 1.0f);
     applyStonePbr(altarBase, glm::vec3(0.35f, 0.30f, 0.32f));
     altarRoot->addChild(altarBase);
 

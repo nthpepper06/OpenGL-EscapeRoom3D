@@ -1,6 +1,7 @@
 #include "rooms/MirrorRoom.hpp"
 #include "renderer/PrimitiveGenerator.hpp"
 #include "renderer/Texture.hpp"
+#include "renderer/MeshBatcher.hpp"
 #include "scene/EscapeRoomBuilder.hpp"
 
 MirrorRoom::MirrorRoom() {
@@ -120,7 +121,6 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     backWall->scale = glm::vec3(10.0f, 4.2f, 0.2f);
     backWall->material.albedoColor = glm::vec3(0.25f, 0.18f, 0.26f);
     backWall->material.diffuseColor = glm::vec3(0.25f, 0.18f, 0.26f);
-    rootNode->addChild(backWall);
 
     // Front Wall (+Z)
     auto frontWall = std::make_shared<SceneObject>("front_wall_mirror", "Salon Front Wall", PrimitiveType::Cube);
@@ -129,7 +129,6 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     frontWall->scale = glm::vec3(10.0f, 4.2f, 0.2f);
     frontWall->material.albedoColor = glm::vec3(0.25f, 0.18f, 0.26f);
     frontWall->material.diffuseColor = glm::vec3(0.25f, 0.18f, 0.26f);
-    rootNode->addChild(frontWall);
 
     // Left Wall (-X)
     auto leftWall = std::make_shared<SceneObject>("left_wall_mirror", "Salon Left Wall", PrimitiveType::Cube);
@@ -138,7 +137,6 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     leftWall->scale = glm::vec3(0.2f, 4.2f, 10.0f);
     leftWall->material.albedoColor = glm::vec3(0.25f, 0.18f, 0.26f);
     leftWall->material.diffuseColor = glm::vec3(0.25f, 0.18f, 0.26f);
-    rootNode->addChild(leftWall);
 
     // Right Wall (+X)
     auto rightWall = std::make_shared<SceneObject>("right_wall_mirror", "Salon Right Wall", PrimitiveType::Cube);
@@ -147,7 +145,15 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     rightWall->scale = glm::vec3(0.2f, 4.2f, 10.0f);
     rightWall->material.albedoColor = glm::vec3(0.25f, 0.18f, 0.26f);
     rightWall->material.diffuseColor = glm::vec3(0.25f, 0.18f, 0.26f);
-    rootNode->addChild(rightWall);
+
+    // Static Mesh Batching (Phase 3: 4 Victorian walls batched into 1 draw call)
+    std::vector<std::shared_ptr<SceneObject>> staticWalls = { backWall, frontWall, leftWall, rightWall };
+    auto batchedWalls = MeshBatcher::batchObjects("walls_mirror_batched", "Salon Victorian Walls", staticWalls, backWall->material);
+    if (batchedWalls) {
+        rootNode->addChild(batchedWalls);
+    } else {
+        for (auto& w : staticWalls) rootNode->addChild(w);
+    }
 
     // ==========================================
     // 2. HAUNTED MIRRORS
@@ -186,9 +192,9 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
     rootNode->addChild(deskRoot);
 
     auto deskTop = std::make_shared<SceneObject>("desk_top", "Vanity Surface", PrimitiveType::Cube);
-    deskTop->mesh = cubeMesh;
+    deskTop->mesh = PrimitiveGenerator::createBeveledCube(2.2f, 0.08f, 1.2f, 0.015f, 2);
     deskTop->position = glm::vec3(0.0f, 0.8f, 0.0f);
-    deskTop->scale = glm::vec3(2.2f, 0.08f, 1.2f);
+    deskTop->scale = glm::vec3(1.0f, 1.0f, 1.0f);
     deskTop->material.diffuseColor = glm::vec3(0.38f, 0.18f, 0.10f);
     deskTop->material.useTexture = true;
     deskTop->material.textureId = woodPbr.albedo;
