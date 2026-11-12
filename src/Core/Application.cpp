@@ -146,6 +146,11 @@ bool Application::init(int width, int height, const std::string& title) {
         }
     }
 
+    // Load UV Decal Shaders for Early-Z optimized fluorescent decals
+    if (!uvDecalShader.loadFromFiles("assets/shaders/uv_decal.vert", "assets/shaders/uv_decal.frag")) {
+        uvDecalShader.loadFromFiles("uv_decal.vert", "uv_decal.frag");
+    }
+
     // Initialize Post-Processing FBO Pipeline
     std::string postVert = "assets/shaders/post_process.vert";
     std::string postFrag = "assets/shaders/post_process.frag";
@@ -588,8 +593,95 @@ void Application::run() {
         lightingShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
+        bool inspectingItem = interactionMgr.isInspectMode && 
+                              (interactionMgr.currentInspectType == InspectType::GoldenKey || interactionMgr.currentInspectType == InspectType::SigilFragment) &&
+                              interactionMgr.keyObject != nullptr;
+        bool origKeyVis = true;
+        if (inspectingItem && interactionMgr.keyObject) {
+            origKeyVis = interactionMgr.keyObject->isVisible;
+            interactionMgr.keyObject->isVisible = false; // Hide from world pass while inspecting
+        }
+
         if (sceneRoot) {
             sceneRoot->draw(lightingShader, hoveredObjectId, selectedId, RenderLayer::RealOnly);
+        }
+
+        // ------------------------------------------------------------------------
+        // PASS 1B: UV FLUORESCENT DECAL OVERLAY (Additive Blend + Polygon Offset)
+        // ------------------------------------------------------------------------
+        if (interactionMgr.isUvLightActive || currentRoomIndex == 1) {
+            uvDecalShader.use();
+            uvDecalShader.setMat4("projection", projection);
+            uvDecalShader.setMat4("view", view);
+            uvDecalShader.setVec3("spotLight.position", spotLight.position);
+            uvDecalShader.setVec3("spotLight.direction", spotLight.direction);
+            uvDecalShader.setFloat("spotLight.cutOff", spotLight.cutOff);
+            uvDecalShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+            uvDecalShader.setBool("spotLight.enabled", spotLight.enabled);
+            uvDecalShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
+            uvDecalShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE); // Additive fluorescent glow
+            glDepthMask(GL_FALSE);             // Don't overwrite opaque depth buffer
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(-1.0f, -1.0f);     // Zero Z-fighting against walls
+
+            if (sceneRoot) {
+                sceneRoot->draw(uvDecalShader, "", "", RenderLayer::UVDecalsOnly);
+            }
+
+            glDisable(GL_POLYGON_OFFSET_FILL);
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
+        }
+
+        // ------------------------------------------------------------------------
+        // PASS 1C: INSPECT MODE DEPTH ISOLATION (Turntable without scene clipping)
+        // ------------------------------------------------------------------------
+        if (inspectingItem && interactionMgr.keyObject) {
+            glClear(GL_DEPTH_BUFFER_BIT); // Depth buffer isolation: never clipped by walls or desks
+
+            glm::mat4 inspectProj = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.05f, 10.0f);
+            glm::mat4 inspectView = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.25f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+            lightingShader.use();
+            lightingShader.setMat4("projection", inspectProj);
+            lightingShader.setMat4("view", inspectView);
+            lightingShader.setVec3("viewPos", glm::vec3(0.0f, 0.0f, 1.25f));
+
+            // Dedicated inspect lighting
+            lightingShader.setBool("pointLight.enabled", true);
+            lightingShader.setVec3("pointLight.position", glm::vec3(0.8f, 1.2f, 1.5f));
+            lightingShader.setVec3("pointLight.color", glm::vec3(1.0f, 0.96f, 0.90f));
+            lightingShader.setFloat("pointLight.intensity", 12.0f);
+            lightingShader.setFloat("pointLight.constant", 1.0f);
+            lightingShader.setFloat("pointLight.linear", 0.09f);
+            lightingShader.setFloat("pointLight.quadratic", 0.032f);
+
+            lightingShader.setBool("spotLight.enabled", false);
+            lightingShader.setBool("pointShadowEnabled", false);
+            lightingShader.setBool("spotShadowEnabled", false);
+            lightingShader.setBool("usePlanarReflection", false);
+            lightingShader.setBool("isUvLightActive", false);
+            lightingShader.setBool("uIsUVMode", false);
+            lightingShader.setFloat("highlightFactor", 0.0f);
+
+            glm::vec3 origPos = interactionMgr.keyObject->position;
+            glm::vec3 origRot = interactionMgr.keyObject->rotation;
+            glm::vec3 origScale = interactionMgr.keyObject->scale;
+
+            interactionMgr.keyObject->isVisible = true;
+            interactionMgr.keyObject->position = glm::vec3(0.0f, 0.0f, 0.0f);
+            interactionMgr.keyObject->rotation = glm::vec3(interactionMgr.inspectPitch, interactionMgr.inspectYaw, 0.0f);
+            interactionMgr.keyObject->scale = glm::vec3(0.48f);
+
+            interactionMgr.keyObject->draw(lightingShader, "", "", RenderLayer::Both);
+
+            interactionMgr.keyObject->position = origPos;
+            interactionMgr.keyObject->rotation = origRot;
+            interactionMgr.keyObject->scale = origScale;
+            interactionMgr.keyObject->isVisible = origKeyVis;
         }
 
         // Render Atmospheric Dust Motes
@@ -1148,6 +1240,34 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
         if (sceneRoot) {
             sceneRoot->draw(lightingShader, hoveredObjectId, selectedId, RenderLayer::RealOnly);
+        }
+
+        // UV Decal overlay pass during benchmark capture
+        if (interactionMgr.isUvLightActive || currentRoomIndex == 1) {
+            uvDecalShader.use();
+            uvDecalShader.setMat4("projection", projection);
+            uvDecalShader.setMat4("view", view);
+            uvDecalShader.setVec3("spotLight.position", spotLight.position);
+            uvDecalShader.setVec3("spotLight.direction", spotLight.direction);
+            uvDecalShader.setFloat("spotLight.cutOff", spotLight.cutOff);
+            uvDecalShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+            uvDecalShader.setBool("spotLight.enabled", spotLight.enabled);
+            uvDecalShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
+            uvDecalShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDepthMask(GL_FALSE);
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(-1.0f, -1.0f);
+
+            if (sceneRoot) {
+                sceneRoot->draw(uvDecalShader, "", "", RenderLayer::UVDecalsOnly);
+            }
+
+            glDisable(GL_POLYGON_OFFSET_FILL);
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
         }
 
         if (particleSystem.enabled) {

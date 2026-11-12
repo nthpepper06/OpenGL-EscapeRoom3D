@@ -64,6 +64,7 @@ private:
     Camera camera;
     PlayerController playerController;
     Shader lightingShader;
+    Shader uvDecalShader;
     PostProcessor postProcessor;
     IblPipeline iblPipeline;
     ShadowPipeline shadowPipeline;

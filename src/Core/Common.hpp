@@ -51,7 +51,8 @@ enum class PrimitiveType {
 enum class RenderLayer {
     Both = 0,
     RealOnly = 1,
-    MirrorOnly = 2
+    MirrorOnly = 2,
+    UVDecalsOnly = 3
 };
 
 enum class InteractionType {

@@ -158,6 +158,44 @@ void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const
     // If drawing planar mirror reflection pass only, skip real-only objects
     if (passLayer == RenderLayer::MirrorOnly && renderLayer == RenderLayer::RealOnly) return;
 
+    // UV Decals separation for Early-Z hardware restoration
+    if (passLayer == RenderLayer::UVDecalsOnly) {
+        if (!material.uIsUVReactive) {
+            for (const auto& child : children) {
+                if (child) child->draw(shader, hoveredId, selectedId, passLayer);
+            }
+            return;
+        }
+
+        if (mesh && primitiveType != PrimitiveType::None) {
+            glm::mat4 model = getWorldMatrix();
+            shader.setMat4("model", model);
+            shader.setVec3("decalColor", material.albedoColor);
+            shader.setFloat("decalIntensity", material.emissiveIntensity > 0.0f ? material.emissiveIntensity * 2.2f : 4.5f);
+            bool useTex = material.useTexture && material.textureId != 0;
+            shader.setBool("useDecalTexture", useTex);
+            if (useTex) {
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, material.textureId);
+                shader.setInt("decalTexture", 0);
+            }
+            mesh->draw();
+        }
+
+        for (const auto& child : children) {
+            if (child) child->draw(shader, hoveredId, selectedId, passLayer);
+        }
+        return;
+    } else {
+        // In standard geometry passes, skip UV reactive decals to restore 100% hardware Early-Z
+        if (material.uIsUVReactive) {
+            for (const auto& child : children) {
+                if (child) child->draw(shader, hoveredId, selectedId, passLayer);
+            }
+            return;
+        }
+    }
+
     if (mesh && primitiveType != PrimitiveType::None) {
         glm::mat4 model = getWorldMatrix();
         glm::mat3 normalMat = getNormalMatrix();

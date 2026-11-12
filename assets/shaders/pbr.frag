@@ -272,6 +272,13 @@ void main()
     if (material.useRoughnessMap) roughness *= texture(material.roughnessMap, TexCoords).r;
     roughness = clamp(roughness, 0.04, 1.0);
 
+    // Geometric Specular Anti-Aliasing (Kaplanyan / Toksvig normal variance filter)
+    vec3 dndu = dFdx(N);
+    vec3 dndv = dFdy(N);
+    float variance = 0.25 * (dot(dndu, dndu) + dot(dndv, dndv));
+    float kernelRoughness = min(2.0 * variance, 0.18);
+    roughness = clamp(sqrt(roughness * roughness + kernelRoughness), 0.04, 1.0);
+
     float ao = material.ao;
     if (material.useAoMap) ao *= texture(material.aoMap, TexCoords).r;
 
@@ -287,7 +294,7 @@ void main()
         emissive *= texture(material.emissiveMap, TexCoords).rgb;
     }
 
-    // UV Blacklight & Fluorescent Clue Activation
+    // UV Blacklight & Fluorescent Clue Activation (Early-Z friendly: no discard in main PBR pass)
     bool uvActive = uIsUVMode || isUvLightActive;
     float spotFactor = 0.0;
     if (spotLight.enabled) {
@@ -302,13 +309,7 @@ void main()
         }
     }
 
-    if (material.uIsUVReactive) {
-        // Clue object: strictly invisible unless illuminated by UV Blacklight beam
-        if (!uvActive || spotFactor <= 0.05) {
-            discard;
-        }
-        emissive += vec3(0.10, 1.0, 0.65) * (4.5 * spotFactor);
-    } else if (material.isFluorescent) {
+    if (material.isFluorescent) {
         if (uvActive && spotFactor > 0.05) {
             emissive += material.fluorescentColor * (5.5 * spotFactor);
         }
@@ -409,13 +410,37 @@ void main()
         vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
         vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
-        // Phase 3: Planar Reflection blending on smooth reflective mirror surfaces
+        // Phase 3: Realistic Physical Glass Mirror with Fresnel, Tint & Edge Dust Patina
         bool isMirrorSurface = (usePlanarReflection && metallic > 0.7 && roughness < 0.35);
         if (isMirrorSurface) {
             vec2 refUV = gl_FragCoord.xy / screenSize;
             refUV += (N.xy) * (0.02 * roughness);
             refUV = clamp(refUV, 0.002, 0.998);
             vec3 planarRef = texture(planarReflectionMap, refUV).rgb;
+
+            // Physical glass substrate tint (subtle antique soda-lime greenish absorption)
+            planarRef *= vec3(0.93, 0.98, 0.96);
+
+            // Glancing-angle glass Fresnel reflection (front-surface glass reflection)
+            float glassFresnel = pow(clamp(1.0 - max(dot(N, V), 0.0), 0.0, 1.0), 4.0);
+            vec3 glassRimColor = vec3(0.85, 0.92, 0.98);
+            planarRef = mix(planarRef, glassRimColor, glassFresnel * 0.35);
+
+            // Procedural edge dust, corner grime patina, and subtle glass border vignette
+            vec2 uvDist = abs(TexCoords - vec2(0.5)) * 2.0;
+            float maxDist = max(uvDist.x, uvDist.y);
+            float edgeGrime = pow(maxDist, 4.0);
+            float grungeNoise = fract(sin(dot(floor(TexCoords * 96.0), vec2(12.9898, 78.233))) * 43758.5453);
+            float dustNoise = fract(sin(dot(floor(TexCoords * 32.0), vec2(39.346, 11.135))) * 24634.6345);
+            float grimeMask = clamp(edgeGrime * 0.55 + (grungeNoise * 0.15 + dustNoise * 0.20) * edgeGrime, 0.0, 0.75);
+
+            vec3 dustPatina = vec3(0.32, 0.28, 0.24);
+            planarRef = mix(planarRef, dustPatina, grimeMask);
+
+            // Glass edge vignette
+            float borderVignette = smoothstep(0.70, 0.98, maxDist);
+            planarRef *= (1.0 - borderVignette * 0.35);
+
             specularIBL = mix(specularIBL, planarRef * F, 0.92);
             specularIBL = min(specularIBL, vec3(1.02));
         }
