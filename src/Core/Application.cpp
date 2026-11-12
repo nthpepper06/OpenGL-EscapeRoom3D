@@ -375,6 +375,42 @@ void Application::run() {
 
         gpuProfiler.beginFrame();
 
+        // Enforce baseline clean OpenGL state at the start of every frame
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+        glDisable(GL_CLIP_DISTANCE0);
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
+        static bool sLoggedInitialGLState = false;
+        if (!sLoggedInitialGLState) {
+            GLboolean dm, be, ce, de, cd0;
+            GLint cm, ff;
+            glGetBooleanv(GL_DEPTH_WRITEMASK, &dm);
+            be = glIsEnabled(GL_BLEND);
+            ce = glIsEnabled(GL_CULL_FACE);
+            de = glIsEnabled(GL_DEPTH_TEST);
+            cd0 = glIsEnabled(GL_CLIP_DISTANCE0);
+            glGetIntegerv(GL_CULL_FACE_MODE, &cm);
+            glGetIntegerv(GL_FRONT_FACE, &ff);
+            std::cout << "[STEP 1 GLState] Frame start: DepthMask=" << (int)dm
+                      << " DepthTest=" << (int)de << " Blend=" << (int)be << " CullFace=" << (int)ce
+                      << " CullMode=0x" << std::hex << cm << " FrontFace=0x" << ff
+                      << " ClipDist0=" << (int)cd0 << std::dec << "\n";
+            sLoggedInitialGLState = true;
+        }
+
+        #ifndef NDEBUG
+        GLboolean depthMaskCheck;
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMaskCheck);
+        assert(depthMaskCheck == GL_TRUE);
+        assert(glIsEnabled(GL_DEPTH_TEST));
+        #endif
+
         // Check if player unlocked the exit door and triggered a room transition
         if (interactionMgr.requestRoomTransition) {
             interactionMgr.requestRoomTransition = false;

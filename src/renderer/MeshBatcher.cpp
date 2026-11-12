@@ -39,7 +39,7 @@ std::shared_ptr<SceneObject> MeshBatcher::batchObjects(
         return nullptr;
     }
 
-    auto batchedObj = std::make_shared<SceneObject>(batchId, batchName, PrimitiveType::None);
+    auto batchedObj = std::make_shared<SceneObject>(batchId, batchName, PrimitiveType::Cube);
     batchedObj->mesh = std::make_shared<Mesh>(batchedVertices, batchedIndices);
     batchedObj->material = sharedMaterial;
     batchedObj->position = glm::vec3(0.0f);

@@ -1,4 +1,5 @@
 #include "renderer/PostProcessor.hpp"
+#include "renderer/GLStateGuard.hpp"
 #include <iostream>
 
 PostProcessor::PostProcessor() {}
@@ -167,6 +168,7 @@ void PostProcessor::setupBloom(int width, int height) {
 
 void PostProcessor::renderBloom() {
     if (!bloomEnabled || bloomMips.empty()) return;
+    GLStateGuard guard;
 
     glDisable(GL_DEPTH_TEST);
 

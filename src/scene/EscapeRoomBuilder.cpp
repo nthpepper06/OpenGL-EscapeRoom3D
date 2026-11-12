@@ -984,12 +984,24 @@ std::shared_ptr<SceneObject> EscapeRoomBuilder::buildExitDoor(
     doorRoot->addChild(doorHinge);
     interactionMgr.exitDoorObject = doorHinge;
 
-    // Detailed Reinforced Door Slab
+    // Solid Doorway Portal Backing Slab (Guarantees no see-through void from behind or when open)
+    auto portalBacking = std::make_shared<SceneObject>(prefix + "_portal_backing", "Doorway Portal Backing", PrimitiveType::Cube);
+    portalBacking->mesh = cubeMesh;
+    portalBacking->position = glm::vec3(0.0f, 1.70f, -0.16f);
+    portalBacking->scale = glm::vec3(2.30f, 3.40f, 0.08f);
+    portalBacking->material.albedoColor = glm::vec3(0.06f, 0.06f, 0.07f);
+    portalBacking->material.diffuseColor = glm::vec3(0.06f, 0.06f, 0.07f);
+    portalBacking->material.roughness = 0.95f;
+    portalBacking->material.metallic = 0.05f;
+    doorRoot->addChild(portalBacking);
+
+    // Detailed Reinforced Solid Door Slab (0.16m thickness, opaque from both sides)
     auto exitDoor = std::make_shared<SceneObject>("exit_door_panel", "Reinforced Escape Door", PrimitiveType::Cube);
     exitDoor->mesh = cubeMesh;
     exitDoor->position = glm::vec3(1.0f, 0.0f, 0.0f);
-    exitDoor->scale = glm::vec3(2.0f, 3.20f, 0.12f);
+    exitDoor->scale = glm::vec3(2.0f, 3.20f, 0.16f);
     exitDoor->material.diffuseColor = doorColor;
+    exitDoor->material.albedoColor = doorColor;
     exitDoor->material.specularColor = glm::vec3(0.4f);
     exitDoor->material.shininess = 32.0f;
     exitDoor->material.useTexture = true;
@@ -997,47 +1009,97 @@ std::shared_ptr<SceneObject> EscapeRoomBuilder::buildExitDoor(
     exitDoor->interactType = InteractionType::ExitDoor; // Main door panel is directly interactable!
     doorHinge->addChild(exitDoor);
 
-    // Relief Panels on the Door Face
-    auto upperPanel = std::make_shared<SceneObject>(prefix + "_panel_upper", "Door Upper Inset", PrimitiveType::Cube);
+    // Relief Panels on the Front Door Face (+Z)
+    auto upperPanel = std::make_shared<SceneObject>(prefix + "_panel_upper", "Door Upper Inset Front", PrimitiveType::Cube);
     upperPanel->mesh = cubeMesh;
-    upperPanel->position = glm::vec3(0.0f, 0.72f, 0.025f);
+    upperPanel->position = glm::vec3(0.0f, 0.72f, 0.09f);
     upperPanel->scale = glm::vec3(1.70f, 1.15f, 0.03f);
     upperPanel->material.diffuseColor = doorColor * 0.82f;
+    upperPanel->material.albedoColor = doorColor * 0.82f;
     upperPanel->material.useTexture = true;
     upperPanel->material.textureId = doorTex;
     upperPanel->interactType = InteractionType::ExitDoor;
     exitDoor->addChild(upperPanel);
 
-    auto lowerPanel = std::make_shared<SceneObject>(prefix + "_panel_lower", "Door Lower Inset", PrimitiveType::Cube);
+    auto lowerPanel = std::make_shared<SceneObject>(prefix + "_panel_lower", "Door Lower Inset Front", PrimitiveType::Cube);
     lowerPanel->mesh = cubeMesh;
-    lowerPanel->position = glm::vec3(0.0f, -0.72f, 0.025f);
+    lowerPanel->position = glm::vec3(0.0f, -0.72f, 0.09f);
     lowerPanel->scale = glm::vec3(1.70f, 1.15f, 0.03f);
     lowerPanel->material.diffuseColor = doorColor * 0.82f;
+    lowerPanel->material.albedoColor = doorColor * 0.82f;
     lowerPanel->material.useTexture = true;
     lowerPanel->material.textureId = doorTex;
     lowerPanel->interactType = InteractionType::ExitDoor;
     exitDoor->addChild(lowerPanel);
 
-    auto midBeam = std::make_shared<SceneObject>(prefix + "_panel_mid", "Door Reinforcement Beam", PrimitiveType::Cube);
+    auto midBeam = std::make_shared<SceneObject>(prefix + "_panel_mid", "Door Reinforcement Beam Front", PrimitiveType::Cube);
     midBeam->mesh = cubeMesh;
-    midBeam->position = glm::vec3(0.0f, 0.0f, 0.035f);
+    midBeam->position = glm::vec3(0.0f, 0.0f, 0.095f);
     midBeam->scale = glm::vec3(1.90f, 0.20f, 0.04f);
     midBeam->material.diffuseColor = doorColor * 1.25f;
+    midBeam->material.albedoColor = doorColor * 1.25f;
     midBeam->material.useTexture = true;
     midBeam->material.textureId = frameTex;
     midBeam->interactType = InteractionType::ExitDoor;
     exitDoor->addChild(midBeam);
 
-    // 5. Heavy Brass Lockplate & Golden Keyhole Fitting (Waist Height)
-    auto lockPlate = std::make_shared<SceneObject>(prefix + "_lock_plate", "Brass Lock Assembly", PrimitiveType::Cube);
+    // Relief Panels on the Back Door Face (-Z) (For opaque dual-sided architectural detailing)
+    auto upperPanelBack = std::make_shared<SceneObject>(prefix + "_panel_upper_bk", "Door Upper Inset Back", PrimitiveType::Cube);
+    upperPanelBack->mesh = cubeMesh;
+    upperPanelBack->position = glm::vec3(0.0f, 0.72f, -0.09f);
+    upperPanelBack->scale = glm::vec3(1.70f, 1.15f, 0.03f);
+    upperPanelBack->material.diffuseColor = doorColor * 0.82f;
+    upperPanelBack->material.albedoColor = doorColor * 0.82f;
+    upperPanelBack->material.useTexture = true;
+    upperPanelBack->material.textureId = doorTex;
+    upperPanelBack->interactType = InteractionType::ExitDoor;
+    exitDoor->addChild(upperPanelBack);
+
+    auto lowerPanelBack = std::make_shared<SceneObject>(prefix + "_panel_lower_bk", "Door Lower Inset Back", PrimitiveType::Cube);
+    lowerPanelBack->mesh = cubeMesh;
+    lowerPanelBack->position = glm::vec3(0.0f, -0.72f, -0.09f);
+    lowerPanelBack->scale = glm::vec3(1.70f, 1.15f, 0.03f);
+    lowerPanelBack->material.diffuseColor = doorColor * 0.82f;
+    lowerPanelBack->material.albedoColor = doorColor * 0.82f;
+    lowerPanelBack->material.useTexture = true;
+    lowerPanelBack->material.textureId = doorTex;
+    lowerPanelBack->interactType = InteractionType::ExitDoor;
+    exitDoor->addChild(lowerPanelBack);
+
+    auto midBeamBack = std::make_shared<SceneObject>(prefix + "_panel_mid_bk", "Door Reinforcement Beam Back", PrimitiveType::Cube);
+    midBeamBack->mesh = cubeMesh;
+    midBeamBack->position = glm::vec3(0.0f, 0.0f, -0.095f);
+    midBeamBack->scale = glm::vec3(1.90f, 0.20f, 0.04f);
+    midBeamBack->material.diffuseColor = doorColor * 1.25f;
+    midBeamBack->material.albedoColor = doorColor * 1.25f;
+    midBeamBack->material.useTexture = true;
+    midBeamBack->material.textureId = frameTex;
+    midBeamBack->interactType = InteractionType::ExitDoor;
+    exitDoor->addChild(midBeamBack);
+
+    // 5. Heavy Brass Lockplate & Golden Keyhole Fitting (Front)
+    auto lockPlate = std::make_shared<SceneObject>(prefix + "_lock_plate", "Brass Lock Assembly Front", PrimitiveType::Cube);
     lockPlate->mesh = cubeMesh;
-    lockPlate->position = glm::vec3(0.72f, -0.08f, 0.065f);
+    lockPlate->position = glm::vec3(0.72f, -0.08f, 0.095f);
     lockPlate->scale = glm::vec3(0.24f, 0.48f, 0.03f);
     lockPlate->material.diffuseColor = glm::vec3(1.0f, 0.84f, 0.25f); // Radiant Brass / Gold
+    lockPlate->material.albedoColor = glm::vec3(1.0f, 0.84f, 0.25f);
     lockPlate->material.specularColor = glm::vec3(1.0f, 0.95f, 0.80f);
     lockPlate->material.shininess = 128.0f;
     lockPlate->interactType = InteractionType::ExitDoor;
     exitDoor->addChild(lockPlate);
+
+    // Lockplate on Back Face (-Z)
+    auto lockPlateBack = std::make_shared<SceneObject>(prefix + "_lock_plate_bk", "Brass Lock Assembly Back", PrimitiveType::Cube);
+    lockPlateBack->mesh = cubeMesh;
+    lockPlateBack->position = glm::vec3(0.72f, -0.08f, -0.095f);
+    lockPlateBack->scale = glm::vec3(0.24f, 0.48f, 0.03f);
+    lockPlateBack->material.diffuseColor = glm::vec3(1.0f, 0.84f, 0.25f);
+    lockPlateBack->material.albedoColor = glm::vec3(1.0f, 0.84f, 0.25f);
+    lockPlateBack->material.specularColor = glm::vec3(1.0f, 0.95f, 0.80f);
+    lockPlateBack->material.shininess = 128.0f;
+    lockPlateBack->interactType = InteractionType::ExitDoor;
+    exitDoor->addChild(lockPlateBack);
 
     // Black Keyhole Cutout slot
     auto keyholeSlot = std::make_shared<SceneObject>(prefix + "_keyhole_slot", "Keyhole Slot", PrimitiveType::Cube);

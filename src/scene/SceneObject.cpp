@@ -167,7 +167,7 @@ void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const
             return;
         }
 
-        if (mesh && primitiveType != PrimitiveType::None) {
+        if (mesh) {
             glm::mat4 model = getWorldMatrix();
             shader.setMat4("model", model);
             shader.setVec3("decalColor", material.albedoColor);
@@ -196,7 +196,7 @@ void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const
         }
     }
 
-    if (mesh && primitiveType != PrimitiveType::None) {
+    if (mesh) {
         glm::mat4 model = getWorldMatrix();
         glm::mat3 normalMat = getNormalMatrix();
 
