@@ -243,6 +243,10 @@ void Application::nextRoom() {
 }
 
 void Application::run() {
+    if (smokeTestMode) {
+        runSmokeTest();
+        return;
+    }
     if (captureMode) {
         runBenchmarkAndCaptureScreenshots();
         return;
@@ -1221,7 +1225,6 @@ void Application::runBugDiagnostics() {
                 std::cout << "[2.4 Prompt Text] \"" << interactionMgr.getPromptText(hit.object) << "\"\n";
             }
 
-            glm::mat4 hingeMat0 = safeHinge->getWorldMatrix();
             glm::mat4 doorMat0 = safeDoor->getWorldMatrix();
             glm::vec3 doorPos0 = glm::vec3(doorMat0[3]);
 
@@ -1237,7 +1240,6 @@ void Application::runBugDiagnostics() {
                 rooms[r]->update(0.016f, f * 0.016f, camera.position);
             }
 
-            glm::mat4 hingeMat1 = safeHinge->getWorldMatrix();
             glm::mat4 doorMat1 = safeDoor->getWorldMatrix();
             glm::vec3 doorPos1 = glm::vec3(doorMat1[3]);
 
@@ -1255,4 +1257,75 @@ void Application::runBugDiagnostics() {
         }
         std::cout << "\n--------------------------------------------------------\n";
     }
+}
+
+void Application::runSmokeTest() {
+    std::cout << "\n========================================================\n";
+    std::cout << "  [HEADLESS / SMOKE TEST: ALL 3 ROOMS & RENDER CYCLES]\n";
+    std::cout << "========================================================\n";
+
+    GLenum initialErr = glGetError();
+    if (initialErr != GL_NO_ERROR) {
+        std::cerr << "[SMOKE TEST ERROR] Initial GL error present: 0x" << std::hex << initialErr << std::dec << "\n";
+    }
+
+    for (int r = 0; r < 3; ++r) {
+        std::cout << "\n[Smoke Test] Loading Room " << r << " (" << rooms[r]->name << ")..." << std::endl;
+        switchRoom(r);
+
+        for (int frame = 0; frame < 10; ++frame) {
+            float dt = 0.016f;
+            float time = frame * dt;
+
+            // Update room
+            rooms[r]->update(dt, time, camera.position);
+
+            // Execute passes
+            if (spotLight.enabled) {
+                shadowPipeline.renderSpotShadow(spotLight, sceneRoot);
+            }
+            if (pointLight.enabled && shadowPipeline.pointShadowEnabled) {
+                shadowPipeline.renderPointShadow(pointLight, sceneRoot);
+            }
+
+            glm::mat4 proj = camera.getProjectionMatrix((float)windowWidth / (float)windowHeight);
+            glm::mat4 view = camera.getViewMatrix();
+
+            if (ssaoPipeline.enabled) {
+                ssaoPipeline.renderGeometryPrepass(view, proj, sceneRoot);
+                ssaoPipeline.renderSSAO(proj);
+            }
+
+            if (r == 2 && planarReflection.enabled) {
+                glm::mat4 refView, refProj;
+                planarReflection.computeReflectionMatrices(camera, glm::vec3(0, 2.1f, -4.84f), glm::vec3(0, 0, 1), 1.0f, refView, refProj);
+                planarReflection.beginRender();
+                planarReflection.endRender();
+            }
+
+            postProcessor.beginRender();
+            lightingShader.use();
+            if (sceneRoot) {
+                sceneRoot->draw(lightingShader, "", "");
+            }
+            postProcessor.endRender();
+
+            postProcessor.render(time, 0.0f);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+
+            GLenum err = glGetError();
+            if (err != GL_NO_ERROR) {
+                std::cerr << "[SMOKE TEST FAILED] GL Error 0x" << std::hex << err << std::dec 
+                          << " in Room " << r << " at frame " << frame << "!\n";
+                exit(1);
+            }
+        }
+        std::cout << ">>> [PASS] Room " << r << " rendered 10 frames cleanly with 0 GL errors." << std::endl;
+    }
+
+    std::cout << "\n========================================================\n";
+    std::cout << ">>> [ALL SMOKE TESTS PASSED]: 3/3 rooms verified with 0 GL errors.\n";
+    std::cout << "========================================================\n";
 }

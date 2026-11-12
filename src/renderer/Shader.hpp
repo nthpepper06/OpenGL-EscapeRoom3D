@@ -1,6 +1,8 @@
 #pragma once
 
 #include "core/Common.hpp"
+#include <unordered_map>
+#include <unordered_set>
 
 class Shader {
 public:
@@ -25,4 +27,7 @@ public:
 
 private:
     bool checkCompileErrors(unsigned int shader, const std::string& type);
+    int getUniformLocation(const std::string& name) const;
+    mutable std::unordered_map<std::string, int> uniformLocationCache;
+    mutable std::unordered_set<std::string> warnedUniforms;
 };

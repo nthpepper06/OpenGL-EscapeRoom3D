@@ -33,6 +33,8 @@ AudioEngine::~AudioEngine() {
 }
 
 bool AudioEngine::init() {
+    isAvailable = false;
+    enabled = false;
 #ifdef _WIN32
     WAVEFORMATEX wfx;
     ZeroMemory(&wfx, sizeof(WAVEFORMATEX));
@@ -46,8 +48,9 @@ bool AudioEngine::init() {
 
     MMRESULT result = waveOutOpen(&g_winAudio.hWaveOut, WAVE_MAPPER, &wfx, 0, 0, CALLBACK_NULL);
     if (result != MMSYSERR_NOERROR) {
-        std::cerr << "[AudioEngine] Warning: Could not initialize Windows WaveOut audio device (code " 
-                  << result << "). Audio will run in silent fallback mode.\n";
+        std::cerr << "[AudioEngine] Warning: Could not initialize audio output device (code " 
+                  << result << "). Audio will run in silent null-fallback mode (isAvailable = false).\n";
+        isAvailable = false;
         enabled = false;
         return false;
     }
@@ -60,11 +63,14 @@ bool AudioEngine::init() {
         waveOutPrepareHeader(g_winAudio.hWaveOut, &g_winAudio.waveHeaders[i], sizeof(WAVEHDR));
     }
 
+    isAvailable = true;
+    enabled = true;
     isRunning = true;
     audioThread = std::thread(&AudioEngine::audioLoop, this);
     std::cout << "[AudioEngine] Procedural 3D Spatial Audio Engine initialized (44100Hz Stereo).\n";
     return true;
 #else
+    isAvailable = false;
     enabled = false;
     return false;
 #endif
@@ -91,7 +97,7 @@ void AudioEngine::shutdown() {
 }
 
 void AudioEngine::playFootstep(const glm::vec3& position) {
-    if (!enabled || muted) return;
+    if (!isAvailable || !enabled || muted) return;
     std::lock_guard<std::mutex> lock(soundMutex);
     ActiveSound snd;
     snd.type = SoundType::Footstep;
@@ -104,7 +110,7 @@ void AudioEngine::playFootstep(const glm::vec3& position) {
 }
 
 void AudioEngine::playKeypadBeep(bool success) {
-    if (!enabled || muted) return;
+    if (!isAvailable || !enabled || muted) return;
     std::lock_guard<std::mutex> lock(soundMutex);
     ActiveSound snd;
     snd.type = success ? SoundType::KeypadBeep : SoundType::KeypadError;
@@ -116,7 +122,7 @@ void AudioEngine::playKeypadBeep(bool success) {
 }
 
 void AudioEngine::playSafeUnlock(const glm::vec3& position) {
-    if (!enabled || muted) return;
+    if (!isAvailable || !enabled || muted) return;
     std::lock_guard<std::mutex> lock(soundMutex);
     ActiveSound snd;
     snd.type = SoundType::SafeUnlock;
@@ -129,7 +135,7 @@ void AudioEngine::playSafeUnlock(const glm::vec3& position) {
 }
 
 void AudioEngine::playDrawerSlide(const glm::vec3& position) {
-    if (!enabled || muted) return;
+    if (!isAvailable || !enabled || muted) return;
     std::lock_guard<std::mutex> lock(soundMutex);
     ActiveSound snd;
     snd.type = SoundType::DrawerSlide;
@@ -142,7 +148,7 @@ void AudioEngine::playDrawerSlide(const glm::vec3& position) {
 }
 
 void AudioEngine::playDoorCreak(const glm::vec3& position) {
-    if (!enabled || muted) return;
+    if (!isAvailable || !enabled || muted) return;
     std::lock_guard<std::mutex> lock(soundMutex);
     ActiveSound snd;
     snd.type = SoundType::DoorCreak;
@@ -155,7 +161,7 @@ void AudioEngine::playDoorCreak(const glm::vec3& position) {
 }
 
 void AudioEngine::playItemPickup() {
-    if (!enabled || muted) return;
+    if (!isAvailable || !enabled || muted) return;
     std::lock_guard<std::mutex> lock(soundMutex);
     ActiveSound snd;
     snd.type = SoundType::ItemPickup;

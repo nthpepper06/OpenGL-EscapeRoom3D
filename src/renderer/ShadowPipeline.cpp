@@ -1,4 +1,5 @@
 #include "renderer/ShadowPipeline.hpp"
+#include "renderer/GLStateGuard.hpp"
 #include <iostream>
 
 ShadowPipeline::ShadowPipeline() {}
@@ -111,6 +112,7 @@ void ShadowPipeline::setupPointFBO() {
 
 void ShadowPipeline::renderSpotShadow(const SpotLight& spot, const std::shared_ptr<SceneObject>& root) {
     if (!spot.enabled || spot.intensity < 0.001f || !root) return;
+    GLStateGuard guard;
 
     // Outer cutoff in degrees
     float outerAngleDeg = glm::degrees(std::acos(spot.outerCutOff)) * 2.0f;
@@ -152,6 +154,7 @@ void ShadowPipeline::renderSpotShadow(const SpotLight& spot, const std::shared_p
 void ShadowPipeline::renderPointShadow(const PointLight& point, const std::shared_ptr<SceneObject>& root, bool forceBake) {
     if (!pointShadowEnabled || !point.enabled || point.intensity < 0.001f || !root) return;
     if (!pointShadowDirty && !forceBake) return;
+    GLStateGuard guard;
 
     glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, pointFarPlane);
     glm::vec3 pos = point.position;

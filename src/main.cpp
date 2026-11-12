@@ -24,6 +24,9 @@ int main(int argc, char* argv[]) {
         if (arg == "--test-bug" || arg == "--diagnose") {
             app.testBugMode = true;
         }
+        if (arg == "--smoke-test") {
+            app.smokeTestMode = true;
+        }
     }
 
     if (!app.init(1280, 720, "3D Escape Room - Modern OpenGL 3.3 Core")) {

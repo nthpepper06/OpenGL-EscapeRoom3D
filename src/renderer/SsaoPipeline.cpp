@@ -1,4 +1,5 @@
 #include "renderer/SsaoPipeline.hpp"
+#include "renderer/GLStateGuard.hpp"
 #include <random>
 #include <iostream>
 
@@ -86,6 +87,7 @@ void SsaoPipeline::cleanup() {
 }
 
 void SsaoPipeline::resize(int width, int height) {
+    if (width <= 0 || height <= 0) return;
     cleanup();
     init(width, height);
 }
@@ -138,6 +140,9 @@ void SsaoPipeline::setupSsaoFBOs() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "[SsaoPipeline] Raw SSAO FBO is incomplete!\n";
+    }
 
     // 2. Blurred SSAO FBO
     glGenFramebuffers(1, &ssaoBlurFBO);
@@ -149,6 +154,9 @@ void SsaoPipeline::setupSsaoFBOs() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBlurBuffer, 0);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "[SsaoPipeline] Blurred SSAO FBO is incomplete!\n";
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -229,6 +237,7 @@ void SsaoPipeline::renderQuad() {
 
 void SsaoPipeline::renderGeometryPrepass(const glm::mat4& view, const glm::mat4& proj, const std::shared_ptr<SceneObject>& root) {
     if (!enabled || !root) return;
+    GLStateGuard guard;
 
     glViewport(0, 0, halfWidth, halfHeight);
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -259,6 +268,7 @@ void SsaoPipeline::renderGeometryPrepass(const glm::mat4& view, const glm::mat4&
 
 void SsaoPipeline::renderSSAO(const glm::mat4& proj) {
     if (!enabled) return;
+    GLStateGuard guard;
 
     glViewport(0, 0, halfWidth, halfHeight);
 

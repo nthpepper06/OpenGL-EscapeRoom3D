@@ -88,6 +88,19 @@ if(NOT imgui_POPULATED)
     FetchContent_Populate(imgui)
 endif()
 
+# 7. miniaudio
+message(STATUS "Configuring miniaudio...")
+FetchContent_Declare(
+    miniaudio
+    GIT_REPOSITORY https://github.com/mackron/miniaudio.git
+    GIT_TAG master
+    GIT_SHALLOW TRUE
+)
+FetchContent_GetProperties(miniaudio)
+if(NOT miniaudio_POPULATED)
+    FetchContent_Populate(miniaudio)
+endif()
+
 # Setup STB interface library
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
@@ -163,6 +176,7 @@ set(ESCAPE_ROOM_SOURCES
     src/interaction/InteractionManager.cpp
     src/ui/GuiLayer.hpp
     src/ui/GuiLayer.cpp
+    src/renderer/GLStateGuard.hpp
     src/audio/AudioEngine.hpp
     src/audio/AudioEngine.cpp
 )
@@ -174,7 +188,12 @@ target_include_directories(EscapeRoom PRIVATE
     ${stb_SOURCE_DIR}
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
+    ${miniaudio_SOURCE_DIR}
 )
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(EscapeRoom PRIVATE -Wall -Wextra -Wno-unused-parameter)
+endif()
 
 target_link_libraries(EscapeRoom PRIVATE
     glfw
@@ -188,6 +207,10 @@ target_link_libraries(EscapeRoom PRIVATE
 if(WIN32)
     target_link_libraries(EscapeRoom PRIVATE opengl32 winmm)
 endif()
+
+enable_testing()
+add_test(NAME EscapeRoom_RegressionTest COMMAND EscapeRoom --test-bug)
+add_test(NAME EscapeRoom_SmokeTest COMMAND EscapeRoom --smoke-test)
 
 # Copy assets directory to build output directory
 add_custom_command(TARGET EscapeRoom POST_BUILD

@@ -4,6 +4,9 @@
 #include "camera/Camera.hpp"
 #include "scene/SceneObject.hpp"
 #include "renderer/Shader.hpp"
+#include <memory>
+
+class GLStateGuard;
 
 class PlanarReflection {
 public:
@@ -34,6 +37,7 @@ private:
     unsigned int fbo = 0;
     unsigned int reflectionTexture = 0;
     unsigned int depthRbo = 0;
+    std::unique_ptr<GLStateGuard> stateGuard;
 
     void setupFBO();
 };

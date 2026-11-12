@@ -48,6 +48,7 @@ public:
     void updateAtmosphere(float fearFactor, const glm::vec3& lightPos, bool lightFlickering);
 
     // Audio controls for Dear ImGui
+    bool isAvailable = false;
     bool enabled = true;
     float masterVolume = 0.75f;
     float sfxVolume = 0.85f;

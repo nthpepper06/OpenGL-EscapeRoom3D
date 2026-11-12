@@ -47,8 +47,10 @@ public:
     // Automated Diagnostics & Evidence Benchmark
     bool captureMode = false;
     bool testBugMode = false;
+    bool smokeTestMode = false;
     void runBenchmarkAndCaptureScreenshots();
     void runBugDiagnostics();
+    void runSmokeTest();
     static bool saveScreenshot(const std::string& filepath, int width, int height);
 
 private:

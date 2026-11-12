@@ -1,4 +1,5 @@
 #include "renderer/PlanarReflection.hpp"
+#include "renderer/GLStateGuard.hpp"
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -120,6 +121,8 @@ void PlanarReflection::computeReflectionMatrices(const Camera& mainCamera,
 }
 
 void PlanarReflection::beginRender() {
+    stateGuard = std::make_unique<GLStateGuard>();
+
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glViewport(0, 0, resolution, resolution);
     glClearColor(0.04f, 0.03f, 0.06f, 1.0f);
@@ -131,5 +134,10 @@ void PlanarReflection::beginRender() {
 
 void PlanarReflection::endRender() {
     glFrontFace(GL_CCW);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (stateGuard) {
+        stateGuard->restore();
+        stateGuard.reset();
+    } else {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }

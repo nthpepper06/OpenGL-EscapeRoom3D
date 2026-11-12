@@ -50,7 +50,6 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     // Procedural PBR Texture Sets
     PbrTextureSet asylumPbr = Texture::createAsylumTilePbr(512, 512);
     PbrTextureSet metalPbr = Texture::createMetalPbr(512, 512);
-    PbrTextureSet woodPbr = Texture::createWoodPbr(512, 512);
     unsigned int noteTex = Texture::createNoteTexture("PATIENT RECORD", "PIN: " + cluePin, 256, 256);
 
     auto applyAsylumTilePbr = [&](const std::shared_ptr<SceneObject>& obj, const glm::vec3& tint = glm::vec3(1.0f)) {

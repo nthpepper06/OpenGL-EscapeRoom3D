@@ -11,6 +11,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#define GL_CHECK_ERROR() \
+    do { \
+        GLenum err; \
+        while ((err = glGetError()) != GL_NO_ERROR) { \
+            std::cerr << "[OpenGL Error] (0x" << std::hex << err << std::dec \
+                      << ") at " << __FILE__ << ":" << __LINE__ << "\n"; \
+        } \
+    } while (0)
+
 #ifndef GLM_ENABLE_EXPERIMENTAL
 #define GLM_ENABLE_EXPERIMENTAL
 #endif
