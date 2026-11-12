@@ -205,21 +205,26 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                     setMessage("SANCTUARY DOOR IS SEALED! Observe the mirror and align the 3 busts symmetrically!", 6.0f);
                 }
             } else if (currentRoomId == 1) {
-                if (safeUnlocked || hasGoldenKey) {
+                if (safeUnlocked) {
                     if (exitDoorObject) {
                         exitDoorObject->isOpen = true;
                         exitDoorObject->isLocked = false;
                     }
                     obj->isOpen = true;
                     exitUnlocked = true;
+                    if (!hasSigil[1]) {
+                        hasSigil[1] = true;
+                        sigilsCollected++;
+                        keysCollected++;
+                    }
                     requestRoomTransition = true;
                     if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
-                    setMessage("UNLOCKED! Transitioning to the Haunted Mirror Gallery (Room 3)...", 6.0f);
+                    setMessage("UNLOCKED! Sigil Fragment #2 Acquired. Advancing to Haunted Mirror Gallery (Room 3)...", 6.0f);
                 } else {
                     showKeypadModal = true;
                     enteredPin = "";
                     if (audioEngine) audioEngine->playKeypadBeep(false);
-                    setMessage("Isolation door locked with security keypad! Use UV Blacklight [Right-Click / V] on cell walls!", 5.0f);
+                    setMessage("Isolation Exit Door is locked! Enter 4-digit PIN on keypad (look for UV markings on cell walls).", 5.0f);
                 }
             } else {
                 if (hasGoldenKey) {
@@ -377,12 +382,17 @@ bool InteractionManager::checkPin(const std::string& pin) {
             exitDoorObject->isOpen = true;
             exitDoorObject->isLocked = false;
             exitUnlocked = true;
+            if (!hasSigil[1]) {
+                hasSigil[1] = true;
+                sigilsCollected++;
+                keysCollected++;
+            }
         }
         if (audioEngine) {
             audioEngine->playKeypadBeep(true);
             audioEngine->playSafeUnlock(safeDoorObject ? glm::vec3(safeDoorObject->getWorldMatrix()[3]) : glm::vec3(3.2f, 1.46f, 0.0f));
         }
-        setMessage("ACCESS GRANTED! Correct PIN (" + pin + ") entered! Door unlocked.", 8.0f);
+        setMessage("ACCESS GRANTED! Correct PIN (" + pin + ") entered! Isolation Door Unlocked & Sigil Fragment #2 Acquired.", 8.0f);
         return true;
     } else {
         if (audioEngine) {

@@ -323,18 +323,19 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     uvPanel->material.fluorescentColor = glm::vec3(0.25f, 0.95f, 1.0f); // Brilliant cyan-blue fluorescence
     rootNode->addChild(uvPanel);
 
-    // 4 UV Reactive Cipher Plaques in 4 corners of Isolation Cell (Order 1->2->3->4 = PIN 4108)
+    // 4 UV Reactive Cipher Plaques in 4 corners of Isolation Cell (Order 1->2->3->4 = PIN from cluePin)
     struct CipherPlaqueData {
         glm::vec3 pos;
         glm::vec3 rot;
         std::string label;
         char digit;
+        int orderIndex;
     };
     CipherPlaqueData cipherData[4] = {
-        {{ 4.5f, 2.0f, -3.88f}, {0.0f,   0.0f, 0.0f}, "Cipher Fragment #1", '4'},
-        {{ 6.88f, 2.0f, -1.8f}, {0.0f, -90.0f, 0.0f}, "Cipher Fragment #2", '1'},
-        {{ 4.5f, 2.0f,  3.88f}, {0.0f, 180.0f, 0.0f}, "Cipher Fragment #3", '0'},
-        {{ 1.68f, 2.0f,  2.0f}, {0.0f,  90.0f, 0.0f}, "Cipher Fragment #4", '8'}
+        {{ 4.5f, 2.0f, -3.88f}, {0.0f,   0.0f, 0.0f}, "Cipher Fragment #1", (cluePin.size() > 0 ? cluePin[0] : '4'), 1},
+        {{ 6.88f, 2.0f, -1.8f}, {0.0f, -90.0f, 0.0f}, "Cipher Fragment #2", (cluePin.size() > 1 ? cluePin[1] : '1'), 2},
+        {{ 4.5f, 2.0f,  3.88f}, {0.0f, 180.0f, 0.0f}, "Cipher Fragment #3", (cluePin.size() > 2 ? cluePin[2] : '0'), 3},
+        {{ 1.68f, 2.0f,  2.0f}, {0.0f,  90.0f, 0.0f}, "Cipher Fragment #4", (cluePin.size() > 3 ? cluePin[3] : '8'), 4}
     };
 
     for (int i = 0; i < 4; ++i) {
@@ -343,7 +344,7 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
         plaqueRoot->rotation = cipherData[i].rot;
         rootNode->addChild(plaqueRoot);
 
-        auto plate = std::make_shared<SceneObject>("uv_plate_" + std::to_string(i + 1), "Cipher Plate", PrimitiveType::Cube);
+        auto plate = std::make_shared<SceneObject>("uv_plate_" + std::to_string(i + 1), "Cipher Plate [" + std::to_string(cipherData[i].orderIndex) + "]", PrimitiveType::Cube);
         plate->mesh = PrimitiveGenerator::createBeveledCube(0.65f, 0.65f, 0.03f, 0.01f, 1);
         plate->position = glm::vec3(0.0f);
         plate->material.uIsUVReactive = true;
@@ -353,29 +354,33 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
 
         auto numTag = std::make_shared<SceneObject>("uv_tag_" + std::to_string(i + 1), "Digit " + std::string(1, cipherData[i].digit), PrimitiveType::Cube);
         numTag->mesh = cubeMesh;
-        numTag->position = glm::vec3(0.0f, 0.0f, 0.025f);
+        numTag->position = glm::vec3(0.0f, -0.04f, 0.025f);
         numTag->scale = glm::vec3(0.35f, 0.35f, 0.02f);
         numTag->material.uIsUVReactive = true;
         numTag->material.albedoColor = glm::vec3(0.10f, 1.0f, 0.65f);
         numTag->material.emissiveColor = glm::vec3(0.10f, 1.0f, 0.65f);
         numTag->material.emissiveIntensity = 4.0f;
         plate->addChild(numTag);
+
+        // Small fluorescent order position mark [1], [2], [3], [4] directly above each digit
+        auto orderMark = std::make_shared<SceneObject>("uv_order_" + std::to_string(i + 1), "Position #" + std::to_string(cipherData[i].orderIndex), PrimitiveType::Cube);
+        orderMark->mesh = cubeMesh;
+        orderMark->position = glm::vec3(0.0f, 0.22f, 0.025f);
+        orderMark->scale = glm::vec3(0.20f, 0.06f, 0.02f);
+        orderMark->material.uIsUVReactive = true;
+        orderMark->material.albedoColor = glm::vec3(0.25f, 0.90f, 1.0f);
+        orderMark->material.emissiveColor = glm::vec3(0.25f, 0.90f, 1.0f);
+        orderMark->material.emissiveIntensity = 3.5f;
+        plate->addChild(orderMark);
     }
 
-    // Golden Key & Sigil #2 placed inside the cell on a stand
-    auto keyStand = std::make_shared<SceneObject>("key_stand", "Specimen Stand", PrimitiveType::Cylinder);
-    keyStand->mesh = cylinderMesh;
-    keyStand->position = glm::vec3(3.5f, 0.5f, -1.8f);
-    keyStand->scale = glm::vec3(0.4f, 1.0f, 0.4f);
-    keyStand->material.albedoColor = glm::vec3(0.35f, 0.38f, 0.36f);
-    rootNode->addChild(keyStand);
-
-    auto goldenKey = EscapeRoomBuilder::buildOrnateGoldenKey(interactionMgr);
-    goldenKey->position = glm::vec3(3.5f, 1.15f, -1.8f);
-    goldenKey->scale = glm::vec3(0.24f);
-    goldenKey->interactType = InteractionType::GoldenKey;
-    rootNode->addChild(goldenKey);
-    interactionMgr.keyObject = goldenKey;
+    // Specimen Examination Table inside cell (Empty, no bypass key - player MUST solve UV puzzle!)
+    auto specimenTable = std::make_shared<SceneObject>("specimen_table", "Specimen Examination Stand", PrimitiveType::Cylinder);
+    specimenTable->mesh = cylinderMesh;
+    specimenTable->position = glm::vec3(3.5f, 0.5f, -1.8f);
+    specimenTable->scale = glm::vec3(0.4f, 1.0f, 0.4f);
+    specimenTable->material.albedoColor = glm::vec3(0.35f, 0.38f, 0.36f);
+    rootNode->addChild(specimenTable);
 
     // ==========================================
     // 5. ISOLATION EXIT DOOR & KEYPAD

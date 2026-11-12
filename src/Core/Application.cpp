@@ -1,4 +1,5 @@
 #include "core/Application.hpp"
+#include "renderer/GLStateGuard.hpp"
 #include <imgui.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -645,7 +646,8 @@ void Application::run() {
         // ------------------------------------------------------------------------
         // PASS 1B: UV FLUORESCENT DECAL OVERLAY (Additive Blend + Polygon Offset)
         // ------------------------------------------------------------------------
-        if (interactionMgr.isUvLightActive || currentRoomIndex == 1) {
+        if (interactionMgr.isUvLightActive) {
+            GLStateGuard uvGuard;
             uvDecalShader.use();
             uvDecalShader.setMat4("projection", projection);
             uvDecalShader.setMat4("view", view);
@@ -654,11 +656,12 @@ void Application::run() {
             uvDecalShader.setFloat("spotLight.cutOff", spotLight.cutOff);
             uvDecalShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
             uvDecalShader.setBool("spotLight.enabled", spotLight.enabled);
-            uvDecalShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
-            uvDecalShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
+            uvDecalShader.setBool("uIsUVMode", true);
+            uvDecalShader.setBool("isUvLightActive", true);
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE); // Additive fluorescent glow
+            glDepthFunc(GL_LEQUAL);
             glDepthMask(GL_FALSE);             // Don't overwrite opaque depth buffer
             glEnable(GL_POLYGON_OFFSET_FILL);
             glPolygonOffset(-1.0f, -1.0f);     // Zero Z-fighting against walls
@@ -666,10 +669,6 @@ void Application::run() {
             if (sceneRoot) {
                 sceneRoot->draw(uvDecalShader, "", "", RenderLayer::UVDecalsOnly);
             }
-
-            glDisable(GL_POLYGON_OFFSET_FILL);
-            glDepthMask(GL_TRUE);
-            glDisable(GL_BLEND);
         }
 
         // ------------------------------------------------------------------------
