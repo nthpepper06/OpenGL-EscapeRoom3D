@@ -46,12 +46,12 @@ OccultRitualRoom::OccultRitualRoom() {
 
 std::string OccultRitualRoom::getObjectiveHint(const InteractionManager& im) const {
     if (im.hasGoldenKey) {
-        return "Đã có Chìa Khóa Nghi Lễ! Hãy bước tới Cửa Thoát Hiểm ở phía Nam để tiếp tục.";
+        return "Ritual Key acquired! Proceed to the South Exit Door to continue.";
     }
     if (im.altarUnlocked) {
-        return "Bệ thờ đã mở! Hãy lại gần lấy Chìa Khóa Nghi Lễ & Mảnh Sigil #1.";
+        return "Altar slab has slid open! Retrieve the Ritual Key & Sigil Fragment #1 from the crypt altar.";
     }
-    return "Xoay 3 Cột Totem [E] sao cho bóng đổ khớp với 3 Cổ Tự trên tường phía Bắc.";
+    return "Rotate 3 Totems [E] so their projected shadows align with the 3 Runes on the North wall.";
 }
 
 void OccultRitualRoom::build(InteractionManager& interactionMgr) {
@@ -163,7 +163,7 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
         auto pillar = std::make_shared<SceneObject>("pillar_occult_" + std::to_string(i+1), "Colossal Stone Pillar", PrimitiveType::Cylinder);
         pillar->mesh = cylinderMesh;
         pillar->position = pillarPositions[i];
-        pillar->scale = glm::vec3(0.70f, 5.5f, 0.70f);
+        pillar->scale = glm::vec3(0.70f, 5.54f, 0.70f); // 5.54m height penetrates floor and ceiling to eliminate Z-fighting
         applyStonePbr(pillar, glm::vec3(0.75f));
         rootNode->addChild(pillar);
     }
@@ -192,13 +192,14 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     altarRoot->addChild(altarLid);
     interactionMgr.altarLidObject = altarLid;
 
-    // Skull on Altar Lid
+    // Skull on Altar Lid (Weathered bone effigy)
     auto skull = std::make_shared<SceneObject>("altar_skull", "Occult Skull", PrimitiveType::Cube);
-    skull->mesh = cubeMesh;
-    skull->position = glm::vec3(0.0f, 0.20f, 0.0f);
-    skull->scale = glm::vec3(0.35f, 0.32f, 0.40f);
-    skull->material.albedoColor = glm::vec3(0.85f, 0.82f, 0.70f);
-    skull->material.roughness = 0.65f;
+    skull->mesh = PrimitiveGenerator::createBeveledCube(0.32f, 0.28f, 0.36f, 0.03f, 2);
+    skull->position = glm::vec3(0.0f, 0.18f, 0.0f);
+    skull->scale = glm::vec3(1.0f);
+    skull->material.albedoColor = glm::vec3(0.55f, 0.52f, 0.45f);
+    skull->material.roughness = 0.75f;
+    skull->material.metallic = 0.05f;
     altarLid->addChild(skull);
 
     // 4 Bloody Candles on Altar Corners

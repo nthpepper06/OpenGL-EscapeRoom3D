@@ -812,6 +812,153 @@
       },
       {
         "children": [],
+        "id": "uv_arrow_fuse_1",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Fluorescent Trail Marker #1",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -1.2000000476837158,
+          0.014999999664723873,
+          0.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          90.0,
+          0.0
+        ],
+        "scale": [
+          0.4000000059604645,
+          0.009999999776482582,
+          0.1599999964237213
+        ]
+      },
+      {
+        "children": [],
+        "id": "uv_arrow_fuse_2",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Fluorescent Trail Marker #2",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -3.5,
+          0.014999999664723873,
+          1.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          135.0,
+          0.0
+        ],
+        "scale": [
+          0.4000000059604645,
+          0.009999999776482582,
+          0.1599999964237213
+        ]
+      },
+      {
+        "children": [],
+        "id": "uv_arrow_fuse_3",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Fluorescent Trail Marker #3",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -4.880000114440918,
+          1.600000023841858,
+          2.5999999046325684
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          -90.0
+        ],
+        "scale": [
+          0.03999999910593033,
+          0.5,
+          0.18000000715255737
+        ]
+      },
+      {
+        "children": [],
         "id": "gurney_root",
         "interactType": "None",
         "isLocked": false,
@@ -906,6 +1053,602 @@
           2.4000000953674316,
           1.5,
           0.03999999910593033
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "uv_tag_1",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Digit 4",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.3499999940395355,
+                  0.3499999940395355,
+                  0.019999999552965164
+                ]
+              }
+            ],
+            "id": "uv_plate_1",
+            "interactType": "SecretNote",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Cipher Plate",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "id": "uv_cipher_1",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Cipher Fragment #1",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          4.5,
+          2.0,
+          -3.880000114440918
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "uv_tag_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Digit 1",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.3499999940395355,
+                  0.3499999940395355,
+                  0.019999999552965164
+                ]
+              }
+            ],
+            "id": "uv_plate_2",
+            "interactType": "SecretNote",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Cipher Plate",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "id": "uv_cipher_2",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Cipher Fragment #2",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          6.880000114440918,
+          2.0,
+          -1.7999999523162842
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          -90.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "uv_tag_3",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Digit 0",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.3499999940395355,
+                  0.3499999940395355,
+                  0.019999999552965164
+                ]
+              }
+            ],
+            "id": "uv_plate_3",
+            "interactType": "SecretNote",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Cipher Plate",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "id": "uv_cipher_3",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Cipher Fragment #3",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          4.5,
+          2.0,
+          3.880000114440918
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          180.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "id": "uv_tag_4",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Digit 8",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.0,
+                  0.02500000037252903
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.3499999940395355,
+                  0.3499999940395355,
+                  0.019999999552965164
+                ]
+              }
+            ],
+            "id": "uv_plate_4",
+            "interactType": "SecretNote",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Cipher Plate",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "id": "uv_cipher_4",
+        "interactType": "None",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Cipher Fragment #4",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          1.6799999475479126,
+          2.0,
+          2.0
+        ],
+        "primitiveType": "None",
+        "rotation": [
+          0.0,
+          90.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
         ]
       },
       {

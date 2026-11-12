@@ -218,8 +218,19 @@ void Application::switchRoom(int index) {
     // Reset camera to room's designated spawn point
     camera = Camera(room->spawnPosition, glm::vec3(0.0f, 1.0f, 0.0f), room->spawnYaw, room->spawnPitch);
     playerController.setPosition(camera.position);
+    playerController.playerVelocity = glm::vec3(0.0f);
     playerController.setRoomBounds(room->roomBounds);
     interactionMgr.currentRoomId = currentRoomIndex;
+
+    // Close any open modals
+    interactionMgr.closeInspect();
+    interactionMgr.showKeypadModal = false;
+
+    // Lock cursor to FPS mode
+    if (appMode == AppMode::PlayMode && window) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        firstMouse = true;
+    }
 
     // Apply room-specific post-processing baseline
     postProcessor.vignetteStrength = room->baseVignette;
@@ -235,7 +246,98 @@ void Application::switchRoom(int index) {
     // Save initial room configuration
     SceneSerializer::saveToFile(sceneFilePath, sceneRoot, pointLight, spotLight, ambientLight);
 
-    interactionMgr.setMessage("Da vao: " + room->name + " - " + room->description, 6.0f);
+    interactionMgr.setMessage("Switched to Room " + std::to_string(currentRoomIndex + 1) + ": " + room->name + " | [F1-F3] Rooms | [F4] Solve Puzzle", 6.0f);
+}
+
+void Application::autoSolveCurrentRoom() {
+    if (currentRoomIndex == 0) {
+        // Room 0: Occult Ritual Chamber (Shadow Totem Alignment)
+        interactionMgr.totemAngles[0] = 90.0f;
+        interactionMgr.totemAngles[1] = 180.0f;
+        interactionMgr.totemAngles[2] = 270.0f;
+        if (sceneRoot) {
+            auto t1 = sceneRoot->findById("totem_1");
+            if (t1) t1->setRotation(glm::vec3(0.0f, 90.0f, 0.0f));
+            auto t2 = sceneRoot->findById("totem_2");
+            if (t2) t2->setRotation(glm::vec3(0.0f, 180.0f, 0.0f));
+            auto t3 = sceneRoot->findById("totem_3");
+            if (t3) t3->setRotation(glm::vec3(0.0f, 270.0f, 0.0f));
+            auto key = sceneRoot->findById("golden_key");
+            if (key) key->isVisible = false;
+        }
+        interactionMgr.altarUnlocked = true;
+        if (interactionMgr.altarLidObject) {
+            interactionMgr.altarLidObject->isOpen = true;
+        }
+        interactionMgr.hasGoldenKey = true;
+        interactionMgr.hasSigil[0] = true;
+        interactionMgr.sigilsCollected = std::max(interactionMgr.sigilsCollected, 1);
+        interactionMgr.keysCollected = std::max(interactionMgr.keysCollected, 1);
+        if (interactionMgr.exitDoorObject) {
+            interactionMgr.exitDoorObject->isLocked = false;
+            interactionMgr.exitDoorObject->isOpen = true;
+        }
+        audioEngine.playSafeUnlock(glm::vec3(0.0f, 1.0f, 0.0f));
+        interactionMgr.setMessage("Room 1 Auto-Solved! Totems aligned, altar opened, Ritual Key acquired, exit unlocked.", 6.0f);
+    } else if (currentRoomIndex == 1) {
+        // Room 1: Abandoned Asylum (Breaker Box, UV Ciphers & Safe PIN 4108)
+        interactionMgr.fusesCollected = 2;
+        interactionMgr.powerRestored = true;
+        pointLight.color = glm::vec3(0.75f, 0.95f, 0.92f);
+        pointLight.intensity = 11.0f;
+        if (interactionMgr.isolationGateObject) {
+            interactionMgr.isolationGateObject->isOpen = true;
+        }
+        interactionMgr.safeUnlocked = true;
+        if (interactionMgr.safeDoorObject) {
+            interactionMgr.safeDoorObject->isOpen = true;
+        }
+        interactionMgr.hasGoldenKey = true;
+        interactionMgr.hasSigil[1] = true;
+        interactionMgr.sigilsCollected = std::max(interactionMgr.sigilsCollected, 2);
+        interactionMgr.keysCollected = std::max(interactionMgr.keysCollected, 2);
+        if (interactionMgr.exitDoorObject) {
+            interactionMgr.exitDoorObject->isLocked = false;
+            interactionMgr.exitDoorObject->isOpen = true;
+        }
+        if (sceneRoot) {
+            auto key = sceneRoot->findById("golden_key");
+            if (key) key->isVisible = false;
+            auto f1 = sceneRoot->findById("fuse_1");
+            if (f1) f1->isVisible = false;
+            auto f2 = sceneRoot->findById("fuse_2");
+            if (f2) f2->isVisible = false;
+        }
+        audioEngine.playSafeUnlock(glm::vec3(0.0f, 1.0f, 0.0f));
+        interactionMgr.setMessage("Room 2 Auto-Solved! Power restored, security gate opened, PIN 4108 verified, exit unlocked.", 6.0f);
+    } else if (currentRoomIndex == 2) {
+        // Room 2: Haunted Mirror Sanctuary (Mirror World Bust Symmetry)
+        interactionMgr.bustAngles[0] = 180.0f;
+        interactionMgr.bustAngles[1] = 90.0f;
+        interactionMgr.bustAngles[2] = 270.0f;
+        if (sceneRoot) {
+            auto b1 = sceneRoot->findById("bust_1");
+            if (b1) b1->setRotation(glm::vec3(0.0f, 180.0f, 0.0f));
+            auto b2 = sceneRoot->findById("bust_2");
+            if (b2) b2->setRotation(glm::vec3(0.0f, 90.0f, 0.0f));
+            auto b3 = sceneRoot->findById("bust_3");
+            if (b3) b3->setRotation(glm::vec3(0.0f, 270.0f, 0.0f));
+            auto key = sceneRoot->findById("golden_key");
+            if (key) key->isVisible = false;
+        }
+        interactionMgr.mirrorPuzzleSolved = true;
+        interactionMgr.hasGoldenKey = true;
+        interactionMgr.hasSigil[2] = true;
+        interactionMgr.sigilsCollected = 3;
+        interactionMgr.keysCollected = 3;
+        interactionMgr.gameWon = true;
+        if (interactionMgr.exitDoorObject) {
+            interactionMgr.exitDoorObject->isLocked = false;
+            interactionMgr.exitDoorObject->isOpen = true;
+        }
+        audioEngine.playDoorCreak(glm::vec3(0.0f, 1.5f, 0.0f));
+        interactionMgr.setMessage("Room 3 Auto-Solved! Mirror anomalies matched, Sanctuary seal broken, Exit Door open!", 6.0f);
+    }
 }
 
 void Application::nextRoom() {
@@ -275,7 +377,7 @@ void Application::run() {
                 switchRoom(currentRoomIndex + 1);
             } else {
                 interactionMgr.gameWon = true;
-                interactionMgr.setMessage("CHIEN THANG CUOI CUNG! Ban da vuot qua toan bo 3 can phong kinh di!", 10.0f);
+                interactionMgr.setMessage("FINAL VICTORY! You have solved all 3 horror rooms and escaped Dr. Vance's asylum!", 10.0f);
             }
         }
 
@@ -483,6 +585,7 @@ void Application::run() {
         lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
         lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
+        lightingShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
         if (sceneRoot) {
@@ -632,17 +735,17 @@ void Application::onMouseButton(int button, int action, int mods) {
             interactionMgr.isUvLightActive = false;
             spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
             spotLight.intensity = 22.0f;
-            interactionMgr.setMessage("Da BAT den pin thuong. Nhan [Chuot phai / F] de chuyen sang Den UV!", 3.5f);
+            interactionMgr.setMessage("[NORMAL FLASHLIGHT] Restored white beam. Press [Right-Click / F / V] for UV Blacklight!", 3.5f);
         } else {
             interactionMgr.isUvLightActive = !interactionMgr.isUvLightActive;
             if (interactionMgr.isUvLightActive) {
-                spotLight.color = glm::vec3(0.40f, 0.10f, 1.0f);
+                spotLight.color = glm::vec3(0.45f, 0.12f, 1.0f);
                 spotLight.intensity = 18.0f;
-                interactionMgr.setMessage("[DEN PIN UV KICH HOAT] Anh sang tim giup phat hien mau son da quang an tren tuong!", 4.0f);
+                interactionMgr.setMessage("[UV BLACKLIGHT ACTIVE] Violet spectrum reveals hidden fluorescent ciphers and blood trails!", 4.0f);
             } else {
                 spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
                 spotLight.intensity = 22.0f;
-                interactionMgr.setMessage("[DEN PIN TIEU CHUAN] Da chuyen ve den pin thuong.", 3.0f);
+                interactionMgr.setMessage("[NORMAL FLASHLIGHT] Restored standard white beam.", 3.0f);
             }
         }
         audioEngine.playKeypadBeep(true);
@@ -739,6 +842,51 @@ void Application::onKey(int key, int scancode, int action, int mods) {
         return;
     }
 
+    // Fast Demo Hotkeys: F1, F2, F3 for room switching
+    if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
+        switchRoom(0);
+        return;
+    }
+    if (key == GLFW_KEY_F2 && action == GLFW_PRESS) {
+        switchRoom(1);
+        return;
+    }
+    if (key == GLFW_KEY_F3 && action == GLFW_PRESS) {
+        switchRoom(2);
+        return;
+    }
+
+    // Fast Demo Hotkey: F4 to auto-solve current room puzzle
+    if (key == GLFW_KEY_F4 && action == GLFW_PRESS) {
+        autoSolveCurrentRoom();
+        return;
+    }
+
+    // Toggle Flashlight & UV Blacklight via F or V key
+    if ((key == GLFW_KEY_F || key == GLFW_KEY_V) && action == GLFW_PRESS) {
+        if (!spotLight.enabled) {
+            spotLight.enabled = true;
+            interactionMgr.isUvLightActive = (key == GLFW_KEY_V);
+            spotLight.color = interactionMgr.isUvLightActive ? glm::vec3(0.45f, 0.12f, 1.0f) : glm::vec3(1.0f, 0.95f, 0.88f);
+            spotLight.intensity = interactionMgr.isUvLightActive ? 18.0f : 22.0f;
+            interactionMgr.setMessage(interactionMgr.isUvLightActive ? "[UV BLACKLIGHT ACTIVE] Violet spectrum reveals hidden fluorescent ciphers!"
+                                                                     : "[NORMAL FLASHLIGHT] Restored white beam. Press [V / F] for UV Blacklight!", 3.5f);
+        } else {
+            interactionMgr.isUvLightActive = !interactionMgr.isUvLightActive;
+            if (interactionMgr.isUvLightActive) {
+                spotLight.color = glm::vec3(0.45f, 0.12f, 1.0f);
+                spotLight.intensity = 18.0f;
+                interactionMgr.setMessage("[UV BLACKLIGHT ACTIVE] Violet spectrum reveals hidden fluorescent ciphers and blood trails!", 4.0f);
+            } else {
+                spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
+                spotLight.intensity = 22.0f;
+                interactionMgr.setMessage("[NORMAL FLASHLIGHT] Restored standard white beam.", 3.0f);
+            }
+        }
+        audioEngine.playKeypadBeep(true);
+        return;
+    }
+
     // Quick room switching via Hotkeys 1, 2, 3
     if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
         switchRoom(0);
@@ -750,30 +898,6 @@ void Application::onKey(int key, int scancode, int action, int mods) {
     }
     if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
         switchRoom(2);
-        return;
-    }
-
-    // Toggle Flashlight & UV Blacklight via F key
-    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        if (!spotLight.enabled) {
-            spotLight.enabled = true;
-            interactionMgr.isUvLightActive = false;
-            spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
-            spotLight.intensity = 22.0f;
-            interactionMgr.setMessage("Da BAT den pin thuong. Nhan [F / Chuot phai] de chuyen sang Den UV!", 3.5f);
-        } else {
-            interactionMgr.isUvLightActive = !interactionMgr.isUvLightActive;
-            if (interactionMgr.isUvLightActive) {
-                spotLight.color = glm::vec3(0.40f, 0.10f, 1.0f);
-                spotLight.intensity = 18.0f;
-                interactionMgr.setMessage("[DEN PIN UV KICH HOAT] Anh sang tim giup phat hien mau son da quang an tren tuong!", 4.0f);
-            } else {
-                spotLight.color = glm::vec3(1.0f, 0.95f, 0.88f);
-                spotLight.intensity = 22.0f;
-                interactionMgr.setMessage("[DEN PIN TIEU CHUAN] Da chuyen ve den pin thuong.", 3.0f);
-            }
-        }
-        audioEngine.playKeypadBeep(true);
         return;
     }
 
@@ -791,16 +915,16 @@ void Application::onKey(int key, int scancode, int action, int mods) {
     // Inspect key I (Play Mode only)
     if (key == GLFW_KEY_I && action == GLFW_PRESS && appMode == AppMode::PlayMode) {
         if (interactionMgr.hasGoldenKey) {
-            interactionMgr.openInspect(InspectType::GoldenKey, "CHIA KHOA VANG & SIGIL",
-                                       "Co vat toa ra anh sang kim loai phan chieu khong gian xung quanh.\n"
-                                       "Vat pham can thiet de mo khoa Cua Thoat Hiem.");
+            interactionMgr.openInspect(InspectType::GoldenKey, "GOLDEN KEY & SIGIL FRAGMENT",
+                                       "Radiant ancient talisman reflecting the room environment in HDR.\n"
+                                       "Required to unlock the Exit Door and escape.");
         } else if (interactionMgr.sigilsCollected > 0) {
-            interactionMgr.openInspect(InspectType::SigilFragment, "MANH SIGIL CO THU",
-                                       "Manh phu chu chua dung linh hon nan nhan cua Tien si Vance.");
+            interactionMgr.openInspect(InspectType::SigilFragment, "ANCIENT SIGIL FRAGMENT",
+                                       "An occult talisman capturing the tormented soul of an asylum victim.");
         } else {
-            interactionMgr.openInspect(InspectType::SecretNote, "THU TICH CUA DR. ELIAS VANCE",
-                                       "Ghi chu ve thuat phong an va ma so bao mat phong hien tai:\n"
-                                       "Ma PIN ket sat: " + interactionMgr.correctSafePin);
+            interactionMgr.openInspect(InspectType::SecretNote, "JOURNAL OF DR. ELIAS VANCE",
+                                       "Ritual notes and security override PIN for this room:\n"
+                                       "Security PIN: " + interactionMgr.correctSafePin);
         }
         return;
     }
@@ -823,7 +947,7 @@ void Application::onScroll(double yoffset) {
 void Application::saveCurrentScene() {
     if (sceneRoot) {
         if (SceneSerializer::saveToFile(sceneFilePath, sceneRoot, pointLight, spotLight, ambientLight)) {
-            interactionMgr.setMessage("Da luu cau hinh phong vao " + sceneFilePath, 3.0f);
+            interactionMgr.setMessage("Saved room configuration to " + sceneFilePath, 3.0f);
         }
     }
 }
@@ -835,7 +959,7 @@ void Application::loadSceneFile() {
             interactionMgr.safeDoorObject = sceneRoot->findById("safe_hinge");
             interactionMgr.exitDoorObject = sceneRoot->findById("door_hinge");
             interactionMgr.keyObject = sceneRoot->findById("golden_key");
-            interactionMgr.setMessage("Da nap cau hinh phong tu " + sceneFilePath, 3.0f);
+            interactionMgr.setMessage("Loaded room configuration from " + sceneFilePath, 3.0f);
         }
     } else {
         interactionMgr.setMessage("Khong the nap file: " + sceneFilePath, 3.0f);
@@ -1019,6 +1143,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
         lightingShader.setFloat("ambientAO", guiLayer.ambientAO);
         lightingShader.setInt("debugViewMode", guiLayer.debugViewMode);
         lightingShader.setBool("isUvLightActive", interactionMgr.isUvLightActive);
+        lightingShader.setBool("uIsUVMode", interactionMgr.isUvLightActive);
 
         std::string selectedId = guiLayer.selectedObject ? guiLayer.selectedObject->id : "";
         if (sceneRoot) {

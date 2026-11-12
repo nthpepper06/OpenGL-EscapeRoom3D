@@ -101,7 +101,9 @@ void PlanarReflection::computeReflectionMatrices(const Camera& mainCamera,
     outProj = mainCamera.getProjectionMatrix(aspect);
 
     // Oblique Near-Plane Projection Matrix (Lengyel method)
-    glm::vec4 clipPlane = glm::vec4(n, d);
+    // Add small bias (0.05m) to clip plane distance d to eliminate Z-fighting and near-plane precision flickering
+    float clipPlaneBias = 0.05f;
+    glm::vec4 clipPlane = glm::vec4(n, d + clipPlaneBias);
     glm::vec4 viewSpacePlane = glm::transpose(glm::inverse(outView)) * clipPlane;
     if (viewSpacePlane.w > 0.0f) {
         viewSpacePlane = -viewSpacePlane;
@@ -130,6 +132,7 @@ void PlanarReflection::beginRender() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glFrontFace(GL_CW); // Inverted face winding due to reflection
+    glDisable(GL_CULL_FACE); // Disable cull face during reflection pass to eliminate all flipped/missing polygon flickering
 }
 
 void PlanarReflection::endRender() {

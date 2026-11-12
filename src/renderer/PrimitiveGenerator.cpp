@@ -80,7 +80,7 @@ std::shared_ptr<Mesh> PrimitiveGenerator::createCylinder(int segments) {
     float radius = 0.5f;
     float halfHeight = 0.5f;
 
-    // Side vertices
+    // Side vertices with proper CCW normals and 2x4 texture repeats for architectural pillars
     for (int i = 0; i <= segments; ++i) {
         float theta = (float)i / (float)segments * 2.0f * (float)M_PI;
         float cosTheta = std::cos(theta);
@@ -90,9 +90,9 @@ std::shared_ptr<Mesh> PrimitiveGenerator::createCylinder(int segments) {
         float u = (float)i / (float)segments;
 
         // Bottom vertex
-        vertices.push_back({ {radius * cosTheta, -halfHeight, radius * sinTheta}, normal, {u, 0.0f} });
+        vertices.push_back({ {radius * cosTheta, -halfHeight, radius * sinTheta}, normal, {u * 2.0f, 0.0f} });
         // Top vertex
-        vertices.push_back({ {radius * cosTheta,  halfHeight, radius * sinTheta}, normal, {u, 1.0f} });
+        vertices.push_back({ {radius * cosTheta,  halfHeight, radius * sinTheta}, normal, {u * 2.0f, 4.0f} });
     }
 
     for (int i = 0; i < segments; ++i) {
@@ -101,13 +101,14 @@ std::shared_ptr<Mesh> PrimitiveGenerator::createCylinder(int segments) {
         int b2 = (i + 1) * 2;
         int t2 = b2 + 1;
 
+        // Counter-clockwise (CCW) front-facing triangles viewed from outside
         indices.push_back(b1);
-        indices.push_back(b2);
         indices.push_back(t1);
+        indices.push_back(b2);
 
         indices.push_back(t1);
-        indices.push_back(b2);
         indices.push_back(t2);
+        indices.push_back(b2);
     }
 
     // Top cap

@@ -36,6 +36,8 @@ struct Material {
 
     bool isFluorescent;
     vec3 fluorescentColor;
+
+    bool uIsUVReactive;
 };
 
 struct PointLight {
@@ -66,6 +68,7 @@ uniform PointLight pointLight;
 uniform SpotLight spotLight;
 uniform vec3 viewPos;
 uniform bool isUvLightActive;
+uniform bool uIsUVMode;
 
 // IBL Split-Sum Inputs
 uniform samplerCube irradianceMap;
@@ -284,18 +287,30 @@ void main()
         emissive *= texture(material.emissiveMap, TexCoords).rgb;
     }
 
-    // UV Blacklight Fluorescent Activation
-    if (material.isFluorescent) {
-        if (isUvLightActive && spotLight.enabled) {
-            vec3 toLight = spotLight.position - FragPos;
-            float dist = length(toLight);
-            vec3 L = normalize(toLight);
-            float theta = dot(L, normalize(-spotLight.direction));
-            if (theta > spotLight.outerCutOff && dist < 14.0) {
-                float coneFactor = smoothstep(spotLight.outerCutOff, spotLight.cutOff, theta);
-                float distAtten = 1.0 / (1.0 + 0.08 * dist + 0.04 * dist * dist);
-                emissive += material.fluorescentColor * (6.5 * coneFactor * distAtten);
-            }
+    // UV Blacklight & Fluorescent Clue Activation
+    bool uvActive = uIsUVMode || isUvLightActive;
+    float spotFactor = 0.0;
+    if (spotLight.enabled) {
+        vec3 toLight = spotLight.position - FragPos;
+        float dist = length(toLight);
+        vec3 L = normalize(toLight);
+        float theta = dot(L, normalize(-spotLight.direction));
+        if (theta > spotLight.outerCutOff && dist < 14.0) {
+            float coneFactor = smoothstep(spotLight.outerCutOff, spotLight.cutOff, theta);
+            float distAtten = 1.0 / (1.0 + 0.08 * dist + 0.03 * dist * dist);
+            spotFactor = coneFactor * distAtten;
+        }
+    }
+
+    if (material.uIsUVReactive) {
+        // Clue object: strictly invisible unless illuminated by UV Blacklight beam
+        if (!uvActive || spotFactor <= 0.05) {
+            discard;
+        }
+        emissive += vec3(0.10, 1.0, 0.65) * (4.5 * spotFactor);
+    } else if (material.isFluorescent) {
+        if (uvActive && spotFactor > 0.05) {
+            emissive += material.fluorescentColor * (5.5 * spotFactor);
         }
     }
 
@@ -395,16 +410,21 @@ void main()
         vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
         // Phase 3: Planar Reflection blending on smooth reflective mirror surfaces
-        if (usePlanarReflection && metallic > 0.7 && roughness < 0.35) {
+        bool isMirrorSurface = (usePlanarReflection && metallic > 0.7 && roughness < 0.35);
+        if (isMirrorSurface) {
             vec2 refUV = gl_FragCoord.xy / screenSize;
             refUV += (N.xy) * (0.02 * roughness);
             refUV = clamp(refUV, 0.002, 0.998);
             vec3 planarRef = texture(planarReflectionMap, refUV).rgb;
-            specularIBL = mix(specularIBL, planarRef * F, 0.88);
+            specularIBL = mix(specularIBL, planarRef * F, 0.92);
+            specularIBL = min(specularIBL, vec3(1.02));
         }
 
         // Modulate with material baked AO, ambientAO, and dynamic SSAO
         ambient = (kD * diffuseIBL + specularIBL) * (ao * ambientAO * ssaoFactor) * iblIntensity;
+        if (uvActive) {
+            ambient *= 0.35; // Dim white ambient environment in UV mode
+        }
     }
 
     if (debugViewMode == 6) { FragColor = vec4(ambient, 1.0); return; }
@@ -412,6 +432,11 @@ void main()
 
     // Direct lighting decoupled from ambient: shadow multiplies only direct terms!
     vec3 directLighting = (1.0 - pointShadow) * Lo_point + (1.0 - spotShadow) * Lo_spot;
+    bool isMirror = (usePlanarReflection && metallic > 0.7 && roughness < 0.35);
+    if (isMirror) {
+        // Direct light shining straight on mirror surface softened to avoid specular bloom blowout
+        directLighting = min(directLighting, vec3(0.35));
+    }
     vec3 color = ambient + directLighting + emissive;
 
     // ------------------------------------------------------------------------
@@ -423,8 +448,8 @@ void main()
         float fogFactor = 1.0 - exp(-distToCam * fogDensity * heightFactor);
         fogFactor = clamp(fogFactor, 0.0, 1.0);
 
-        // Forward-scattering in-scatter inside flashlight beam
-        if (spotLight.enabled && spotLight.intensity > 0.0) {
+        // Forward-scattering in-scatter inside flashlight beam (suppressed on mirror face to prevent milky white wall)
+        if (spotLight.enabled && spotLight.intensity > 0.0 && !isMirror) {
             vec3 toFrag = normalize(FragPos - viewPos);
             float coneDot = dot(toFrag, normalize(spotLight.direction));
             if (coneDot > spotLight.outerCutOff) {
@@ -438,6 +463,10 @@ void main()
     // Inspector / Hover highlight
     if (highlightFactor > 0.0) {
         color = mix(color, highlightColor, highlightFactor);
+    }
+
+    if (isMirror) {
+        color = min(color, vec3(1.08)); // Strictly below HDR bloom threshold (1.15) for smooth, clear reflection
     }
 
     FragColor = vec4(color, 1.0);

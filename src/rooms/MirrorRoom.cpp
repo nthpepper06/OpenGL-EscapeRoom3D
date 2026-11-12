@@ -46,12 +46,12 @@ MirrorRoom::MirrorRoom() {
 
 std::string MirrorRoom::getObjectiveHint(const InteractionManager& im) const {
     if (im.gameWon) {
-        return "Ác mộng của Dr. Vance đã bị phá vỡ! Chúc mừng bạn đã giải thoát toàn bộ linh hồn!";
+        return "Dr. Vance's nightmare is shattered! Congratulations, you have broken the ritual loop!";
     }
     if (im.mirrorPuzzleSolved) {
-        return "Phong ấn phản chiếu đã giải trừ! Tiến về Cánh Cửa Thánh Địa Cuối Cùng để thoát khỏi ác mộng Vance.";
+        return "Sanctuary seal shattered! Approach the Great Sanctuary Door to complete your escape.";
     }
-    return "Quan sát hình ảnh phản chiếu trong Gương Quỷ. Xoay 3 bức tượng ngoài đời thực [E] cho khớp với gợi ý trong gương.";
+    return "Observe the Demon Mirror reflection: rotate the 3 real busts [E] to match the mirror spectral guides.";
 }
 
 void MirrorRoom::build(InteractionManager& interactionMgr) {

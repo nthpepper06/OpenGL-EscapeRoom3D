@@ -20,57 +20,61 @@ std::string InteractionManager::getPromptText(const std::shared_ptr<SceneObject>
 
     switch (obj->interactType) {
         case InteractionType::LightSwitch:
-            return "[E] Bat/Tat den tran (Light Switch)";
+            return "[E] Toggle Ceiling Light";
         case InteractionType::DeskDrawer: {
             bool open = drawerObject ? drawerObject->isOpen : obj->isOpen;
-            return open ? "[E] Dong ngan keo" : "[E] Mo ngan keo (Tim manh giay mat ma)";
+            return open ? "[E] Close Drawer" : "[E] Open Drawer (Search for Clue)";
         }
-        case InteractionType::SecretNote:
-            return "[E] Doc manh giay mat ma [PIN: " + correctSafePin + "]";
+        case InteractionType::SecretNote: {
+            if (obj->id.find("uv_") != std::string::npos) {
+                return "[E] Inspect Fluorescent UV Clue: " + obj->name;
+            }
+            return "[E] Read Clue Document [PIN: " + correctSafePin + "]";
+        }
         case InteractionType::SafeKeypad:
-            return safeUnlocked ? "[E] Ket sat / Cua da mo khoa" : "[E] Nhap ma PIN mo cua (Ho tro ban phim 0-9)";
+            return safeUnlocked ? "[E] Keypad Unlocked" : "[E] Enter 4-Digit Security PIN (Keyboard 0-9)";
         case InteractionType::SafeDoor: {
-            if (!safeUnlocked) return "[E] Ket sat dang KHOA! Bam [E] de nhap ma PIN.";
+            if (!safeUnlocked) return "[E] Vault Safe is LOCKED! Press [E] to enter PIN.";
             bool open = safeDoorObject ? safeDoorObject->isOpen : obj->isOpen;
-            return open ? "[E] Dong cua ket sat" : "[E] Mo cua ket sat";
+            return open ? "[E] Close Vault Door" : "[E] Open Vault Door";
         }
         case InteractionType::GoldenKey:
-            return "[E] Nhat Chia Khoa & Manh Sigil thoat hiem!";
+            return "[E] Take Golden Key & Sigil Fragment!";
         case InteractionType::ExitDoor: {
             if (currentRoomId == 0) {
-                if (!hasGoldenKey) return "[E] Cua thoat hiem [KHOA] - Can Chia Khoa Nghi Le tren be tho!";
+                if (!hasGoldenKey) return "[E] Exit Door [LOCKED] - Requires Ritual Key from the altar!";
             } else if (currentRoomId == 1) {
-                if (!safeUnlocked && !hasGoldenKey) return "[E] Cua buong giam [KHOA MA SO] - Dung den UV soi mat ma tren tuong!";
+                if (!safeUnlocked && !hasGoldenKey) return "[E] Isolation Door [PIN LOCKED] - Use UV Blacklight on cell walls!";
             } else if (currentRoomId == 2) {
-                if (!mirrorPuzzleSolved && keysCollected < 3) return "[E] Cua Thanh Dia [PHONG AN] - Quan sat anh phan chieu trong guong de giai!";
+                if (!mirrorPuzzleSolved && keysCollected < 3) return "[E] Sanctuary Door [SEALED] - Align the 3 busts with the mirror!";
             }
             bool open = exitDoorObject ? exitDoorObject->isOpen : obj->isOpen;
-            return open ? "[E] Buoc qua cua thoat hiem" : "[E] MO CUA THOAT HIEM";
+            return open ? "[E] Step Through Exit Door" : "[E] OPEN EXIT DOOR";
         }
         case InteractionType::Totem: {
             int idx = 0;
             if (obj->id.find("2") != std::string::npos) idx = 1;
             else if (obj->id.find("3") != std::string::npos) idx = 2;
             int angle = static_cast<int>(totemAngles[idx]) % 360;
-            return "[E] Xoay Cot Totem #" + std::to_string(idx + 1) + " (Goc hien tai: " + std::to_string(angle) + " do)";
+            return "[E] Rotate Shadow Totem #" + std::to_string(idx + 1) + " (Current Angle: " + std::to_string(angle) + " deg)";
         }
         case InteractionType::FuseItem:
-            return "[E] Nhat " + obj->name;
+            return "[E] Pick up " + obj->name;
         case InteractionType::BreakerBox: {
-            if (powerRestored) return "[E] Tu Cau Chi (Nguon dien 220V da duoc kich hoat)";
-            if (fusesCollected < 2) return "[E] Tu Cau Chi (Thieu 2 cau chi, hien co: " + std::to_string(fusesCollected) + "/2)";
-            return "[E] LAP 2 CAU CHI KHOI PHUC NGUON DIEN & MO CONG";
+            if (powerRestored) return "[E] Circuit Breaker (220V Power Online)";
+            if (fusesCollected < 2) return "[E] Circuit Breaker (Missing 2 fuses, holding: " + std::to_string(fusesCollected) + "/2)";
+            return "[E] INSERT 2 FUSES & RESTORE 220V POWER";
         }
         case InteractionType::IsolationGate: {
-            if (!powerRestored) return "[E] Cong song sat [KHOA DIEN TU] - Can khoi phuc nguon dien tai Tu Cau Chi!";
-            return obj->isOpen ? "[E] Dong cong song sat" : "[E] Mo cong song sat";
+            if (!powerRestored) return "[E] Iron Security Gate [POWER OFFLINE] - Restore power at Breaker Box!";
+            return obj->isOpen ? "[E] Close Security Gate" : "[E] Open Security Gate";
         }
         case InteractionType::MirrorBust: {
             int idx = 0;
             if (obj->id.find("2") != std::string::npos) idx = 1;
             else if (obj->id.find("3") != std::string::npos) idx = 2;
             int angle = static_cast<int>(bustAngles[idx]) % 360;
-            return "[E] Xoay Tuong Ban Than #" + std::to_string(idx + 1) + " (Goc: " + std::to_string(angle) + " do - Nhin vao guong de so sanh)";
+            return "[E] Rotate Bust #" + std::to_string(idx + 1) + " (Angle: " + std::to_string(angle) + " deg - Compare with Mirror)";
         }
         default:
             return "";
@@ -84,43 +88,55 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
         case InteractionType::LightSwitch: {
             ceilingLight.enabled = !ceilingLight.enabled;
             obj->isOpen = ceilingLight.enabled;
-            setMessage(ceilingLight.enabled ? "Da BAT den tran." : "Da TAT den tran.");
+            setMessage(ceilingLight.enabled ? "Ceiling light turned ON." : "Ceiling light turned OFF.");
             break;
         }
         case InteractionType::DeskDrawer: {
             auto target = drawerObject ? drawerObject : obj;
             target->isOpen = !target->isOpen;
             if (audioEngine) audioEngine->playDrawerSlide(glm::vec3(target->getWorldMatrix()[3]));
-            setMessage(target->isOpen ? "Da mo ngan keo! Ben trong co manh giay ghi: [MA PIN KET SAT: " + correctSafePin + "]!" : "Da dong ngan keo ban.", 8.0f);
+            setMessage(target->isOpen ? "Opened drawer! Paper scrap found: [PIN: " + correctSafePin + "]!" : "Closed desk drawer.", 8.0f);
             break;
         }
         case InteractionType::SecretNote: {
             std::string loreTitle = "";
             std::string loreBody = "";
-            if (currentRoomId == 0) {
-                loreTitle = "NHAT KY HIEN TE CUA DR. ELIAS VANCE (1893)";
-                loreBody = "Ngay 13 thang 11, 1893:\n"
-                           "Nhung benh nhan tam than khong phai la ganh nang, ho la vat hien te hoan hao.\n"
-                           "Ta da phong an Manh Co Vat dau tien vao chiec ket sat sat ngam.\n"
-                           "Ma so giai phong nghi le duoc khac ghi tren buc tuong mau:\n\n"
-                           "        >>> MA PIN KET SAT: " + correctSafePin + " <<<\n\n"
-                           "Hay mo ket sat de lay Chia Khoa Vang va Manh Sigil!";
+            if (obj->id.find("uv_cipher_1") != std::string::npos) {
+                loreTitle = "UV FLUORESCENT CIPHER [STEP 1/4]";
+                loreBody = "First digit of the isolation cell security keypad: [ 4 ]\n\nSearch the remaining 3 corners under UV Blacklight.";
+            } else if (obj->id.find("uv_cipher_2") != std::string::npos) {
+                loreTitle = "UV FLUORESCENT CIPHER [STEP 2/4]";
+                loreBody = "Second digit of the isolation cell security keypad: [ 1 ]\n\nSearch the remaining 2 corners under UV Blacklight.";
+            } else if (obj->id.find("uv_cipher_3") != std::string::npos) {
+                loreTitle = "UV FLUORESCENT CIPHER [STEP 3/4]";
+                loreBody = "Third digit of the isolation cell security keypad: [ 0 ]\n\nSearch the last corner under UV Blacklight.";
+            } else if (obj->id.find("uv_cipher_4") != std::string::npos) {
+                loreTitle = "UV FLUORESCENT CIPHER [STEP 4/4]";
+                loreBody = "Fourth digit of the isolation cell security keypad: [ 8 ]\n\nComplete Keypad PIN Sequence: 4 - 1 - 0 - 8.";
+            } else if (currentRoomId == 0) {
+                loreTitle = "RITUAL SACRIFICE DIARY OF DR. ELIAS VANCE (1893)";
+                loreBody = "November 13, 1893:\n"
+                           "The asylum patients are not a burden; they are the ideal ritual vessels.\n"
+                           "I have sealed the first Sigil Fragment inside the stone crypt altar.\n"
+                           "Align the three totems with the blood glyphs on the North wall:\n\n"
+                           "        >>> TOTEM ANGLES: 90 / 180 / 270 DEGREES <<<\n\n"
+                           "Retrieve the Ritual Key to unlock the southern gateway!";
             } else if (currentRoomId == 1) {
-                loreTitle = "HO SO BENH AN TRICH XUAT - BENH VIEN TAM THAN";
-                loreBody = "Benh an #4108 - Doi tuong: Elias Vance.\n"
-                           "Doi tuong nghe thay tieng thi tham tu ben kia tam guong.\n"
-                           "Doi tuong da giau chia khoa buong giam vao tu ho so thep.\n\n"
-                           "        >>> MA PIN KET SAT: " + correctSafePin + " <<<\n\n"
-                           "Canh bao: Khong duoc nhin vao tam guong phong so 3!";
+                loreTitle = "PATIENT MEDICAL DOSSIER - SECLUSION WARD";
+                loreBody = "Case #4108 - Subject: Elias Vance.\n"
+                           "Subject exhibits acute delusions and claims whispers echo from the mirror.\n"
+                           "Security lock encoded with 4-digit sequence:\n\n"
+                           "        >>> KEYPAD PIN: " + correctSafePin + " <<<\n\n"
+                           "Warning: Inspect isolation cell walls under UV Blacklight.";
             } else {
-                loreTitle = "LOI NGUYEN PHONG AN GUONG QUY";
-                loreBody = "Tien si Vance da bien mat vao ben trong the gioi guong.\n"
-                           "De pha vo vong lap ac mong va mo cua thoat hiem cuoi cung,\n"
-                           "nguoi choi can phai so huu du ca 3 Chia Khoa Vang va 3 Manh Sigil!\n\n"
-                           "        >>> MA PIN KET SAT CUOI: " + correctSafePin + " <<<\n";
+                loreTitle = "CURSE OF THE DEMON MIRROR";
+                loreBody = "Dr. Vance retreated into the mirror world.\n"
+                           "To shatter the nightmare loop and unseal the sanctuary exit,\n"
+                           "the seeker must align all 3 marble busts to match the spectral reflection!\n\n"
+                           "        >>> TARGET ROTATIONS: 180 / 90 / 270 DEGREES <<<\n";
             }
             openInspect(InspectType::SecretNote, loreTitle, loreBody);
-            setMessage("Dang doc [Manh Giay Mat Ma]! Nhan [E] hoac [ESC] de dong lai.", 4.0f);
+            setMessage("Reading document. Press [E] or [ESC] to close.", 4.0f);
             break;
         }
         case InteractionType::SafeKeypad: {
@@ -128,7 +144,7 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 showKeypadModal = true;
                 enteredPin = "";
             } else {
-                setMessage("Ket sat da mo khoa san roi.");
+                setMessage("Keypad is already unlocked.");
             }
             break;
         }
@@ -137,22 +153,22 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 showKeypadModal = true;
                 enteredPin = "";
                 if (audioEngine) audioEngine->playKeypadBeep(true);
-                setMessage("Ket sat dang khoa! Hay go ma PIN 4 chu so (" + correctSafePin + ").", 5.0f);
+                setMessage("Vault safe is locked! Enter 4-digit PIN (" + correctSafePin + ").", 5.0f);
             } else {
                 auto target = safeDoorObject ? safeDoorObject : obj;
                 target->isOpen = !target->isOpen;
                 if (audioEngine) audioEngine->playDoorCreak(glm::vec3(target->getWorldMatrix()[3]));
-                setMessage(target->isOpen ? "Da mo cua ket sat." : "Da dong cua ket sat.");
+                setMessage(target->isOpen ? "Opened vault safe door." : "Closed vault safe door.");
             }
             break;
         }
         case InteractionType::GoldenKey: {
             if (currentRoomId == 0 && !altarUnlocked && altarLidObject && !altarLidObject->isOpen) {
-                setMessage("Nap be tho van dang khoa kin! Hay xoay 3 cot Totem sao cho bong do khop voi co tu.", 5.0f);
+                setMessage("The altar slab is locked tight! Align the 3 totems with the North wall runes.", 5.0f);
                 return;
             }
             if (currentRoomId == 1 && !powerRestored) {
-                setMessage("Can khoi phuc nguon dien va buoc vao buong giam truoc!", 4.0f);
+                setMessage("Restore power and step into the isolation cell first!", 4.0f);
                 return;
             }
             hasGoldenKey = true;
@@ -163,18 +179,17 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
             }
             if (audioEngine) audioEngine->playItemPickup();
             obj->isVisible = false;
-            std::string keyTitle = "CHIA KHOA & MANH SIGIL CUA VANCE [" + std::to_string(keysCollected) + "/3]";
-            std::string keyBody = "Ban da thu thap thanh cong Chia Khoa va Manh Co Vat Sigil #" + std::to_string(currentRoomId + 1) + "!\n"
-                                  "Co vat toa ra anh sang vang kim chong lai bong toi.\n"
-                                  "Tong so co vat hien co: " + std::to_string(keysCollected) + "/3.\n\n"
-                                  "Hay tien ve phia Cua Thoat Hiem [EXIT] de tiep tuc hanh trinh!";
+            std::string keyTitle = "KEY & SIGIL FRAGMENT OF VANCE [" + std::to_string(keysCollected) + "/3]";
+            std::string keyBody = "You have collected Golden Key and Sigil Fragment #" + std::to_string(currentRoomId + 1) + "!\n"
+                                  "The golden relic radiates warmth, pushing back the dark.\n"
+                                  "Total relics collected: " + std::to_string(keysCollected) + "/3.\n\n"
+                                  "Proceed to the EXIT Door to advance!";
             openInspect(InspectType::GoldenKey, keyTitle, keyBody);
-            setMessage("DA NHAT DUOC CHIA KHOA & MANH SIGIL [" + std::to_string(keysCollected) + "/3]!", 8.0f);
+            setMessage("ACQUIRED KEY & SIGIL FRAGMENT [" + std::to_string(keysCollected) + "/3]!", 8.0f);
             break;
         }
         case InteractionType::ExitDoor: {
             if (currentRoomId == 2) {
-                // Final room: requires mirror puzzle solved or all 3 keys!
                 if (mirrorPuzzleSolved || keysCollected >= 3) {
                     if (exitDoorObject) {
                         exitDoorObject->isOpen = true;
@@ -184,13 +199,12 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                     exitUnlocked = true;
                     gameWon = true;
                     if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
-                    setMessage("CHUC MUNG! Ban da hoa giai thanh cong ao anh Guong Quy va thoat khoi vien tam than!", 12.0f);
+                    setMessage("CONGRATULATIONS! You broke the Demon Mirror illusion and escaped the nightmare!", 12.0f);
                 } else {
                     if (audioEngine) audioEngine->playKeypadBeep(false);
-                    setMessage("CUA THANH DIA BI PHONG AN! Hay quan sat guong va xoay 3 tuong ban than cho can xung!", 6.0f);
+                    setMessage("SANCTUARY DOOR IS SEALED! Observe the mirror and align the 3 busts symmetrically!", 6.0f);
                 }
             } else if (currentRoomId == 1) {
-                // Room 2: Asylum door opened by safeUnlocked (PIN 4108) or hasGoldenKey
                 if (safeUnlocked || hasGoldenKey) {
                     if (exitDoorObject) {
                         exitDoorObject->isOpen = true;
@@ -200,15 +214,14 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                     exitUnlocked = true;
                     requestRoomTransition = true;
                     if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
-                    setMessage("MO KHOA THANH CONG! Dang chuyen sang Can Phong Guong (Room 3)...", 6.0f);
+                    setMessage("UNLOCKED! Transitioning to the Haunted Mirror Gallery (Room 3)...", 6.0f);
                 } else {
                     showKeypadModal = true;
                     enteredPin = "";
                     if (audioEngine) audioEngine->playKeypadBeep(false);
-                    setMessage("Cua buong giam khoa bang mat ma so! Bat den pin UV [Chuot phai / F] soi len tuong!", 5.0f);
+                    setMessage("Isolation door locked with security keypad! Use UV Blacklight [Right-Click / V] on cell walls!", 5.0f);
                 }
             } else {
-                // Room 0: Occult Ritual room
                 if (hasGoldenKey) {
                     if (exitDoorObject) {
                         exitDoorObject->isOpen = true;
@@ -218,10 +231,10 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                     exitUnlocked = true;
                     requestRoomTransition = true;
                     if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
-                    setMessage("MO KHOA THANH CONG! Dang tien vao Benh Vien Tam Than Bo Hoang (Room 2)...", 6.0f);
+                    setMessage("UNLOCKED! Advancing to Abandoned Psychiatric Ward (Room 2)...", 6.0f);
                 } else {
                     if (audioEngine) audioEngine->playKeypadBeep(false);
-                    setMessage("Cua thoat hiem dang bi KHOA CHAT! Hay giai cau do chieu bong Totem tren be tho!", 5.0f);
+                    setMessage("Exit door is firmly locked! Solve the shadow totem alignment on the altar!", 5.0f);
                 }
             }
             break;
@@ -256,10 +269,10 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 if (audioEngine) {
                     audioEngine->playSafeUnlock(glm::vec3(0.0f, 1.0f, 0.0f));
                 }
-                setMessage("BONG DO KHOP VOI CO TU! Nap be tho da truot mo, lo ra Chia Khoa Nghi Le!", 8.0f);
+                setMessage("SHADOWS ALIGNED WITH RUNES! The altar stone slab slides open, revealing the Ritual Key!", 8.0f);
             } else {
                 int deg = static_cast<int>(totemAngles[idx]) % 360;
-                setMessage("Da xoay Totem #" + std::to_string(idx + 1) + " sang " + std::to_string(deg) + " do. Quan sat bong do len tuong Bac!", 4.0f);
+                setMessage("Rotated Totem #" + std::to_string(idx + 1) + " to " + std::to_string(deg) + " deg. Observe shadow on North wall!", 4.0f);
             }
             break;
         }
@@ -267,17 +280,17 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
             fusesCollected++;
             obj->isVisible = false;
             if (audioEngine) audioEngine->playItemPickup();
-            setMessage("Da nhat: " + obj->name + " [" + std::to_string(fusesCollected) + "/2]! Hay dem den Tu Cau Chi o goc tuong.", 6.0f);
+            setMessage("Acquired: " + obj->name + " [" + std::to_string(fusesCollected) + "/2]! Bring to the Circuit Breaker box.", 6.0f);
             break;
         }
         case InteractionType::BreakerBox: {
             if (powerRestored) {
-                setMessage("Tu cau chi da hoat dong. Toan bo he thong dien phong 2 da on dinh.", 4.0f);
+                setMessage("Circuit breaker is online. 220V power grid operating normally.", 4.0f);
                 break;
             }
             if (fusesCollected < 2) {
                 if (audioEngine) audioEngine->playKeypadBeep(false);
-                setMessage("Tu cau chi dang thieu cau chi (" + std::to_string(fusesCollected) + "/2)! Tim tren xe day y te & bon rua.", 5.0f);
+                setMessage("Circuit breaker missing fuses (" + std::to_string(fusesCollected) + "/2)! Follow the UV trail to find them.", 5.0f);
                 break;
             }
 
@@ -293,18 +306,18 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 audioEngine->playKeypadBeep(true);
                 audioEngine->playDoorCreak(glm::vec3(0.0f, 1.5f, 0.0f));
             }
-            setMessage("DA LAP 2 CAU CHI! Dien da sang, khoa tu dong nhung mo! Cong song sat da mo!", 8.0f);
+            setMessage("2 FUSES INSERTED! Power restored, electronic security gate opened!", 8.0f);
             break;
         }
         case InteractionType::IsolationGate: {
             if (!powerRestored) {
                 if (audioEngine) audioEngine->playKeypadBeep(false);
-                setMessage("Cong song sat bi KHOA DIEN TU! Can khoi phuc nguon dien tai Tu Cau Chi.", 5.0f);
+                setMessage("Security gate is ELECTRONICALLY LOCKED! Restore power at Circuit Breaker.", 5.0f);
                 break;
             }
             obj->isOpen = !obj->isOpen;
             if (audioEngine) audioEngine->playDoorCreak(glm::vec3(obj->getWorldMatrix()[3]));
-            setMessage(obj->isOpen ? "Da mo cong song sat buong giam." : "Da dong cong song sat.", 3.0f);
+            setMessage(obj->isOpen ? "Opened security gate." : "Closed security gate.", 3.0f);
             break;
         }
         case InteractionType::MirrorBust: {
@@ -340,10 +353,10 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 if (audioEngine) {
                     audioEngine->playSafeUnlock(glm::vec3(0.0f, 2.0f, 0.0f));
                 }
-                setMessage("AO ANH TRONG GUONG DA TRUNG KHOP! Phong an giai tru, Cua Thanh Dia da mo toang!", 10.0f);
+                setMessage("MIRROR ANOMALIES MATCHED! The Sanctuary seal breaks, final Exit Door swings open!", 10.0f);
             } else {
                 int deg = static_cast<int>(bustAngles[idx]) % 360;
-                setMessage("Da xoay Tuong #" + std::to_string(idx + 1) + " (" + std::to_string(deg) + " do). Hay nhin vao guong kiem tra vi tri!", 4.0f);
+                setMessage("Rotated Bust #" + std::to_string(idx + 1) + " (" + std::to_string(deg) + " deg). Look into the mirror to compare!", 4.0f);
             }
             break;
         }
@@ -360,17 +373,22 @@ bool InteractionManager::checkPin(const std::string& pin) {
             safeDoorObject->isOpen = true;
             safeDoorObject->isLocked = false;
         }
+        if (exitDoorObject && currentRoomId == 1) {
+            exitDoorObject->isOpen = true;
+            exitDoorObject->isLocked = false;
+            exitUnlocked = true;
+        }
         if (audioEngine) {
             audioEngine->playKeypadBeep(true);
             audioEngine->playSafeUnlock(safeDoorObject ? glm::vec3(safeDoorObject->getWorldMatrix()[3]) : glm::vec3(3.2f, 1.46f, 0.0f));
         }
-        setMessage("DUNG MA PIN! Ket sat da mo khoa va bung cua! Nhat Chia Khoa Vang ben trong!", 8.0f);
+        setMessage("ACCESS GRANTED! Correct PIN (" + pin + ") entered! Door unlocked.", 8.0f);
         return true;
     } else {
         if (audioEngine) {
             audioEngine->playKeypadBeep(false);
         }
-        setMessage("SAI MA PIN! Manh giay trong ngan keo ghi: " + correctSafePin, 5.0f);
+        setMessage("ACCESS DENIED! Incorrect PIN (" + pin + "). Inspect cell walls under UV light!", 5.0f);
         enteredPin.clear();
         return false;
     }
@@ -410,7 +428,7 @@ void InteractionManager::resetGameState() {
     }
     if (keyObject) keyObject->isVisible = true;
 
-    setMessage("Escape Room reset! Kham pha cac phong va pha giai loi nguyen Dr. Vance!", 5.0f);
+    setMessage("Escape Room reset! Explore the chambers and break Vance's curse!", 5.0f);
 }
 
 void InteractionManager::openInspect(InspectType type, const std::string& title, const std::string& body) {

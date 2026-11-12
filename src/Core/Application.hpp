@@ -40,9 +40,10 @@ public:
     void onKey(int key, int scancode, int action, int mods);
     void onScroll(double yoffset);
 
-    // Multi-Room Switching
+    // Multi-Room Switching & Fast Demo Solvers
     void switchRoom(int index);
     void nextRoom();
+    void autoSolveCurrentRoom();
 
     // Automated Diagnostics & Evidence Benchmark
     bool captureMode = false;

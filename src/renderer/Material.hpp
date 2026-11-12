@@ -14,6 +14,7 @@ struct Material {
     // UV Fluorescent Blacklight Response
     bool isFluorescent = false;
     glm::vec3 fluorescentColor = glm::vec3(0.2f, 0.95f, 1.0f);
+    bool uIsUVReactive = false;
 
     // PBR Texture Maps (0 = none)
     unsigned int albedoMap = 0;

@@ -46,15 +46,18 @@ AbandonedAsylumRoom::AbandonedAsylumRoom() {
 
 std::string AbandonedAsylumRoom::getObjectiveHint(const InteractionManager& im) const {
     if (im.exitUnlocked) {
-        return "Cửa thoát hiểm buồng giam đã mở! Tiến vào căn phòng tiếp theo.";
+        return "Isolation exit door is open! Step through to advance to the next chamber.";
+    }
+    if (im.safeUnlocked) {
+        return "Security Keypad unlocked (PIN 4108)! Open the exit door to proceed.";
     }
     if (im.powerRestored) {
-        return "Đã có điện! Bật Đèn Pin UV [Chuột phải / F] soi tìm mã số huỳnh quang trên vách buồng giam.";
+        return "Power restored! Toggle UV Blacklight [Right-Click / V] to reveal 4 hidden cipher digits in the cell corners.";
     }
     if (im.fusesCollected < 2) {
-        return "Mất điện! Tìm đủ 2 cầu chì (trên xe đẩy y tế & bồn rửa) để cấp điện cho Tủ Cầu Chì [Hiện có: " + std::to_string(im.fusesCollected) + "/2].";
+        return "Power failure! Follow the faint UV trail to find 2 missing electrical fuses [Acquired: " + std::to_string(im.fusesCollected) + "/2].";
     }
-    return "Đã có 2 cầu chì! Lắp vào Tủ Cầu Chì ở góc tường để kích hoạt nguồn điện & mở cửa song sắt.";
+    return "Both fuses acquired! Insert them into the Circuit Breaker box [E] to restore 220V power & open security gate.";
 }
 
 void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
@@ -269,6 +272,30 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     fuse2->interactType = InteractionType::FuseItem;
     rootNode->addChild(fuse2);
 
+    // 3 UV Reactive Fluorescent Chevrons leading to Fuse 2 (washbasin)
+    glm::vec3 arrowPositions[3] = {
+        {-1.2f, 0.015f,  0.0f},  // Corridor floor near partition
+        {-3.5f, 0.015f,  1.0f},  // Corridor turn floor
+        {-4.88f, 1.60f,  2.6f}   // Wall directly above washbasin
+    };
+    glm::vec3 arrowRotations[3] = {
+        {0.0f,  90.0f, 0.0f},
+        {0.0f, 135.0f, 0.0f},
+        {0.0f,   0.0f, -90.0f}
+    };
+    for (int i = 0; i < 3; ++i) {
+        auto arrow = std::make_shared<SceneObject>("uv_arrow_fuse_" + std::to_string(i + 1), "Fluorescent Trail Marker #" + std::to_string(i + 1), PrimitiveType::Cube);
+        arrow->mesh = cubeMesh;
+        arrow->position = arrowPositions[i];
+        arrow->rotation = arrowRotations[i];
+        arrow->scale = (i == 2) ? glm::vec3(0.04f, 0.50f, 0.18f) : glm::vec3(0.40f, 0.01f, 0.16f);
+        arrow->material.uIsUVReactive = true;
+        arrow->material.albedoColor = glm::vec3(0.10f, 1.0f, 0.65f);
+        arrow->material.emissiveColor = glm::vec3(0.10f, 1.0f, 0.65f);
+        arrow->material.emissiveIntensity = 2.0f;
+        rootNode->addChild(arrow);
+    }
+
     // ==========================================
     // 4. INNER ISOLATION CELL & UV FLUORESCENT CIPHER WALL
     // ==========================================
@@ -292,8 +319,48 @@ void AbandonedAsylumRoom::build(InteractionManager& interactionMgr) {
     uvPanel->material.textureId = uvCodeTex;
     // Mark as UV Fluorescent: reacts to UV Blacklight with radiant cyan emission!
     uvPanel->material.isFluorescent = true;
+    uvPanel->material.uIsUVReactive = true;
     uvPanel->material.fluorescentColor = glm::vec3(0.25f, 0.95f, 1.0f); // Brilliant cyan-blue fluorescence
     rootNode->addChild(uvPanel);
+
+    // 4 UV Reactive Cipher Plaques in 4 corners of Isolation Cell (Order 1->2->3->4 = PIN 4108)
+    struct CipherPlaqueData {
+        glm::vec3 pos;
+        glm::vec3 rot;
+        std::string label;
+        char digit;
+    };
+    CipherPlaqueData cipherData[4] = {
+        {{ 4.5f, 2.0f, -3.88f}, {0.0f,   0.0f, 0.0f}, "Cipher Fragment #1", '4'},
+        {{ 6.88f, 2.0f, -1.8f}, {0.0f, -90.0f, 0.0f}, "Cipher Fragment #2", '1'},
+        {{ 4.5f, 2.0f,  3.88f}, {0.0f, 180.0f, 0.0f}, "Cipher Fragment #3", '0'},
+        {{ 1.68f, 2.0f,  2.0f}, {0.0f,  90.0f, 0.0f}, "Cipher Fragment #4", '8'}
+    };
+
+    for (int i = 0; i < 4; ++i) {
+        auto plaqueRoot = std::make_shared<SceneObject>("uv_cipher_" + std::to_string(i + 1), cipherData[i].label, PrimitiveType::None);
+        plaqueRoot->position = cipherData[i].pos;
+        plaqueRoot->rotation = cipherData[i].rot;
+        rootNode->addChild(plaqueRoot);
+
+        auto plate = std::make_shared<SceneObject>("uv_plate_" + std::to_string(i + 1), "Cipher Plate", PrimitiveType::Cube);
+        plate->mesh = PrimitiveGenerator::createBeveledCube(0.65f, 0.65f, 0.03f, 0.01f, 1);
+        plate->position = glm::vec3(0.0f);
+        plate->material.uIsUVReactive = true;
+        plate->material.albedoColor = glm::vec3(0.12f, 0.14f, 0.14f);
+        plate->interactType = InteractionType::SecretNote;
+        plaqueRoot->addChild(plate);
+
+        auto numTag = std::make_shared<SceneObject>("uv_tag_" + std::to_string(i + 1), "Digit " + std::string(1, cipherData[i].digit), PrimitiveType::Cube);
+        numTag->mesh = cubeMesh;
+        numTag->position = glm::vec3(0.0f, 0.0f, 0.025f);
+        numTag->scale = glm::vec3(0.35f, 0.35f, 0.02f);
+        numTag->material.uIsUVReactive = true;
+        numTag->material.albedoColor = glm::vec3(0.10f, 1.0f, 0.65f);
+        numTag->material.emissiveColor = glm::vec3(0.10f, 1.0f, 0.65f);
+        numTag->material.emissiveIntensity = 4.0f;
+        plate->addChild(numTag);
+    }
 
     // Golden Key & Sigil #2 placed inside the cell on a stand
     auto keyStand = std::make_shared<SceneObject>("key_stand", "Specimen Stand", PrimitiveType::Cylinder);

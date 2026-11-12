@@ -179,6 +179,7 @@ void SceneObject::draw(const Shader& shader, const std::string& hoveredId, const
         shader.setFloat("material.emissiveIntensity", material.emissiveIntensity);
         shader.setBool("material.isFluorescent", material.isFluorescent);
         shader.setVec3("material.fluorescentColor", material.fluorescentColor);
+        shader.setBool("material.uIsUVReactive", material.uIsUVReactive);
 
         // Resolve maps with seamless fallback to diffuse/textureId
         unsigned int albedoTex = material.albedoMap ? material.albedoMap : (material.useTexture ? material.textureId : 0);

@@ -22,7 +22,7 @@ public:
     void render(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const SpotLight& spot);
     void cleanup();
 
-    bool enabled = true;
+    bool enabled = false;
     int activeCount = 400;
     float particleBaseSize = 0.04f;
 

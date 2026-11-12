@@ -104,7 +104,7 @@ void GuiLayer::render(AppMode appMode,
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("Rooms (Chuyen Phong)")) {
+            if (ImGui::BeginMenu("Rooms (Select)")) {
                 if (ImGui::MenuItem("[1] Occult Ritual Chamber", "1", currentRoomIndex == 0)) {
                     if (onSwitchRoom) onSwitchRoom(0);
                 }
@@ -505,17 +505,27 @@ void GuiLayer::renderGameHUD(AppMode appMode,
     }
 
     // 3. Top-left Status Badges
-    std::string uvStatus = interactionMgr.isUvLightActive ? "UV BLACKLIGHT [F/RClick]" : "WHITE [F/RClick]";
     std::string modeStatus = (appMode == AppMode::PlayMode) ? "PLAY [TAB: Edit]" : "EDIT [TAB: Play]";
-
-    std::string hudTop = "[" + roomName + "] | " + modeStatus + " | Den pin: " + uvStatus + " | Co vat: " + std::to_string(interactionMgr.keysCollected) + "/3";
-    drawList->AddRectFilled(ImVec2(10.0f, 10.0f), ImVec2(10.0f + ImGui::CalcTextSize(hudTop.c_str()).x + 16.0f, 32.0f),
+    std::string hudTop = "[" + roomName + "] | " + modeStatus + " | Relics: " + std::to_string(interactionMgr.keysCollected) + "/3";
+    ImVec2 topSize = ImGui::CalcTextSize(hudTop.c_str());
+    drawList->AddRectFilled(ImVec2(10.0f, 10.0f), ImVec2(10.0f + topSize.x + 16.0f, 32.0f),
                            IM_COL32(15, 15, 20, 200), 4.0f);
     drawList->AddText(ImVec2(18.0f, 13.0f), IM_COL32(210, 235, 255, 240), hudTop.c_str());
 
+    // Flashlight status badge
+    std::string uvStatus = interactionMgr.isUvLightActive 
+        ? "Flashlight: [UV BLACKLIGHT ACTIVE] (Reveals hidden fluorescent clues)"
+        : "Flashlight: [NORMAL] (Right-Click / [V] for UV Blacklight)";
+    ImU32 flashColor = interactionMgr.isUvLightActive ? IM_COL32(183, 148, 244, 255) : IM_COL32(210, 235, 255, 230);
+    ImVec2 flashSize = ImGui::CalcTextSize(uvStatus.c_str());
+    float flashX = 10.0f + topSize.x + 24.0f;
+    drawList->AddRectFilled(ImVec2(flashX, 10.0f), ImVec2(flashX + flashSize.x + 16.0f, 32.0f),
+                           IM_COL32(15, 15, 20, 200), 4.0f);
+    drawList->AddText(ImVec2(flashX + 8.0f, 13.0f), flashColor, uvStatus.c_str());
+
     // Dynamic Objective Hint Banner
     if (!objectiveHint.empty()) {
-        std::string objGuide = ">> [MUC TIEU] " + objectiveHint;
+        std::string objGuide = ">> [OBJECTIVE] " + objectiveHint;
         ImVec2 guideSize = ImGui::CalcTextSize(objGuide.c_str());
         drawList->AddRectFilled(ImVec2(10.0f, 38.0f), ImVec2(10.0f + guideSize.x + 16.0f, 60.0f),
                                IM_COL32(15, 30, 42, 230), 4.0f);
@@ -526,9 +536,9 @@ void GuiLayer::renderGameHUD(AppMode appMode,
 
     // 4. Horror Heartbeat / Fear Indicator (Bottom-left)
     int bpm = static_cast<int>(75.0f + fearFactor * 85.0f);
-    std::string bpmText = "TIM DAP: " + std::to_string(bpm) + " BPM";
+    std::string bpmText = "HEART RATE: " + std::to_string(bpm) + " BPM";
     if (fearFactor > 0.05f) {
-        bpmText += " (HOANG SO: " + std::to_string(static_cast<int>(fearFactor * 100.0f)) + "%)";
+        bpmText += " (FEAR: " + std::to_string(static_cast<int>(fearFactor * 100.0f)) + "%)";
     }
     ImVec2 bpmSize = ImGui::CalcTextSize(bpmText.c_str());
     float bpmY = windowHeight - 40.0f;
@@ -545,9 +555,9 @@ void GuiLayer::renderKeypadModal(InteractionManager& interactionMgr) {
                                    ImGui::GetIO().DisplaySize.y * 0.5f - 210.0f), ImGuiCond_Always);
 
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-    if (ImGui::Begin("Electronic Safe Keypad", &interactionMgr.showKeypadModal, flags)) {
-        ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.4f, 1.0f), "NHAP MA PIN KET SAT (4 CHU SO):");
-        ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.2f, 1.0f), "Go truc tiep ban phim: [0-9], [Backspace], [Enter]");
+    if (ImGui::Begin("Electronic Security Keypad", &interactionMgr.showKeypadModal, flags)) {
+        ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.4f, 1.0f), "ENTER 4-DIGIT SECURITY PIN:");
+        ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.2f, 1.0f), "Direct Keyboard: [0-9], [Backspace], [Enter]");
         ImGui::Spacing();
 
         // Display screen
@@ -587,7 +597,7 @@ void GuiLayer::renderKeypadModal(InteractionManager& interactionMgr) {
         }
 
         ImGui::Spacing();
-        if (ImGui::Button("Cancel / Dong [ESC]", ImVec2(290, 32))) {
+        if (ImGui::Button("Cancel / Close [ESC]", ImVec2(290, 32))) {
             interactionMgr.showKeypadModal = false;
         }
     }
@@ -619,7 +629,7 @@ void GuiLayer::renderInspectModal(InteractionManager& interactionMgr, int window
             ImGui::TextColored(ImVec4(1.0f, 0.84f, 0.0f, 1.0f), "%s", interactionMgr.inspectTitle.c_str());
             ImGui::Separator();
             ImGui::Spacing();
-            ImGui::TextColored(ImVec4(0.3f, 0.9f, 1.0f, 1.0f), "[3D Turntable Active: Di chuot de xoay 3D | Yaw: %.1f deg, Pitch: %.1f deg]",
+            ImGui::TextColored(ImVec4(0.3f, 0.9f, 1.0f, 1.0f), "[3D Turntable: Drag mouse to rotate | Yaw: %.1f deg, Pitch: %.1f deg]",
                                interactionMgr.inspectYaw, interactionMgr.inspectPitch);
             ImGui::Spacing();
             ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.10f, 0.12f, 0.16f, 0.95f));
@@ -627,14 +637,14 @@ void GuiLayer::renderInspectModal(InteractionManager& interactionMgr, int window
                 ImGui::Spacing();
                 ImGui::TextWrapped("%s", interactionMgr.inspectBody.c_str());
                 ImGui::Spacing();
-                ImGui::TextColored(ImVec4(0.85f, 0.75f, 0.35f, 1.0f), "Thuoc tinh co vat: Chieu dai 28cm | Kim loai vang co dai toa sang HDR");
+                ImGui::TextColored(ImVec4(0.85f, 0.75f, 0.35f, 1.0f), "Artifact details: 28cm length | Ancient golden relic glowing with HDR");
             }
             ImGui::EndChild();
             ImGui::PopStyleColor();
         }
 
         ImGui::Spacing();
-        if (ImGui::Button("Dong kiem tra [ESC / E]", ImVec2(modalW - 30.0f, 36.0f))) {
+        if (ImGui::Button("Close Inspection [ESC / E]", ImVec2(modalW - 30.0f, 36.0f))) {
             interactionMgr.closeInspect();
         }
     }
@@ -649,22 +659,22 @@ void GuiLayer::renderVictoryModal(InteractionManager& interactionMgr, std::funct
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
     if (ImGui::Begin("MISSION ACCOMPLISHED - ESCAPED THE NIGHTMARE!", nullptr, flags)) {
         ImGui::Spacing();
-        ImGui::TextColored(ImVec4(1.0f, 0.84f, 0.0f, 1.0f), "XUAT SAC! BAN DA THOAT HIEM TOAN VEN!");
-        ImGui::TextWrapped("Ban da giai xong toan bo 3 can phong kinh di va thu thap du ca 3 Chia Khoa Vang & Manh Sigil cua Dr. Elias Vance!");
+        ImGui::TextColored(ImVec4(1.0f, 0.84f, 0.0f, 1.0f), "CONGRATULATIONS! YOU HAVE ESCAPED!");
+        ImGui::TextWrapped("You solved all 3 horror escape rooms and collected all 3 Golden Keys & Sigils of Dr. Elias Vance!");
         ImGui::Spacing();
-        ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.4f, 1.0f), "Phong an guong quy da bi pha vo. Can phong tro nen thanh tinh.");
+        ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.4f, 1.0f), "The demonic mirror seal has shattered. Sanctuary is cleansed.");
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
 
         if (interactionMgr.currentRoomId < 2) {
-            if (ImGui::Button("Tien vao Phong tiep theo", ImVec2(230, 42))) {
+            if (ImGui::Button("Proceed to Next Room", ImVec2(230, 42))) {
                 interactionMgr.gameWon = false;
                 interactionMgr.requestRoomTransition = true;
             }
             ImGui::SameLine();
         }
-        if (ImGui::Button("Choi lai tu Phong 1", ImVec2(230, 42))) {
+        if (ImGui::Button("Restart from Room 1", ImVec2(230, 42))) {
             interactionMgr.resetGameState();
             if (onSwitchRoom) onSwitchRoom(0);
         }
