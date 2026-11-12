@@ -58,6 +58,8 @@ void GuiLayer::render(AppMode appMode,
                       ParticleSystem& particleSystem,
                       SsaoPipeline& ssaoPipeline,
                       AudioEngine& audioEngine,
+                      GpuProfiler& gpuProfiler,
+                      GraphicsSettings& graphicsSettings,
                       std::function<void(int)> onSwitchRoom,
                       std::function<void()> onSaveScene,
                       std::function<void()> onLoadScene) {
@@ -154,6 +156,7 @@ void GuiLayer::render(AppMode appMode,
         renderHierarchy(root);
         renderInspector(interactionMgr);
         renderLighting(pointLight, spotLight, ambientLight, postProcessor, shadowPipeline, particleSystem, ssaoPipeline, fearFactor);
+        renderPerformanceAndQuality(gpuProfiler, graphicsSettings, shadowPipeline, ssaoPipeline, postProcessor, particleSystem);
     }
 }
 
@@ -378,6 +381,65 @@ void GuiLayer::renderLighting(PointLight& pointLight, SpotLight& spotLight, Ambi
         if (ImGui::TreeNode("Ambient Lighting")) {
             ImGui::ColorEdit3("Ambient Color", &ambientLight.color.r);
             ImGui::SliderFloat("Ambient Intensity", &ambientLight.intensity, 0.0f, 1.0f);
+            ImGui::TreePop();
+        }
+    }
+    ImGui::End();
+}
+
+void GuiLayer::renderPerformanceAndQuality(GpuProfiler& gpuProfiler, GraphicsSettings& graphicsSettings,
+                                          ShadowPipeline& shadowPipeline, SsaoPipeline& ssaoPipeline,
+                                          PostProcessor& postProcessor, ParticleSystem& particleSystem) {
+    ImGui::SetNextWindowPos(ImVec2(10, 490), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(340, 220), ImGuiCond_FirstUseEver);
+
+    if (ImGui::Begin("Profiler & Quality Presets (Phase 6)", nullptr)) {
+        ImGui::TextColored(ImVec4(0.3f, 0.9f, 0.4f, 1.0f), "Quality Preset: %s", graphicsSettings.presetName.c_str());
+        if (ImGui::Button("Low")) {
+            graphicsSettings.applyPreset(QualityLevel::Low);
+            shadowPipeline.spotPcfTaps = graphicsSettings.pcfSamples;
+            ssaoPipeline.enabled = graphicsSettings.ssaoEnabled;
+            ssaoPipeline.kernelSize = graphicsSettings.ssaoSamples;
+            particleSystem.activeCount = graphicsSettings.particleCount;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Medium")) {
+            graphicsSettings.applyPreset(QualityLevel::Medium);
+            shadowPipeline.spotPcfTaps = graphicsSettings.pcfSamples;
+            ssaoPipeline.enabled = graphicsSettings.ssaoEnabled;
+            ssaoPipeline.kernelSize = graphicsSettings.ssaoSamples;
+            particleSystem.activeCount = graphicsSettings.particleCount;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("High")) {
+            graphicsSettings.applyPreset(QualityLevel::High);
+            shadowPipeline.spotPcfTaps = graphicsSettings.pcfSamples;
+            ssaoPipeline.enabled = graphicsSettings.ssaoEnabled;
+            ssaoPipeline.kernelSize = graphicsSettings.ssaoSamples;
+            particleSystem.activeCount = graphicsSettings.particleCount;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Ultra")) {
+            graphicsSettings.applyPreset(QualityLevel::Ultra);
+            shadowPipeline.spotPcfTaps = graphicsSettings.pcfSamples;
+            ssaoPipeline.enabled = graphicsSettings.ssaoEnabled;
+            ssaoPipeline.kernelSize = graphicsSettings.ssaoSamples;
+            particleSystem.activeCount = graphicsSettings.particleCount;
+        }
+
+        ImGui::Separator();
+        float totalGpu = gpuProfiler.getTotalGpuTimeMs();
+        float fps = ImGui::GetIO().Framerate;
+        ImGui::Text("Framerate: %.1f FPS (%.2f ms/frame)", fps, 1000.0f / (fps > 0.0f ? fps : 60.0f));
+        ImGui::TextColored(ImVec4(1.0f, 0.7f, 0.2f, 1.0f), "Total GPU Time: %.3f ms", totalGpu);
+
+        if (ImGui::TreeNodeEx("GPU Timeline Breakdown (GL_TIME_ELAPSED)", ImGuiTreeNodeFlags_DefaultOpen)) {
+            for (size_t p = 0; p < static_cast<size_t>(GpuPass::Count); ++p) {
+                GpuPass pass = static_cast<GpuPass>(p);
+                float ms = gpuProfiler.getPassTimeMs(pass);
+                float pct = (totalGpu > 0.0001f) ? (ms / totalGpu * 100.0f) : 0.0f;
+                ImGui::Text("%-28s: %6.3f ms (%4.1f%%)", GpuProfiler::getPassName(pass), ms, pct);
+            }
             ImGui::TreePop();
         }
     }

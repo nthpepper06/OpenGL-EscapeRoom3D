@@ -189,6 +189,9 @@ bool Application::init(int width, int height, const std::string& title) {
     audioEngine.init();
     interactionMgr.audioEngine = &audioEngine;
 
+    // Initialize Hardware GPU Profiler
+    gpuProfiler.init();
+
     // Load first room (Occult Ritual Chamber)
     switchRoom(0);
 
@@ -258,6 +261,8 @@ void Application::run() {
         lastFrameTime = currentFrame;
         totalTime += deltaTime;
 
+        gpuProfiler.beginFrame();
+
         // Check if player unlocked the exit door and triggered a room transition
         if (interactionMgr.requestRoomTransition) {
             interactionMgr.requestRoomTransition = false;
@@ -320,16 +325,20 @@ void Application::run() {
         // ==========================================
         // PASS 0A: SPOTLIGHT SHADOW MAP PASS
         // ==========================================
+        gpuProfiler.beginPass(GpuPass::SpotShadow);
         if (spotLight.enabled) {
             shadowPipeline.renderSpotShadow(spotLight, sceneRoot);
         }
+        gpuProfiler.endPass(GpuPass::SpotShadow);
 
         // ==========================================
         // PASS 0B: OMNIDIRECTIONAL POINT SHADOW CUBEMAP PASS (CACHED)
         // ==========================================
+        gpuProfiler.beginPass(GpuPass::PointShadow);
         if (pointLight.enabled && shadowPipeline.pointShadowEnabled) {
             shadowPipeline.renderPointShadow(pointLight, sceneRoot);
         }
+        gpuProfiler.endPass(GpuPass::PointShadow);
 
         glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth / (float)windowHeight);
         glm::mat4 view = camera.getViewMatrix();
@@ -337,14 +346,17 @@ void Application::run() {
         // ==========================================
         // PASS 0C: SSAO GEOMETRY PREPASS & COMPUTATION
         // ==========================================
+        gpuProfiler.beginPass(GpuPass::SSAO);
         if (ssaoPipeline.enabled) {
             ssaoPipeline.renderGeometryPrepass(view, projection, sceneRoot);
             ssaoPipeline.renderSSAO(projection);
         }
+        gpuProfiler.endPass(GpuPass::SSAO);
 
         // ==========================================
         // PASS 0D: PLANAR REFLECTION PASS (ROOM 2: MIRROR ROOM)
         // ==========================================
+        gpuProfiler.beginPass(GpuPass::PlanarReflection);
         if (currentRoomIndex == 2 && planarReflection.enabled) {
             glm::mat4 refView, refProj;
             glm::vec3 mirrorPos(0.0f, 2.1f, -4.84f);
@@ -366,10 +378,12 @@ void Application::run() {
             }
             planarReflection.endRender();
         }
+        gpuProfiler.endPass(GpuPass::PlanarReflection);
 
         // ==========================================
         // PASS 1: RENDER 3D SCENE TO FBO TEXTURE (HDR)
         // ==========================================
+        gpuProfiler.beginPass(GpuPass::PbrScene);
         postProcessor.bypassTonemap = (guiLayer.debugViewMode > 0);
         postProcessor.beginRender();
 
@@ -475,12 +489,15 @@ void Application::run() {
         }
 
         postProcessor.endRender();
+        gpuProfiler.endPass(GpuPass::PbrScene);
 
         // ==========================================
         // PASS 2: HORROR POST-PROCESSING TO SCREEN
         // (Bloom + Vignette + Chromatic Aberration + Panic Heartbeat + Film Grain)
         // ==========================================
+        gpuProfiler.beginPass(GpuPass::PostProcess);
         postProcessor.render(totalTime, currentFearFactor);
+        gpuProfiler.endPass(GpuPass::PostProcess);
 
         // ==========================================
         // PASS 3: DEAR IMGUI UI OVERLAY (HUD / INSPECTOR)
@@ -507,10 +524,14 @@ void Application::run() {
                         particleSystem,
                         ssaoPipeline,
                         audioEngine,
+                        gpuProfiler,
+                        graphicsSettings,
                         [this](int roomIdx) { switchRoom(roomIdx); },
                         [this]() { saveCurrentScene(); },
                         [this]() { loadSceneFile(); });
         guiLayer.endFrame();
+
+        gpuProfiler.endFrame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -970,6 +991,7 @@ void Application::runBenchmarkAndCaptureScreenshots() {
                         interactionMgr, camera, hoveredObjectId, windowWidth, windowHeight,
                         currentRoomIndex, currentRoomName, currentFearFactor, postProcessor,
                         shadowPipeline, particleSystem, ssaoPipeline, audioEngine,
+                        gpuProfiler, graphicsSettings,
                         [this](int r) { switchRoom(r); },
                         [this]() { saveCurrentScene(); },
                         [this]() { loadSceneFile(); });

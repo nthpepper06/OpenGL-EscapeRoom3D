@@ -20,6 +20,7 @@
 #include "rooms/AbandonedAsylumRoom.hpp"
 #include "rooms/MirrorRoom.hpp"
 #include "renderer/PlanarReflection.hpp"
+#include "renderer/GpuProfiler.hpp"
 #include "audio/AudioEngine.hpp"
 
 class Application {
@@ -72,6 +73,8 @@ private:
     AmbientLight ambientLight;
 
     AudioEngine audioEngine;
+    GpuProfiler gpuProfiler;
+    GraphicsSettings graphicsSettings;
 
     std::shared_ptr<SceneObject> sceneRoot;
     InteractionManager interactionMgr;

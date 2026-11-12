@@ -9,6 +9,7 @@
 #include "renderer/SsaoPipeline.hpp"
 #include "interaction/InteractionManager.hpp"
 #include "camera/Camera.hpp"
+#include "renderer/GpuProfiler.hpp"
 
 class AudioEngine;
 
@@ -44,6 +45,8 @@ public:
                 ParticleSystem& particleSystem,
                 SsaoPipeline& ssaoPipeline,
                 AudioEngine& audioEngine,
+                GpuProfiler& gpuProfiler,
+                GraphicsSettings& graphicsSettings,
                 std::function<void(int)> onSwitchRoom,
                 std::function<void()> onSaveScene,
                 std::function<void()> onLoadScene);
@@ -52,6 +55,9 @@ private:
     void renderHierarchy(std::shared_ptr<SceneObject>& root);
     void renderHierarchyNode(std::shared_ptr<SceneObject>& obj);
     void renderInspector(InteractionManager& interactionMgr);
+    void renderPerformanceAndQuality(GpuProfiler& gpuProfiler, GraphicsSettings& graphicsSettings,
+                                     ShadowPipeline& shadowPipeline, SsaoPipeline& ssaoPipeline,
+                                     PostProcessor& postProcessor, ParticleSystem& particleSystem);
     void renderLighting(PointLight& pointLight, SpotLight& spotLight, AmbientLight& ambientLight,
                         PostProcessor& postProcessor, ShadowPipeline& shadowPipeline,
                         ParticleSystem& particleSystem, SsaoPipeline& ssaoPipeline, float fearFactor);

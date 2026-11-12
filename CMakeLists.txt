@@ -142,6 +142,8 @@ set(ESCAPE_ROOM_SOURCES
     src/renderer/MeshBatcher.cpp
     src/renderer/PostProcessor.hpp
     src/renderer/PostProcessor.cpp
+    src/renderer/GpuProfiler.hpp
+    src/renderer/GpuProfiler.cpp
     src/rooms/BaseRoom.hpp
     src/rooms/OccultRitualRoom.hpp
     src/rooms/OccultRitualRoom.cpp
