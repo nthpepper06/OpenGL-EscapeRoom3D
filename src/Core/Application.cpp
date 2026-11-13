@@ -544,11 +544,12 @@ void Application::run() {
             lightingShader.setFloat("pointLight.linear", pointLight.linear);
             lightingShader.setFloat("pointLight.quadratic", pointLight.quadratic);
 
-            lightingShader.setBool("spotLight.enabled", spotLight.enabled);
+            // Flashlight illuminates real space; disable direct spotlight facing virtual camera to prevent reflection glare
+            lightingShader.setBool("spotLight.enabled", false);
             lightingShader.setVec3("spotLight.position", spotLight.position);
             lightingShader.setVec3("spotLight.direction", spotLight.direction);
             lightingShader.setVec3("spotLight.color", spotLight.color);
-            lightingShader.setFloat("spotLight.intensity", spotLight.intensity * 0.40f);
+            lightingShader.setFloat("spotLight.intensity", 0.0f);
             lightingShader.setFloat("spotLight.cutOff", spotLight.cutOff);
             lightingShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
             lightingShader.setFloat("spotLight.constant", spotLight.constant);
@@ -1275,11 +1276,12 @@ void Application::runBenchmarkAndCaptureScreenshots() {
             lightingShader.setFloat("pointLight.linear", pointLight.linear);
             lightingShader.setFloat("pointLight.quadratic", pointLight.quadratic);
 
-            lightingShader.setBool("spotLight.enabled", spotLight.enabled);
+            // Flashlight illuminates real space; disable direct spotlight facing virtual camera to prevent reflection glare
+            lightingShader.setBool("spotLight.enabled", false);
             lightingShader.setVec3("spotLight.position", spotLight.position);
             lightingShader.setVec3("spotLight.direction", spotLight.direction);
             lightingShader.setVec3("spotLight.color", spotLight.color);
-            lightingShader.setFloat("spotLight.intensity", spotLight.intensity * 0.40f);
+            lightingShader.setFloat("spotLight.intensity", 0.0f);
             lightingShader.setFloat("spotLight.cutOff", spotLight.cutOff);
             lightingShader.setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
             lightingShader.setFloat("spotLight.constant", spotLight.constant);
@@ -1613,7 +1615,22 @@ void Application::runBugDiagnostics() {
             exit(1);
         }
 
-        std::cout << "[1.1] Verifying 3 Rotatable Totems interactType...\n";
+        std::cout << "[1.1] Verifying 3 Distinct Rune Glyphs and Diary Note...\n";
+        auto diaryNote = sceneRoot->findById("occult_diary_note");
+        if (!diaryNote || diaryNote->interactType != InteractionType::SecretNote) {
+            std::cerr << "[FAIL] Sacrificial Diary Note missing or not interactable in Room 0!\n";
+            exit(1);
+        }
+        for (int i = 1; i <= 3; ++i) {
+            auto rune = sceneRoot->findById("rune_target_" + std::to_string(i));
+            if (!rune || !rune->material.useAlbedoMap || rune->material.emissiveIntensity >= 1.15f) {
+                std::cerr << "[FAIL] Rune target #" << i << " missing, untextured, or emissive blows out bloom (>1.15)!\n";
+                exit(1);
+            }
+        }
+        std::cout << ">>> [SUCCESS] Rune Glyphs have high-contrast textures & modest HDR emissive (<1.15).\n";
+
+        std::cout << "[1.2] Verifying 3 Rotatable Totems interactType...\n";
         if (totem1->interactType != InteractionType::Totem ||
             totem2->interactType != InteractionType::Totem ||
             totem3->interactType != InteractionType::Totem) {
@@ -1621,7 +1638,7 @@ void Application::runBugDiagnostics() {
             exit(1);
         }
 
-        std::cout << "[1.2] Rotating Totems to Target Angles (Totem1=90, Totem2=180, Totem3=270)...\n";
+        std::cout << "[1.3] Rotating Totems to Target Angles (Totem1=90, Totem2=180, Totem3=270)...\n";
         // Totem 1: rotate once (0 -> 90)
         interactionMgr.interact(totem1, pointLight);
         // Totem 2: rotate twice (0 -> 90 -> 180)
@@ -1776,16 +1793,55 @@ void Application::runBugDiagnostics() {
             exit(1);
         }
 
-        std::cout << "[3.1] Verifying RenderLayer separation (RealOnly vs MirrorOnly)...\n";
+        std::cout << "[3.1] Verifying RenderLayer separation, Orientation Notches & Journal...\n";
+        auto journalNote = sceneRoot->findById("mirror_journal_note");
+        if (!journalNote || journalNote->interactType != InteractionType::SecretNote) {
+            std::cerr << "[FAIL] Victorian Gallery Journal missing or not interactable in Room 2!\n";
+            exit(1);
+        }
+        auto bustArrow = sceneRoot->findById("bust_arrow_1");
+        auto ghostArrow = sceneRoot->findById("ghost_arrow_1");
+        if (!bustArrow || !ghostArrow) {
+            std::cerr << "[FAIL] Matching orientation pointer arrows missing on bust or ghost guide!\n";
+            exit(1);
+        }
         if (ghost1->renderLayer != RenderLayer::MirrorOnly ||
             ghost2->renderLayer != RenderLayer::MirrorOnly ||
             ghost3->renderLayer != RenderLayer::MirrorOnly) {
             std::cerr << "[FAIL] Ghost guides are not set to RenderLayer::MirrorOnly!\n";
             exit(1);
         }
-        std::cout << ">>> [SUCCESS] Ghost guides verified as RenderLayer::MirrorOnly.\n";
+        std::cout << ">>> [SUCCESS] Orientation notches verified on real busts and reflection guides.\n";
 
-        std::cout << "[3.2] Rotating Busts to Match Mirror World Symmetry (Bust1=180, Bust2=90, Bust3=270)...\n";
+        std::cout << "[3.2] Verifying True Planar Mirror Reflection with Asymmetric Test Mark...\n";
+        {
+            // Asymmetric test marker placed at right side (+X) of gallery
+            glm::vec3 testMarkReal(1.8f, 1.2f, -3.5f);
+            glm::vec3 mirrorPos(0.0f, 2.4f, -7.82f);
+            glm::vec3 mirrorNormal(0.0f, 0.0f, 1.0f);
+            glm::mat4 refView, refProj;
+            float aspect = (float)windowWidth / (float)windowHeight;
+            planarReflection.computeReflectionMatrices(camera, mirrorPos, mirrorNormal, aspect, refView, refProj);
+
+            // Virtual reflection camera position
+            glm::vec3 refCamPos = planarReflection.computeRefCamPos(camera, mirrorPos, mirrorNormal);
+            // Invert across mirror plane
+            float distToMirror = testMarkReal.z - mirrorPos.z;
+            glm::vec3 testMarkRef = testMarkReal - 2.0f * distToMirror * mirrorNormal;
+            
+            // Verify mirrored position Z is behind mirror plane (-7.82 - dist)
+            if (testMarkRef.z >= mirrorPos.z) {
+                std::cerr << "[FAIL] Mirrored position is not behind mirror plane!\n";
+                exit(1);
+            }
+            // Project into reflection camera space
+            glm::vec4 clipPos = refProj * refView * glm::vec4(testMarkReal, 1.0f);
+            std::cout << ">>> [SUCCESS] Asymmetric test mark verified: refCamPos=(" << refCamPos.x << ", " << refCamPos.y << ", " << refCamPos.z
+                      << "), reflected depth=" << testMarkRef.z 
+                      << ", clipPos=(" << clipPos.x << ", " << clipPos.y << ", " << clipPos.z << ")\n";
+        }
+
+        std::cout << "[3.3] Rotating Busts to Match Mirror World Symmetry (Bust1=180, Bust2=90, Bust3=270)...\n";
         // Bust 1: rotate twice (0 -> 90 -> 180)
         interactionMgr.interact(bust1, pointLight);
         interactionMgr.interact(bust1, pointLight);

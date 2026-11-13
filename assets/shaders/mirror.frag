@@ -41,13 +41,13 @@ void main()
     refl = mix(refl, dustColor, grimeMask);
 
     // 4. Soft-Shoulder Compression relative to Bloom Threshold (bloomThreshold = 1.15)
-    // Ensures mirror radiance smoothly asymptotes to 0.90 and NEVER reaches bloomThreshold (1.15)
+    // Ensures mirror radiance smoothly asymptotes to 0.80 and NEVER reaches bloomThreshold (1.15)
     // Flashlight shining directly at the mirror will NEVER produce a white blowout or bloom!
     float effThreshold = (bloomThreshold > 0.0) ? bloomThreshold : 1.15;
-    float safeCap = effThreshold - 0.25; // 0.90, comfortably below HDR bloom threshold
+    float safeCap = effThreshold - 0.35; // 0.80, comfortably below HDR bloom threshold
     float maxLum = max(refl.r, max(refl.g, refl.b));
-    if (maxLum > 0.70) {
-        float shoulder = 0.70 + (safeCap - 0.70) * (1.0 - exp(-(maxLum - 0.70) / 0.35));
+    if (maxLum > 0.55) {
+        float shoulder = 0.55 + (safeCap - 0.55) * (1.0 - exp(-(maxLum - 0.55) / 0.30));
         refl = refl * (shoulder / maxLum);
     }
     refl = min(refl, vec3(safeCap));

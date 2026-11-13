@@ -41,7 +41,7 @@ OccultRitualRoom::OccultRitualRoom() {
     fearSourcePosition = glm::vec3(0.0f, 0.8f, 0.0f);
     fearDistanceThreshold = 4.0f;
     baseVignette = 0.50f;
-    baseChromatic = 0.004f;
+    baseChromatic = 0.0004f;
 }
 
 std::string OccultRitualRoom::getObjectiveHint(const InteractionManager& im) const {
@@ -197,9 +197,9 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     skull->mesh = PrimitiveGenerator::createBeveledCube(0.32f, 0.28f, 0.36f, 0.03f, 2);
     skull->position = glm::vec3(0.0f, 0.18f, 0.0f);
     skull->scale = glm::vec3(1.0f);
-    skull->material.albedoColor = glm::vec3(0.55f, 0.52f, 0.45f);
-    skull->material.roughness = 0.75f;
-    skull->material.metallic = 0.05f;
+    skull->material.albedoColor = glm::vec3(0.38f, 0.36f, 0.30f);
+    skull->material.roughness = 0.85f;
+    skull->material.metallic = 0.02f;
     altarLid->addChild(skull);
 
     // 4 Bloody Candles on Altar Corners
@@ -236,6 +236,16 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
     altarRoot->addChild(ritualKey);
     interactionMgr.keyObject = ritualKey;
 
+    // Sacrificial Diary of Dr. Vance on the altar stone base
+    auto diaryObj = std::make_shared<SceneObject>("occult_diary_note", "Sacrificial Diary of Dr. Vance", PrimitiveType::Cube);
+    diaryObj->mesh = cubeMesh;
+    diaryObj->position = glm::vec3(-1.35f, 0.95f, 0.0f);
+    diaryObj->scale = glm::vec3(0.32f, 0.04f, 0.42f);
+    diaryObj->material.albedoColor = glm::vec3(0.85f, 0.75f, 0.60f); // Aged parchment
+    diaryObj->material.roughness = 0.75f;
+    diaryObj->interactType = InteractionType::SecretNote;
+    rootNode->addChild(diaryObj);
+
     // ==========================================
     // 4. SHADOW ALIGNMENT PUZZLE: 3 ROTATABLE TOTEMS
     // ==========================================
@@ -263,13 +273,67 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
         applyStonePbr(totemStatue, glm::vec3(0.80f, 0.70f, 0.65f));
         totemBase->addChild(totemStatue);
 
-        // Distinct carving feature that casts directional shadows
-        auto arm = std::make_shared<SceneObject>("totem_arm_" + std::to_string(i+1), "Totem Projection Arm", PrimitiveType::Cube);
-        arm->mesh = cubeMesh;
-        arm->position = glm::vec3(0.28f, 0.25f, 0.0f);
-        arm->scale = glm::vec3(0.35f, 0.15f, 0.15f);
-        arm->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
-        totemStatue->addChild(arm);
+        // Distinct carving features that cast directional shadows matching the wall glyphs
+        if (i == 0) {
+            // Totem 1: Right-pointing arm + crossbar (at 90 deg casts right-pointing arrow shadow)
+            auto arm = std::make_shared<SceneObject>("totem_arm_1", "Totem Pointer Arm", PrimitiveType::Cube);
+            arm->mesh = cubeMesh;
+            arm->position = glm::vec3(0.0f, 0.25f, 0.35f);
+            arm->scale = glm::vec3(0.15f, 0.15f, 0.45f);
+            arm->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(arm);
+
+            auto crossbar = std::make_shared<SceneObject>("totem_cross_1", "Totem Crossbar", PrimitiveType::Cube);
+            crossbar->mesh = cubeMesh;
+            crossbar->position = glm::vec3(0.0f, 0.25f, 0.20f);
+            crossbar->scale = glm::vec3(0.14f, 0.40f, 0.12f);
+            crossbar->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(crossbar);
+        } else if (i == 1) {
+            // Totem 2: Horned trident / 3-prong crest (at 180 deg casts horned trident shadow)
+            auto centralHorn = std::make_shared<SceneObject>("totem_crest_2", "Totem Central Horn", PrimitiveType::Cube);
+            centralHorn->mesh = cubeMesh;
+            centralHorn->position = glm::vec3(0.0f, 0.45f, 0.0f);
+            centralHorn->scale = glm::vec3(0.12f, 0.42f, 0.12f);
+            centralHorn->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(centralHorn);
+
+            auto leftHorn = std::make_shared<SceneObject>("totem_horn_l_2", "Totem Left Horn", PrimitiveType::Cube);
+            leftHorn->mesh = cubeMesh;
+            leftHorn->position = glm::vec3(-0.25f, 0.35f, 0.0f);
+            leftHorn->scale = glm::vec3(0.10f, 0.32f, 0.10f);
+            leftHorn->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(leftHorn);
+
+            auto rightHorn = std::make_shared<SceneObject>("totem_horn_r_2", "Totem Right Horn", PrimitiveType::Cube);
+            rightHorn->mesh = cubeMesh;
+            rightHorn->position = glm::vec3(0.25f, 0.35f, 0.0f);
+            rightHorn->scale = glm::vec3(0.10f, 0.32f, 0.10f);
+            rightHorn->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(rightHorn);
+
+            auto crossbrace = std::make_shared<SceneObject>("totem_brace_2", "Totem Cross Brace", PrimitiveType::Cube);
+            crossbrace->mesh = cubeMesh;
+            crossbrace->position = glm::vec3(0.0f, 0.20f, 0.0f);
+            crossbrace->scale = glm::vec3(0.55f, 0.08f, 0.12f);
+            crossbrace->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(crossbrace);
+        } else {
+            // Totem 3: Left-pointing arm + crossbar (at 270 deg casts left-pointing arrow shadow)
+            auto arm = std::make_shared<SceneObject>("totem_arm_3", "Totem Pointer Arm", PrimitiveType::Cube);
+            arm->mesh = cubeMesh;
+            arm->position = glm::vec3(0.0f, 0.25f, 0.35f);
+            arm->scale = glm::vec3(0.15f, 0.15f, 0.45f);
+            arm->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(arm);
+
+            auto crossbar = std::make_shared<SceneObject>("totem_cross_3", "Totem Crossbar", PrimitiveType::Cube);
+            crossbar->mesh = cubeMesh;
+            crossbar->position = glm::vec3(0.0f, 0.25f, 0.20f);
+            crossbar->scale = glm::vec3(0.14f, 0.40f, 0.12f);
+            crossbar->material.albedoColor = glm::vec3(0.4f, 0.2f, 0.2f);
+            totemStatue->addChild(crossbar);
+        }
     }
 
     // 3 Target Rune Inscriptions on North Wall (-Z)
@@ -279,13 +343,22 @@ void OccultRitualRoom::build(InteractionManager& interactionMgr) {
         { 2.2f, 2.4f, -5.88f}
     };
     for (int i = 0; i < 3; ++i) {
-        auto rune = std::make_shared<SceneObject>("rune_target_" + std::to_string(i+1), "Shadow Target Rune", PrimitiveType::Cube);
+        auto rune = std::make_shared<SceneObject>("rune_target_" + std::to_string(i+1), "Shadow Target Rune #" + std::to_string(i+1), PrimitiveType::Cube);
         rune->mesh = cubeMesh;
         rune->position = runePositions[i];
-        rune->scale = glm::vec3(0.9f, 0.9f, 0.04f);
-        rune->material.albedoColor = glm::vec3(0.3f, 0.1f, 0.1f);
-        rune->material.emissiveColor = glm::vec3(0.9f, 0.2f, 0.15f);
-        rune->material.emissiveIntensity = 2.2f; // Glowing blood rune on wall
+        rune->scale = glm::vec3(1.1f, 1.1f, 0.04f);
+        
+        unsigned int runeTex = Texture::createRuneGlyphTexture(i, 256, 256);
+        rune->material.albedoColor = glm::vec3(0.35f);
+        rune->material.albedoMap = runeTex;
+        rune->material.emissiveMap = runeTex;
+        rune->material.useAlbedoMap = true;
+        rune->material.useEmissiveMap = true;
+        rune->material.useTexture = true;
+        rune->material.textureId = runeTex;
+        rune->material.emissiveColor = glm::vec3(1.0f, 0.45f, 0.25f);
+        rune->material.emissiveIntensity = 0.75f; // Modest HDR value: well below bloom threshold (1.15), razor sharp glyphs without blowout!
+        rune->material.roughness = 0.85f;
         rootNode->addChild(rune);
     }
 

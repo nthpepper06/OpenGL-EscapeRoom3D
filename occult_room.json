@@ -14,7 +14,7 @@
       0.20000000298023224
     ],
     "enabled": true,
-    "intensity": 12.0,
+    "intensity": 7.822872161865234,
     "position": [
       0.0,
       3.799999952316284,
@@ -1252,6 +1252,55 @@
         ]
       },
       {
+        "children": [],
+        "id": "occult_diary_note",
+        "interactType": "SecretNote",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Sacrificial Diary of Dr. Vance",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          -1.350000023841858,
+          0.949999988079071,
+          0.0
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          0.3199999928474426,
+          0.03999999910593033,
+          0.41999998688697815
+        ]
+      },
+      {
         "children": [
           {
             "children": [
@@ -1276,7 +1325,7 @@
                   ],
                   "useTexture": false
                 },
-                "name": "Totem Projection Arm",
+                "name": "Totem Pointer Arm",
                 "openPositionOffset": [
                   0.0,
                   0.0,
@@ -1288,9 +1337,9 @@
                   0.0
                 ],
                 "position": [
-                  0.2800000011920929,
+                  0.0,
                   0.25,
-                  0.0
+                  0.3499999940395355
                 ],
                 "primitiveType": "Cube",
                 "rotation": [
@@ -1299,9 +1348,58 @@
                   0.0
                 ],
                 "scale": [
-                  0.3499999940395355,
                   0.15000000596046448,
-                  0.15000000596046448
+                  0.15000000596046448,
+                  0.44999998807907104
+                ]
+              },
+              {
+                "children": [],
+                "id": "totem_cross_1",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Totem Crossbar",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.25,
+                  0.20000000298023224
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.14000000059604645,
+                  0.4000000059604645,
+                  0.11999999731779099
                 ]
               }
             ],
@@ -1406,7 +1504,7 @@
             "children": [
               {
                 "children": [],
-                "id": "totem_arm_2",
+                "id": "totem_crest_2",
                 "interactType": "None",
                 "isLocked": false,
                 "isOpen": false,
@@ -1425,7 +1523,7 @@
                   ],
                   "useTexture": false
                 },
-                "name": "Totem Projection Arm",
+                "name": "Totem Central Horn",
                 "openPositionOffset": [
                   0.0,
                   0.0,
@@ -1437,8 +1535,8 @@
                   0.0
                 ],
                 "position": [
-                  0.2800000011920929,
-                  0.25,
+                  0.0,
+                  0.44999998807907104,
                   0.0
                 ],
                 "primitiveType": "Cube",
@@ -1448,9 +1546,156 @@
                   0.0
                 ],
                 "scale": [
+                  0.11999999731779099,
+                  0.41999998688697815,
+                  0.11999999731779099
+                ]
+              },
+              {
+                "children": [],
+                "id": "totem_horn_l_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Totem Left Horn",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  -0.25,
                   0.3499999940395355,
-                  0.15000000596046448,
-                  0.15000000596046448
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.10000000149011612,
+                  0.3199999928474426,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "children": [],
+                "id": "totem_horn_r_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Totem Right Horn",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.25,
+                  0.3499999940395355,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.10000000149011612,
+                  0.3199999928474426,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "children": [],
+                "id": "totem_brace_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Totem Cross Brace",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.20000000298023224,
+                  0.0
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.550000011920929,
+                  0.07999999821186066,
+                  0.11999999731779099
                 ]
               }
             ],
@@ -1574,7 +1819,7 @@
                   ],
                   "useTexture": false
                 },
-                "name": "Totem Projection Arm",
+                "name": "Totem Pointer Arm",
                 "openPositionOffset": [
                   0.0,
                   0.0,
@@ -1586,9 +1831,9 @@
                   0.0
                 ],
                 "position": [
-                  0.2800000011920929,
+                  0.0,
                   0.25,
-                  0.0
+                  0.3499999940395355
                 ],
                 "primitiveType": "Cube",
                 "rotation": [
@@ -1597,9 +1842,58 @@
                   0.0
                 ],
                 "scale": [
-                  0.3499999940395355,
                   0.15000000596046448,
-                  0.15000000596046448
+                  0.15000000596046448,
+                  0.44999998807907104
+                ]
+              },
+              {
+                "children": [],
+                "id": "totem_cross_3",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Totem Crossbar",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
+                  0.25,
+                  0.20000000298023224
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.14000000059604645,
+                  0.4000000059604645,
+                  0.11999999731779099
                 ]
               }
             ],
@@ -1717,9 +2011,9 @@
             0.5,
             0.5
           ],
-          "useTexture": false
+          "useTexture": true
         },
-        "name": "Shadow Target Rune",
+        "name": "Shadow Target Rune #1",
         "openPositionOffset": [
           0.0,
           0.0,
@@ -1742,8 +2036,8 @@
           0.0
         ],
         "scale": [
-          0.8999999761581421,
-          0.8999999761581421,
+          1.100000023841858,
+          1.100000023841858,
           0.03999999910593033
         ]
       },
@@ -1766,9 +2060,9 @@
             0.5,
             0.5
           ],
-          "useTexture": false
+          "useTexture": true
         },
-        "name": "Shadow Target Rune",
+        "name": "Shadow Target Rune #2",
         "openPositionOffset": [
           0.0,
           0.0,
@@ -1791,8 +2085,8 @@
           0.0
         ],
         "scale": [
-          0.8999999761581421,
-          0.8999999761581421,
+          1.100000023841858,
+          1.100000023841858,
           0.03999999910593033
         ]
       },
@@ -1815,9 +2109,9 @@
             0.5,
             0.5
           ],
-          "useTexture": false
+          "useTexture": true
         },
-        "name": "Shadow Target Rune",
+        "name": "Shadow Target Rune #3",
         "openPositionOffset": [
           0.0,
           0.0,
@@ -1840,8 +2134,8 @@
           0.0
         ],
         "scale": [
-          0.8999999761581421,
-          0.8999999761581421,
+          1.100000023841858,
+          1.100000023841858,
           0.03999999910593033
         ]
       },

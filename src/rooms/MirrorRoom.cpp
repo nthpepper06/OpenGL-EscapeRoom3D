@@ -41,7 +41,7 @@ MirrorRoom::MirrorRoom() {
     fearSourcePosition = glm::vec3(0.0f, 2.0f, -7.0f);
     fearDistanceThreshold = 4.5f;
     baseVignette = 0.50f;
-    baseChromatic = 0.005f;
+    baseChromatic = 0.0005f;
 }
 
 std::string MirrorRoom::getObjectiveHint(const InteractionManager& im) const {
@@ -213,13 +213,28 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
         bust->renderLayer = RenderLayer::Both;
         pedestal->addChild(bust);
 
-        // Bust nose/pointer feature so orientation is visually unmistakable
-        auto nosePointer = std::make_shared<SceneObject>("bust_face_" + std::to_string(i+1), "Bust Face Feature", PrimitiveType::Cube);
-        nosePointer->mesh = cubeMesh;
-        nosePointer->position = glm::vec3(0.0f, 0.12f, 0.20f);
-        nosePointer->scale = glm::vec3(0.12f, 0.18f, 0.15f);
-        nosePointer->material.albedoColor = glm::vec3(0.9f, 0.8f, 0.5f);
-        bust->addChild(nosePointer);
+        // Bust forward indicator: prominent burnished golden notch arrow pointing +Z in local space
+        auto notchStem = std::make_shared<SceneObject>("bust_face_" + std::to_string(i+1), "Bust Orientation Stem", PrimitiveType::Cube);
+        notchStem->mesh = cubeMesh;
+        notchStem->position = glm::vec3(0.0f, 0.12f, 0.22f);
+        notchStem->scale = glm::vec3(0.10f, 0.16f, 0.20f);
+        notchStem->material.albedoColor = glm::vec3(1.0f, 0.85f, 0.25f);
+        notchStem->material.emissiveColor = glm::vec3(1.0f, 0.75f, 0.20f);
+        notchStem->material.emissiveIntensity = 0.70f;
+        notchStem->material.metallic = 0.85f;
+        notchStem->material.roughness = 0.25f;
+        bust->addChild(notchStem);
+
+        auto notchArrow = std::make_shared<SceneObject>("bust_arrow_" + std::to_string(i+1), "Bust Orientation Arrow", PrimitiveType::Cube);
+        notchArrow->mesh = cubeMesh;
+        notchArrow->position = glm::vec3(0.0f, 0.12f, 0.34f);
+        notchArrow->scale = glm::vec3(0.20f, 0.10f, 0.14f);
+        notchArrow->material.albedoColor = glm::vec3(1.0f, 0.90f, 0.30f);
+        notchArrow->material.emissiveColor = glm::vec3(1.0f, 0.80f, 0.25f);
+        notchArrow->material.emissiveIntensity = 0.90f;
+        notchArrow->material.metallic = 0.95f;
+        notchArrow->material.roughness = 0.20f;
+        bust->addChild(notchArrow);
     }
 
     // ==========================================
@@ -231,17 +246,48 @@ void MirrorRoom::build(InteractionManager& interactionMgr) {
 
     for (int i = 0; i < 3; ++i) {
         auto ghostGuide = std::make_shared<SceneObject>("mirror_ghost_guide_" + std::to_string(i+1), "Spectral Reflection Guide", PrimitiveType::Cube);
-        ghostGuide->mesh = PrimitiveGenerator::createBeveledCube(0.20f, 0.50f, 0.45f, 0.02f, 2);
+        ghostGuide->mesh = PrimitiveGenerator::createBeveledCube(0.24f, 0.50f, 0.40f, 0.02f, 2);
         ghostGuide->position = pedestalPositions[i] + glm::vec3(0.0f, 1.75f, 0.0f); // Hovering above pedestal in the mirror
         ghostGuide->rotation = glm::vec3(0.0f, ghostAngles[i], 0.0f);
         ghostGuide->scale = glm::vec3(1.0f);
-        ghostGuide->material.albedoColor = glm::vec3(0.85f, 0.45f, 1.0f);
-        ghostGuide->material.emissiveColor = glm::vec3(0.85f, 0.45f, 1.0f);
-        ghostGuide->material.emissiveIntensity = 4.5f; // Radiant spectral violet beacon
+        ghostGuide->material.albedoColor = glm::vec3(0.65f, 0.35f, 0.95f);
+        ghostGuide->material.emissiveColor = glm::vec3(0.65f, 0.35f, 0.95f);
+        ghostGuide->material.emissiveIntensity = 1.05f; // Crisp spectral violet beacon without blowout!
         // KEY INNOVATION: ONLY visible inside the mirror reflection!
         ghostGuide->renderLayer = RenderLayer::MirrorOnly;
         rootNode->addChild(ghostGuide);
+
+        // Matching spectral glowing pointer arrow pointing +Z in local space
+        auto ghostStem = std::make_shared<SceneObject>("ghost_stem_" + std::to_string(i+1), "Ghost Orientation Stem", PrimitiveType::Cube);
+        ghostStem->mesh = cubeMesh;
+        ghostStem->position = glm::vec3(0.0f, 0.08f, 0.26f);
+        ghostStem->scale = glm::vec3(0.10f, 0.16f, 0.20f);
+        ghostStem->material.albedoColor = glm::vec3(0.35f, 0.90f, 1.0f); // Luminous cyan/violet
+        ghostStem->material.emissiveColor = glm::vec3(0.35f, 0.90f, 1.0f);
+        ghostStem->material.emissiveIntensity = 1.35f;
+        ghostStem->renderLayer = RenderLayer::MirrorOnly;
+        ghostGuide->addChild(ghostStem);
+
+        auto ghostArrow = std::make_shared<SceneObject>("ghost_arrow_" + std::to_string(i+1), "Ghost Orientation Arrow", PrimitiveType::Cube);
+        ghostArrow->mesh = cubeMesh;
+        ghostArrow->position = glm::vec3(0.0f, 0.08f, 0.38f);
+        ghostArrow->scale = glm::vec3(0.20f, 0.10f, 0.14f);
+        ghostArrow->material.albedoColor = glm::vec3(0.45f, 0.95f, 1.0f);
+        ghostArrow->material.emissiveColor = glm::vec3(0.45f, 0.95f, 1.0f);
+        ghostArrow->material.emissiveIntensity = 1.55f;
+        ghostArrow->renderLayer = RenderLayer::MirrorOnly;
+        ghostGuide->addChild(ghostArrow);
     }
+
+    // Victorian Gallery Journal Note on pedestal near spawn
+    auto journalObj = std::make_shared<SceneObject>("mirror_journal_note", "Victorian Gallery Journal", PrimitiveType::Cube);
+    journalObj->mesh = cubeMesh;
+    journalObj->position = glm::vec3(0.0f, 0.85f, 3.8f);
+    journalObj->scale = glm::vec3(0.32f, 0.04f, 0.42f);
+    journalObj->material.albedoColor = glm::vec3(0.85f, 0.78f, 0.65f); // Aged parchment
+    journalObj->material.roughness = 0.75f;
+    journalObj->interactType = InteractionType::SecretNote;
+    rootNode->addChild(journalObj);
 
     // ==========================================
     // 5. FINAL SANCTUARY EXIT DOOR (ROOM 3 EXIT)

@@ -46,4 +46,5 @@ public:
     static unsigned int createMirrorPattern(int width = 256, int height = 256);
     static unsigned int createNoteTexture(const std::string& title, const std::string& pin, int width = 256, int height = 256);
     static unsigned int createNoteTexture(int width = 256, int height = 256);
+    static unsigned int createRuneGlyphTexture(int glyphIndex, int width = 256, int height = 256);
 };

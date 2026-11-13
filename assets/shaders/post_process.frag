@@ -47,8 +47,8 @@ void main()
     vec2 toCenter = uv - center;
     float dist = length(toCenter);
 
-    // Dynamic chromatic aberration: increases with distance from center and player fear
-    float totalAberration = chromaticAberrationStrength + fearFactor * 0.015;
+    // Dynamic chromatic aberration: subtle shift with distance from center and player fear
+    float totalAberration = chromaticAberrationStrength + fearFactor * 0.0015;
     vec2 dir = (dist > 0.0001) ? normalize(toCenter) : vec2(0.0);
 
     // RGB channel separation (Chromatic Aberration) on raw HDR radiance

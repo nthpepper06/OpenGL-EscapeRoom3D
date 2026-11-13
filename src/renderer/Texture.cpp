@@ -755,3 +755,124 @@ unsigned int Texture::createNoteTexture(const std::string& title, const std::str
 unsigned int Texture::createNoteTexture(int width, int height) {
     return createNoteTexture("SAFE CODE", "PIN: 7492", width, height);
 }
+
+unsigned int Texture::createRuneGlyphTexture(int glyphIndex, int width, int height) {
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    std::vector<unsigned char> data(width * height * 3);
+
+    auto drawSegment = [&](float x1f, float y1f, float x2f, float y2f, float thickness,
+                           unsigned char r, unsigned char g, unsigned char b) {
+        float x1 = x1f * width;
+        float y1 = y1f * height;
+        float x2 = x2f * width;
+        float y2 = y2f * height;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float lenSq = dx * dx + dy * dy;
+        if (lenSq < 0.0001f) return;
+
+        int minX = std::max(0, static_cast<int>(std::min(x1, x2) - thickness - 2));
+        int maxX = std::min(width - 1, static_cast<int>(std::max(x1, x2) + thickness + 2));
+        int minY = std::max(0, static_cast<int>(std::min(y1, y2) - thickness - 2));
+        int maxY = std::min(height - 1, static_cast<int>(std::max(y1, y2) + thickness + 2));
+
+        for (int y = minY; y <= maxY; ++y) {
+            for (int x = minX; x <= maxX; ++x) {
+                float t = std::max(0.0f, std::min(1.0f, ((x - x1) * dx + (y - y1) * dy) / lenSq));
+                float px = x1 + t * dx;
+                float py = y1 + t * dy;
+                float dist = std::sqrt((x - px) * (x - px) + (y - py) * (y - py));
+
+                if (dist <= thickness) {
+                    float alpha = 1.0f;
+                    if (dist > thickness - 1.5f) {
+                        alpha = (thickness - dist) / 1.5f;
+                    }
+                    int idx = (y * width + x) * 3;
+                    data[idx + 0] = static_cast<unsigned char>(data[idx + 0] * (1.0f - alpha) + r * alpha);
+                    data[idx + 1] = static_cast<unsigned char>(data[idx + 1] * (1.0f - alpha) + g * alpha);
+                    data[idx + 2] = static_cast<unsigned char>(data[idx + 2] * (1.0f - alpha) + b * alpha);
+                }
+            }
+        }
+    };
+
+    // 1. Fill base dark ancient crypt stone background
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int idx = (y * width + x) * 3;
+            // Stone texture noise with subtle edge vignette
+            int noise = ((x * 17 + y * 31) % 19) + ((x * 7 - y * 13) % 11);
+            float u = (float)x / width;
+            float v = (float)y / height;
+            float edgeDist = std::min(std::min(u, 1.0f - u), std::min(v, 1.0f - v)) * 2.0f;
+            float vignette = std::min(1.0f, edgeDist * 3.5f);
+
+            unsigned char baseR = static_cast<unsigned char>((22 + noise) * vignette);
+            unsigned char baseG = static_cast<unsigned char>((18 + noise / 2) * vignette);
+            unsigned char baseB = static_cast<unsigned char>((24 + noise / 2) * vignette);
+
+            data[idx + 0] = baseR;
+            data[idx + 1] = baseG;
+            data[idx + 2] = baseB;
+        }
+    }
+
+    // Outer stone tablet etched border
+    drawSegment(0.08f, 0.08f, 0.92f, 0.08f, 2.5f, 70, 45, 45);
+    drawSegment(0.92f, 0.08f, 0.92f, 0.92f, 2.5f, 70, 45, 45);
+    drawSegment(0.92f, 0.92f, 0.08f, 0.92f, 2.5f, 70, 45, 45);
+    drawSegment(0.08f, 0.92f, 0.08f, 0.08f, 2.5f, 70, 45, 45);
+
+    // Glowing rune colors: vibrant crimson-amber glyph on dark stone
+    unsigned char glowR = 255;
+    unsigned char glowG = 135;
+    unsigned char glowB = 55;
+    float strokeThick = 4.5f;
+
+    if (glyphIndex == 0) {
+        // GLYPH 0 (Totem 1, Target: 90 deg / East): RIGHT-FACING ARROW WITH CROSSBAR
+        // Horizontal main shaft pointing East (+X)
+        drawSegment(0.20f, 0.50f, 0.80f, 0.50f, strokeThick, glowR, glowG, glowB);
+        // Arrowhead barbs
+        drawSegment(0.80f, 0.50f, 0.55f, 0.72f, strokeThick, glowR, glowG, glowB);
+        drawSegment(0.80f, 0.50f, 0.55f, 0.28f, strokeThick, glowR, glowG, glowB);
+        // Vertical crossbar
+        drawSegment(0.35f, 0.32f, 0.35f, 0.68f, strokeThick, glowR, glowG, glowB);
+    } else if (glyphIndex == 1) {
+        // GLYPH 1 (Totem 2, Target: 180 deg / South / Up): HORNED TRIDENT / CRESCENT FORK
+        // Central vertical shaft
+        drawSegment(0.50f, 0.18f, 0.50f, 0.82f, strokeThick, glowR, glowG, glowB);
+        // Central spearhead
+        drawSegment(0.50f, 0.82f, 0.42f, 0.68f, strokeThick, glowR, glowG, glowB);
+        drawSegment(0.50f, 0.82f, 0.58f, 0.68f, strokeThick, glowR, glowG, glowB);
+        // Horizontal cross-brace
+        drawSegment(0.24f, 0.42f, 0.76f, 0.42f, strokeThick, glowR, glowG, glowB);
+        // Left and right upward-flaring horns
+        drawSegment(0.24f, 0.42f, 0.24f, 0.76f, strokeThick, glowR, glowG, glowB);
+        drawSegment(0.76f, 0.42f, 0.76f, 0.76f, strokeThick, glowR, glowG, glowB);
+    } else {
+        // GLYPH 2 (Totem 3, Target: 270 deg / West): LEFT-FACING ARROW WITH CROSSBAR
+        // Horizontal main shaft pointing West (-X)
+        drawSegment(0.80f, 0.50f, 0.20f, 0.50f, strokeThick, glowR, glowG, glowB);
+        // Arrowhead barbs
+        drawSegment(0.20f, 0.50f, 0.45f, 0.72f, strokeThick, glowR, glowG, glowB);
+        drawSegment(0.20f, 0.50f, 0.45f, 0.28f, strokeThick, glowR, glowG, glowB);
+        // Vertical crossbar
+        drawSegment(0.65f, 0.32f, 0.65f, 0.68f, strokeThick, glowR, glowG, glowB);
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    applyAnisotropicFiltering();
+
+    return textureID;
+}

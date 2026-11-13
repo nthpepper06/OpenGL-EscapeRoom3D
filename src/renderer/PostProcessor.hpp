@@ -30,8 +30,8 @@ public:
     bool bypassTonemap = false;
     float vignetteStrength = 0.50f;
     float vignetteRadius = 0.80f;
-    float chromaticAberrationStrength = 0.0035f;
-    float filmGrainStrength = 0.035f;
+    float chromaticAberrationStrength = 0.0004f;
+    float filmGrainStrength = 0.005f;
 
     // HDR Bloom controls
     bool bloomEnabled = true;

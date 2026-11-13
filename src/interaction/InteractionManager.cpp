@@ -29,6 +29,9 @@ std::string InteractionManager::getPromptText(const std::shared_ptr<SceneObject>
             if (obj->id.find("uv_") != std::string::npos) {
                 return "[E] Inspect Fluorescent UV Clue: " + obj->name;
             }
+            if (currentRoomId == 0 || currentRoomId == 2) {
+                return "[E] Read " + obj->name;
+            }
             return "[E] Read Clue Document [PIN: " + correctSafePin + "]";
         }
         case InteractionType::SafeKeypad:
@@ -56,7 +59,7 @@ std::string InteractionManager::getPromptText(const std::shared_ptr<SceneObject>
             if (obj->id.find("2") != std::string::npos) idx = 1;
             else if (obj->id.find("3") != std::string::npos) idx = 2;
             int angle = static_cast<int>(totemAngles[idx]) % 360;
-            return "[E] Rotate Shadow Totem #" + std::to_string(idx + 1) + " (Current Angle: " + std::to_string(angle) + " deg)";
+            return "[E] Rotate totem (now " + std::to_string(angle) + " deg)";
         }
         case InteractionType::FuseItem:
             return "[E] Pick up " + obj->name;
@@ -74,7 +77,7 @@ std::string InteractionManager::getPromptText(const std::shared_ptr<SceneObject>
             if (obj->id.find("2") != std::string::npos) idx = 1;
             else if (obj->id.find("3") != std::string::npos) idx = 2;
             int angle = static_cast<int>(bustAngles[idx]) % 360;
-            return "[E] Rotate Bust #" + std::to_string(idx + 1) + " (Angle: " + std::to_string(angle) + " deg - Compare with Mirror)";
+            return "[E] Rotate bust (now " + std::to_string(angle) + " deg)";
         }
         default:
             return "";
@@ -116,9 +119,8 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
             } else if (currentRoomId == 0) {
                 loreTitle = "RITUAL SACRIFICE DIARY OF DR. ELIAS VANCE (1893)";
                 loreBody = "November 13, 1893:\n"
-                           "The asylum patients are not a burden; they are the ideal ritual vessels.\n"
-                           "I have sealed the first Sigil Fragment inside the stone crypt altar.\n"
-                           "Align the three totems with the blood glyphs on the North wall:\n\n"
+                           "Rotate each stone totem until its cast shadow matches the corresponding rune engraved upon the North wall.\n\n"
+                           "When all three shadows align with the crimson glyphs, the crypt altar slab shall slide open.\n\n"
                            "        >>> TOTEM ANGLES: 90 / 180 / 270 DEGREES <<<\n\n"
                            "Retrieve the Ritual Key to unlock the southern gateway!";
             } else if (currentRoomId == 1) {
@@ -131,8 +133,8 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
             } else {
                 loreTitle = "CURSE OF THE DEMON MIRROR";
                 loreBody = "Dr. Vance retreated into the mirror world.\n"
-                           "To shatter the nightmare loop and unseal the sanctuary exit,\n"
-                           "the seeker must align all 3 marble busts to match the spectral reflection!\n\n"
+                           "Observe the spectral guides in the Great Mirror and align each real bust so its golden notch matches the reflection.\n\n"
+                           "When all three busts mirror the spectral anomalies, the sanctuary exit seal shall shatter.\n\n"
                            "        >>> TARGET ROTATIONS: 180 / 90 / 270 DEGREES <<<\n";
             }
             openInspect(InspectType::SecretNote, loreTitle, loreBody);
@@ -277,7 +279,7 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 setMessage("SHADOWS ALIGNED WITH RUNES! The altar stone slab slides open, revealing the Ritual Key!", 8.0f);
             } else {
                 int deg = static_cast<int>(totemAngles[idx]) % 360;
-                setMessage("Rotated Totem #" + std::to_string(idx + 1) + " to " + std::to_string(deg) + " deg. Observe shadow on North wall!", 4.0f);
+                setMessage("Rotated Totem #" + std::to_string(idx + 1) + " (now " + std::to_string(deg) + " deg). Observe shadow on North wall!", 4.0f);
             }
             break;
         }
@@ -361,7 +363,7 @@ void InteractionManager::interact(std::shared_ptr<SceneObject> obj, PointLight& 
                 setMessage("MIRROR ANOMALIES MATCHED! The Sanctuary seal breaks, final Exit Door swings open!", 10.0f);
             } else {
                 int deg = static_cast<int>(bustAngles[idx]) % 360;
-                setMessage("Rotated Bust #" + std::to_string(idx + 1) + " (" + std::to_string(deg) + " deg). Look into the mirror to compare!", 4.0f);
+                setMessage("Rotated Bust #" + std::to_string(idx + 1) + " (now " + std::to_string(deg) + " deg). Look into the mirror to compare!", 4.0f);
             }
             break;
         }

@@ -41,7 +41,7 @@ AbandonedAsylumRoom::AbandonedAsylumRoom() {
     fearSourcePosition = glm::vec3(0.0f, 1.5f, 0.0f);
     fearDistanceThreshold = 3.5f;
     baseVignette = 0.55f;
-    baseChromatic = 0.005f;
+    baseChromatic = 0.0005f;
 }
 
 std::string AbandonedAsylumRoom::getObjectiveHint(const InteractionManager& im) const {

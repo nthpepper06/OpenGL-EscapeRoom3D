@@ -336,9 +336,9 @@ void GuiLayer::renderLighting(PointLight& pointLight, SpotLight& spotLight, Ambi
             ImGui::Checkbox("Enable Bloom", &postProcessor.bloomEnabled);
             ImGui::SliderFloat("Bloom Intensity", &postProcessor.bloomIntensity, 0.0f, 3.0f, "%.2f");
             ImGui::SliderFloat("Bloom Threshold", &postProcessor.bloomThreshold, 0.5f, 3.0f, "%.2f");
-            ImGui::SliderFloat("Film Grain Strength", &postProcessor.filmGrainStrength, 0.0f, 0.10f, "%.3f");
+            ImGui::SliderFloat("Film Grain Strength", &postProcessor.filmGrainStrength, 0.0f, 0.05f, "%.4f");
             ImGui::SliderFloat("Vignette Strength", &postProcessor.vignetteStrength, 0.0f, 1.0f);
-            ImGui::SliderFloat("Chromatic Aberration", &postProcessor.chromaticAberrationStrength, 0.0f, 0.02f, "%.4f");
+            ImGui::SliderFloat("Chromatic Aberration", &postProcessor.chromaticAberrationStrength, 0.0f, 0.005f, "%.5f");
             ImGui::ProgressBar(fearFactor, ImVec2(0.0f, 0.0f), "Fear Level");
             ImGui::TreePop();
         }

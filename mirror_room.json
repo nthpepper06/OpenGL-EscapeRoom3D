@@ -391,7 +391,7 @@
                   ],
                   "useTexture": false
                 },
-                "name": "Bust Face Feature",
+                "name": "Bust Orientation Stem",
                 "openPositionOffset": [
                   0.0,
                   0.0,
@@ -405,7 +405,7 @@
                 "position": [
                   0.0,
                   0.11999999731779099,
-                  0.20000000298023224
+                  0.2199999988079071
                 ],
                 "primitiveType": "Cube",
                 "rotation": [
@@ -414,9 +414,58 @@
                   0.0
                 ],
                 "scale": [
+                  0.10000000149011612,
+                  0.1599999964237213,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "children": [],
+                "id": "bust_arrow_1",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Bust Orientation Arrow",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
                   0.11999999731779099,
-                  0.18000000715255737,
-                  0.15000000596046448
+                  0.3400000035762787
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.10000000149011612,
+                  0.14000000059604645
                 ]
               }
             ],
@@ -540,7 +589,7 @@
                   ],
                   "useTexture": false
                 },
-                "name": "Bust Face Feature",
+                "name": "Bust Orientation Stem",
                 "openPositionOffset": [
                   0.0,
                   0.0,
@@ -554,7 +603,7 @@
                 "position": [
                   0.0,
                   0.11999999731779099,
-                  0.20000000298023224
+                  0.2199999988079071
                 ],
                 "primitiveType": "Cube",
                 "rotation": [
@@ -563,9 +612,58 @@
                   0.0
                 ],
                 "scale": [
+                  0.10000000149011612,
+                  0.1599999964237213,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "children": [],
+                "id": "bust_arrow_2",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Bust Orientation Arrow",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
                   0.11999999731779099,
-                  0.18000000715255737,
-                  0.15000000596046448
+                  0.3400000035762787
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.10000000149011612,
+                  0.14000000059604645
                 ]
               }
             ],
@@ -689,7 +787,7 @@
                   ],
                   "useTexture": false
                 },
-                "name": "Bust Face Feature",
+                "name": "Bust Orientation Stem",
                 "openPositionOffset": [
                   0.0,
                   0.0,
@@ -703,7 +801,7 @@
                 "position": [
                   0.0,
                   0.11999999731779099,
-                  0.20000000298023224
+                  0.2199999988079071
                 ],
                 "primitiveType": "Cube",
                 "rotation": [
@@ -712,9 +810,58 @@
                   0.0
                 ],
                 "scale": [
+                  0.10000000149011612,
+                  0.1599999964237213,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "children": [],
+                "id": "bust_arrow_3",
+                "interactType": "None",
+                "isLocked": false,
+                "isOpen": false,
+                "isVisible": true,
+                "material": {
+                  "diffuse": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929
+                  ],
+                  "shininess": 32.0,
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "useTexture": false
+                },
+                "name": "Bust Orientation Arrow",
+                "openPositionOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "openRotationOffset": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "position": [
+                  0.0,
                   0.11999999731779099,
-                  0.18000000715255737,
-                  0.15000000596046448
+                  0.3400000035762787
+                ],
+                "primitiveType": "Cube",
+                "rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "scale": [
+                  0.20000000298023224,
+                  0.10000000149011612,
+                  0.14000000059604645
                 ]
               }
             ],
@@ -814,7 +961,106 @@
         ]
       },
       {
-        "children": [],
+        "children": [
+          {
+            "children": [],
+            "id": "ghost_stem_1",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Ghost Orientation Stem",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.07999999821186066,
+              0.25999999046325684
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.10000000149011612,
+              0.1599999964237213,
+              0.20000000298023224
+            ]
+          },
+          {
+            "children": [],
+            "id": "ghost_arrow_1",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Ghost Orientation Arrow",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.07999999821186066,
+              0.3799999952316284
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.20000000298023224,
+              0.10000000149011612,
+              0.14000000059604645
+            ]
+          }
+        ],
         "id": "mirror_ghost_guide_1",
         "interactType": "None",
         "isLocked": false,
@@ -863,7 +1109,106 @@
         ]
       },
       {
-        "children": [],
+        "children": [
+          {
+            "children": [],
+            "id": "ghost_stem_2",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Ghost Orientation Stem",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.07999999821186066,
+              0.25999999046325684
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.10000000149011612,
+              0.1599999964237213,
+              0.20000000298023224
+            ]
+          },
+          {
+            "children": [],
+            "id": "ghost_arrow_2",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Ghost Orientation Arrow",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.07999999821186066,
+              0.3799999952316284
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.20000000298023224,
+              0.10000000149011612,
+              0.14000000059604645
+            ]
+          }
+        ],
         "id": "mirror_ghost_guide_2",
         "interactType": "None",
         "isLocked": false,
@@ -912,7 +1257,106 @@
         ]
       },
       {
-        "children": [],
+        "children": [
+          {
+            "children": [],
+            "id": "ghost_stem_3",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Ghost Orientation Stem",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.07999999821186066,
+              0.25999999046325684
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.10000000149011612,
+              0.1599999964237213,
+              0.20000000298023224
+            ]
+          },
+          {
+            "children": [],
+            "id": "ghost_arrow_3",
+            "interactType": "None",
+            "isLocked": false,
+            "isOpen": false,
+            "isVisible": true,
+            "material": {
+              "diffuse": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+              ],
+              "shininess": 32.0,
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "useTexture": false
+            },
+            "name": "Ghost Orientation Arrow",
+            "openPositionOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "openRotationOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "position": [
+              0.0,
+              0.07999999821186066,
+              0.3799999952316284
+            ],
+            "primitiveType": "Cube",
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.20000000298023224,
+              0.10000000149011612,
+              0.14000000059604645
+            ]
+          }
+        ],
         "id": "mirror_ghost_guide_3",
         "interactType": "None",
         "isLocked": false,
@@ -958,6 +1402,55 @@
           1.0,
           1.0,
           1.0
+        ]
+      },
+      {
+        "children": [],
+        "id": "mirror_journal_note",
+        "interactType": "SecretNote",
+        "isLocked": false,
+        "isOpen": false,
+        "isVisible": true,
+        "material": {
+          "diffuse": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+          ],
+          "shininess": 32.0,
+          "specular": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "useTexture": false
+        },
+        "name": "Victorian Gallery Journal",
+        "openPositionOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "openRotationOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position": [
+          0.0,
+          0.8500000238418579,
+          3.799999952316284
+        ],
+        "primitiveType": "Cube",
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          0.3199999928474426,
+          0.03999999910593033,
+          0.41999998688697815
         ]
       },
       {

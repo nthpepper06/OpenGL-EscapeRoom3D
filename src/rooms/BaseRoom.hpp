@@ -37,7 +37,7 @@ public:
     float fearDistanceThreshold = 2.8f;
     glm::vec3 fearSourcePosition = glm::vec3(0.0f);
     float baseVignette = 0.45f;
-    float baseChromatic = 0.003f;
+    float baseChromatic = 0.0004f;
 
     virtual ~BaseRoom() = default;
 
